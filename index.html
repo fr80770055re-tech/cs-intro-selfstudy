@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>計概自學・數字系統</title>
+<meta name="description" content="給非本科系學生的計算機概論自學網站：互動講義、自動出題練習、通勤用語音複習。">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+.hero{padding:20px 0 8px}
+.hero h1{font-size:34px}
+.entry{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--text);transition:border-color .15s}
+.entry:hover{border-color:var(--accent)}
+.entry .ic{font-size:26px}
+.entry .t{font-size:19px;font-weight:700}
+.entry .d{color:var(--muted);font-size:15px;line-height:1.65;flex:1}
+.entry .p{font-size:14px;color:var(--accent);font-weight:700;margin-top:6px}
+.bar{height:6px;background:var(--surface-2);border-radius:99px;overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.plan{counter-reset:day;list-style:none;padding:0;margin:0}
+.plan li{position:relative;padding:12px 16px 12px 64px;border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-bottom:8px;line-height:1.7}
+.plan li::before{counter-increment:day;content:"第" counter(day) "天";position:absolute;left:12px;top:12px;font-size:13px;font-weight:700;color:var(--accent);width:44px}
+.plan li.daily::before{content:"之後";}
+.plan .tasks{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:15px}
+.plan .tasks a{text-decoration:none}
+.plan .tasks span{color:var(--muted)}
+.scope{font-size:15.5px}
+.scope td,.scope th{padding:6px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.scope{border-collapse:collapse;width:100%}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="logo" href="index.html">計概自學・數字系統</a>
+  <nav><a href="index.html" aria-current="page">首頁</a><a href="lesson.html">講義</a><a href="practice.html">練習</a><a href="audio.html">通勤音檔</a></nav>
+</header>
+<div class="wrap">
+  <section class="hero">
+    <div class="kicker">計算機概論・自學網站</div>
+    <h1>從零開始，看懂電腦怎麼表示數字</h1>
+    <p class="lead">專為非本科系學生設計：不需要任何程式或數學基礎。先讀互動講義理解觀念，再用練習題練到熟，通勤時用耳朵複習。</p>
+  </section>
+
+  <div class="grid cols-3" style="margin-top:18px">
+    <a class="card entry" href="lesson.html">
+      <span class="ic" aria-hidden="true">📘</span><span class="t">1. 互動講義</span>
+      <span class="d">完整的教學內容，搭配可以動手玩的元件，以及一步一步的手算過程。</span>
+      <span class="p">第 0～2 章・約 3 小時</span>
+    </a>
+    <a class="card entry" href="practice.html">
+      <span class="ic" aria-hidden="true">✏️</span><span class="t">2. 練習與精熟</span>
+      <span class="d">隨機出題、告訴你錯在哪，連續答對 5 題就算精熟，並定期提醒複習。</span>
+      <span class="p" id="pp">14 種題型</span><span class="bar"><i id="pbar" style="width:0"></i></span>
+    </a>
+    <a class="card entry" href="audio.html">
+      <span class="ic" aria-hidden="true">🎧</span><span class="t">3. 通勤音檔</span>
+      <span class="d">8 集語音複習，每集約 5 分鐘：觀念講解、心算問答、口訣總整理。</span>
+      <span class="p" id="ap">8 集・約 37 分鐘</span><span class="bar"><i id="abar" style="width:0"></i></span>
+    </a>
+  </div>
+  <div class="note" id="duenote" hidden></div>
+
+  <h2>建議的學習路線（7 天）</h2>
+  <p>每天大約 30～45 分鐘。順序是：<strong>讀講義 → 做練習 → 通勤時聽音檔</strong>。進度落後也沒關係，重點是每個題型都練到「精熟」再往下。</p>
+  <ol class="plan">
+    <li><div class="tasks"><a href="lesson.html#ch0">📘 第 0 章 開始之前</a><a href="practice.html#skill=pow2">✏️ 2 的次方</a><a href="audio.html#1">🎧 第 1 集</a></div></li>
+    <li><div class="tasks"><a href="lesson.html#ch1-1">📘 1.1～1.2 進位制、轉成十進位</a><a href="practice.html#skill=bin2dec">✏️ 二進位→十進位</a><a href="practice.html#skill=hex2dec">✏️ 十六進位→十進位</a><a href="audio.html#2">🎧 第 2 集</a></div></li>
+    <li><div class="tasks"><a href="lesson.html#ch1-3">📘 1.3 除基取餘</a><a href="practice.html#skill=dec2bin">✏️ 十進位→二進位</a><a href="practice.html#skill=dec2hex">✏️ 十進位→十六進位</a><a href="audio.html#6">🎧 第 6 集（心算）</a></div></li>
+    <li><div class="tasks"><a href="lesson.html#ch1-4">📘 1.4～1.5 小數與分組</a><a href="practice.html#skill=frac2bin">✏️ 小數</a><a href="practice.html#skill=bin2hex">✏️ 分組三種</a><a href="audio.html#3">🎧 第 3 集</a></div></li>
+    <li><div class="tasks"><a href="lesson.html#ch2-1">📘 2.1～2.2 負數表示法</a><a href="practice.html#skill=tcWrite">✏️ 寫出／讀出 2 補數</a><a href="practice.html#skill=reps">✏️ 符號大小與 1 補數</a><a href="audio.html#4">🎧 第 4 集</a></div></li>
+    <li><div class="tasks"><a href="lesson.html#ch2-3">📘 2.3～2.4 加減法與溢位</a><a href="practice.html#skill=addsub">✏️ 加減與溢位</a><a href="audio.html#5">🎧 第 5、7 集</a></div></li>
+    <li><div class="tasks"><a href="practice.html#skill=concepts">✏️ 觀念選擇題</a><a href="practice.html#challenge">✏️ 混合挑戰</a><span>＋ 練習頁的「列印紙筆練習卷」</span><a href="audio.html#8">🎧 第 8 集口訣</a></div></li>
+    <li class="daily"><div class="tasks"><span>每天花 5 分鐘做練習頁的「今日複習」，把快忘記的題型找回來。</span></div></li>
+  </ol>
+
+  <h2>這個網站涵蓋的範圍</h2>
+  <p>目前完成的是大學計概「資料表示」單元的前半段，大約是課堂上 2～3 週的內容。</p>
+  <table class="scope">
+    <tr><th>已完成</th><td>位元與位元組、位權、2／8／10／16 進位轉換（含小數）、分組捷徑、符號大小、1 補數、2 補數、2 補數加減法、溢位</td></tr>
+    <tr><th>之後可以加</th><td>浮點數（IEEE 754）、偏移表示法、無號整數與符號延伸、邏輯運算與移位、文字編碼（ASCII／Unicode／UTF-8）、圖片與聲音的表示方式</td></tr>
+  </table>
+  <p class="small muted" style="margin-top:28px">練習進度和音檔播放位置只存在你這台裝置的瀏覽器裡，不會上傳到任何地方。</p>
+</div>
+<script src="assets/progress.js"></script>
+<script src="assets/audio-tracks.js"></script>
+<script>
+(function(){
+  const P = window.Progress, total = 14;
+  const m = Object.values(P.data.skills).filter(s => s.mastered).length;
+  const due = Object.values(P.data.skills).filter(s => s.mastered && s.due <= Date.now()).length;
+  document.getElementById("pp").textContent = m ? `已精熟 ${m} / ${total} 種題型` : `${total} 種題型`;
+  document.getElementById("pbar").style.width = (m / total * 100) + "%";
+  if (due) { const n = document.getElementById("duenote"); n.hidden = false; n.innerHTML = `今天有 <b>${due}</b> 種題型該複習了。<a href="practice.html#review">開始今日複習 →</a>`; }
+  let a = {}; try { a = JSON.parse(localStorage.getItem("csintro.audio.v1")) || {}; } catch (e) {}
+  const T = window.AUDIO_TRACKS || [], d = T.filter(t => a.done && a.done[t.id]).length;
+  if (d) { document.getElementById("ap").textContent = `已聽完 ${d} / ${T.length} 集`; }
+  document.getElementById("abar").style.width = (T.length ? d / T.length * 100 : 0) + "%";
+})();
+</script>
+</body>
+</html>

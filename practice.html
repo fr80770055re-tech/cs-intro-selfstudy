@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>練習與精熟</title>
+<link rel="stylesheet" href="assets/site.css">
+<style>
+.howto{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:14px 0}
+.howto div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:15px;line-height:1.65}
+.howto b{display:block;font-size:15.5px;margin-bottom:2px}
+.modes{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+.next{background:var(--accent-soft);border-radius:12px;padding:14px 18px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;justify-content:space-between}
+.chapter{margin-top:30px}
+.chapter h2{margin:0 0 10px;font-size:19px}
+.skill{display:grid;grid-template-columns:1fr auto;gap:6px 14px;align-items:center;padding:12px 16px;border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-bottom:8px}
+.skill .nm{font-weight:700}
+.skill .ds{font-size:14px;color:var(--muted);line-height:1.6}
+.skill .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.skill .acts a.small{font-size:14px}
+.dots{display:inline-flex;gap:3px;vertical-align:middle}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--zero);display:inline-block}
+.dots i.on{background:var(--gold)}
+.meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px;font-size:13px;color:var(--muted)}
+
+#play,#done{display:none}
+.playbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.qcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 24px}
+.qskill{font-size:13.5px;color:var(--accent);font-weight:700}
+.qprompt{font-size:21px;line-height:1.7;margin:8px 0 16px}
+.qprompt code{font-size:1.05em;background:var(--surface-2);padding:1px 6px;border-radius:5px}
+.answer-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.answer-row input{flex:1 1 200px;max-width:340px}
+.choices{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.choices button{justify-content:flex-start;text-align:left;min-height:48px;font-size:16px;background:var(--bg)}
+.choices button.right{background:var(--ok-soft);border-color:var(--ok)}
+.choices button.wrong{background:var(--bad-soft);border-color:var(--bad)}
+.ovf{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0 2px;font-size:16px}
+.ovf label{display:flex;align-items:center;gap:6px;cursor:pointer;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.hintbox{margin-top:14px;border-left:3px solid var(--gold);padding:4px 0 4px 14px}
+.hintbox .h{margin:6px 0}
+.fb{margin-top:16px;border-radius:10px;padding:12px 16px}
+.fb.ok{background:var(--ok-soft)}
+.fb.bad{background:var(--bad-soft)}
+.fb.invalid{background:var(--sign-soft)}
+.fb .t{font-weight:700;font-size:17px}
+.fb .ans{margin-top:4px}
+.sol{margin-top:12px}
+.sol summary{cursor:pointer;color:var(--accent);font-weight:600}
+.sol ol{padding-left:1.3em;margin:8px 0}
+.sol li{margin:6px 0}
+.event{margin-top:10px;font-weight:700}
+table.calc{border-collapse:collapse;font-family:var(--mono);font-size:15px;margin:6px 0;display:block;overflow-x:auto}
+table.calc th{font-family:var(--sans);font-size:13px;color:var(--muted);font-weight:600;padding:2px 10px;text-align:left}
+table.calc td{padding:2px 10px;white-space:nowrap}
+.grpchip{display:inline-flex;flex-direction:column;align-items:center;font-family:var(--mono);background:var(--surface-2);border-radius:8px;padding:2px 10px;margin:2px}
+.grpchip small{color:var(--accent);font-weight:700}
+.after{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+
+.sumtable{width:100%;border-collapse:collapse;margin:12px 0;font-size:15.5px}
+.sumtable th,.sumtable td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left}
+.big{font-size:40px;font-weight:700;line-height:1.1}
+
+details.tools{margin-top:40px}
+details.tools summary{cursor:pointer;color:var(--muted)}
+details.tools textarea{width:100%;min-height:80px;font-family:var(--mono);font-size:12px}
+
+#print{display:none}
+@media print{
+  body{background:#fff;color:#000;font-size:14pt}
+  .topbar,#home,#play,#done{display:none!important}
+  #print{display:block!important;padding:0 8mm}
+  #print h1{font-size:18pt}
+  #print ol li{margin:0 0 14mm}
+  #print .key{page-break-before:always}
+  #print .key li{margin:0 0 3mm}
+  #print code{font-family:Consolas,monospace}
+}
+@media (max-width:640px){
+  .qcard{padding:16px}
+  .qprompt{font-size:19px}
+  .skill{grid-template-columns:1fr}
+  .skill .acts{justify-content:flex-start}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="logo" href="index.html">計概自學・數字系統</a>
+  <nav><a href="index.html">首頁</a><a href="lesson.html">講義</a><a href="practice.html" aria-current="page">練習</a><a href="audio.html">通勤音檔</a></nav>
+</header>
+
+<div class="wrap">
+<!-- ===== 列表 ===== -->
+<section id="home">
+  <div class="kicker">練習與精熟</div>
+  <h1>把「看懂」變成「會算」</h1>
+  <p class="lead">題目每次都是隨機產生的，可以無限練習。答錯時，系統會告訴你錯在哪一步。</p>
+
+  <div class="howto">
+    <div><b>① 先讀講義，再練習</b>每個題型旁邊都有「講義」連結，忘記方法就回去看。</div>
+    <div><b>② 連續答對 5 題＝精熟</b>不看提示、連續答對 5 題，就算精熟。用了提示的題目不列入計算。</div>
+    <div><b>③ 定期回來複習</b>精熟後，系統會在 1、3、7、14、30 天後提醒你複習。答錯會從 1 天後重新開始。</div>
+  </div>
+
+  <div class="grid cols-3" id="stats"></div>
+  <div class="modes" id="modes"></div>
+  <div class="next" id="next"></div>
+
+  <div id="skilllist"></div>
+
+  <details class="tools">
+    <summary>在其他裝置繼續／重設進度</summary>
+    <p class="small muted">進度只存在這台裝置的瀏覽器裡。想換到手機繼續練習，請在這裡按「產生進度碼」，再到另一台裝置貼上並按「匯入」。</p>
+    <div class="modes" style="margin:8px 0">
+      <button id="exp">產生進度碼</button><button id="imp">匯入進度碼</button><button id="rst">重設全部進度</button>
+    </div>
+    <textarea id="code" placeholder="進度碼會出現在這裡；或把另一台裝置的進度碼貼在這裡" spellcheck="false"></textarea>
+    <p class="small" id="toolmsg"></p>
+  </details>
+</section>
+
+<!-- ===== 作答 ===== -->
+<section id="play">
+  <div class="playbar">
+    <button class="ghost" id="back">← 回到列表</button>
+    <div id="progressinfo" class="small muted"></div>
+  </div>
+  <div class="qcard">
+    <div class="qskill" id="qskill"></div>
+    <div class="qprompt" id="qprompt"></div>
+    <div id="qinput"></div>
+    <div class="hintbox" id="hints" hidden></div>
+    <div id="feedback"></div>
+    <div class="after" id="after"></div>
+  </div>
+  <p class="small muted" style="margin-top:14px">小技巧：按 Enter 可以送出答案，再按一次 Enter 進入下一題。旁邊放一張紙算，效果最好。</p>
+</section>
+
+<!-- ===== 結算 ===== -->
+<section id="done"></section>
+
+<!-- ===== 列印 ===== -->
+<section id="print"></section>
+</div>
+
+<script src="assets/progress.js"></script>
+<script src="assets/practice-skills.js"></script>
+<script>
+(function(){
+"use strict";
+const $ = (s) => document.querySelector(s);
+const P = window.Progress, SK = window.SKILLS, byId = Object.fromEntries(SK.map(s => [s.id, s]));
+const CH = {0: "第 0 章　開始之前", 1: "第 1 章　進位轉換", 2: "第 2 章　負數與溢位"};
+const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const dots = (n) => `<span class="dots" aria-label="連續答對 ${n} / ${P.GOAL}">${Array.from({length: P.GOAL}, (_, i) => `<i class="${i < n ? "on" : ""}"></i>`).join("")}</span>`;
+
+function show(view){
+  for (const v of ["home", "play", "done"]) $("#" + v).style.display = v === view ? "block" : "none";
+  window.scrollTo(0, 0);
+}
+function dueList(){ return SK.filter(s => P.status(s.id) === "due").map(s => s.id); }
+
+/* ---------- 列表 ---------- */
+function badge(id){
+  const st = P.status(id), s = P.data.skills[id];
+  if (st === "new") return `<span class="badge">還沒開始</span>`;
+  if (st === "learning") return `<span class="badge learn">練習中</span>`;
+  if (st === "due") return `<span class="badge due">該複習了</span>`;
+  const d = P.daysUntil(s.due);
+  return `<span class="badge ok">已精熟 ✓</span><span>${d <= 1 ? "明天" : d + " 天後"}複習</span>`;
+}
+function renderHome(){
+  const D = P.data, mastered = SK.filter(s => P.data.skills[s.id]?.mastered).length, due = dueList();
+  const td = D.days[P.today()] || {n: 0, c: 0};
+  $("#stats").innerHTML = `
+    <div class="card stat"><div class="n">${mastered} / ${SK.length}</div><div class="l">已精熟的題型</div></div>
+    <div class="card stat"><div class="n">${due.length}</div><div class="l">今天該複習的題型</div></div>
+    <div class="card stat"><div class="n">${td.n} 題</div><div class="l">今天已練習${td.n ? `・答對 ${Math.round(td.c / td.n * 100)}%` : ""}</div></div>`;
+  $("#modes").innerHTML = `
+    <button class="${due.length ? "primary" : ""}" id="m-review" ${due.length ? "" : "disabled"}>今日複習${due.length ? `（${due.length} 種題型）` : "：目前沒有"}</button>
+    <button id="m-challenge">混合挑戰 10 題</button>
+    <button id="m-print">列印紙筆練習卷</button>`;
+  $("#m-review").onclick = () => startQueue("review");
+  $("#m-challenge").onclick = () => startQueue("challenge");
+  $("#m-print").onclick = printSheet;
+  const nextSkill = SK.find(s => !P.data.skills[s.id]?.mastered);
+  $("#next").innerHTML = due.length
+    ? `<div><b>建議下一步：</b>先做今日複習，把快忘記的題型找回來。</div><button class="primary" id="go-next">開始複習</button>`
+    : nextSkill
+      ? `<div><b>建議下一步：</b>${nextSkill.name}<div class="small muted">${nextSkill.desc}</div></div><button class="primary" id="go-next">開始練習</button>`
+      : `<div><b>全部題型都精熟了！</b>記得照提醒回來複習；也可以用混合挑戰測試自己。</div><button class="primary" id="go-next">混合挑戰</button>`;
+  $("#go-next").onclick = () => due.length ? startQueue("review") : nextSkill ? startSkill(nextSkill.id) : startQueue("challenge");
+  let h = "";
+  for (const ch of [0, 1, 2]) {
+    h += `<div class="chapter"><h2>${CH[ch]}</h2>`;
+    for (const s of SK.filter(x => x.ch === ch)) {
+      const st = P.data.skills[s.id];
+      h += `<div class="skill"><div><div class="nm">${s.name}</div><div class="ds">${s.desc}</div>
+        <div class="meta">${badge(s.id)}${st && !st.mastered ? dots(Math.min(st.streak, P.GOAL)) : ""}${st?.attempts ? `<span>練過 ${st.attempts} 題・答對 ${Math.round(st.correct / st.attempts * 100)}%</span>` : ""}</div></div>
+        <div class="acts"><a class="small" href="${s.lesson}">講義</a><button data-skill="${s.id}" class="${P.status(s.id) === "due" ? "primary" : ""}">練習</button></div></div>`;
+    }
+    h += `</div>`;
+  }
+  $("#skilllist").innerHTML = h;
+}
+$("#skilllist").addEventListener("click", (e) => { const b = e.target.closest("[data-skill]"); if (b) startSkill(b.dataset.skill); });
+
+/* ---------- 作答流程 ---------- */
+let session = null, q = null, answered = false, hinted = false, hintIdx = 0, lastPrompt = {};
+
+function startSkill(id){ session = {mode: "skill", skill: id, results: []}; history.replaceState(null, "", "#skill=" + id); show("play"); nextQ(); }
+function startQueue(mode){
+  let ids;
+  if (mode === "review") ids = shuffle(dueList().flatMap(id => [id, id]));
+  else {
+    const pool = SK.filter(s => P.data.skills[s.id]?.attempts).map(s => s.id);
+    const base = pool.length >= 3 ? pool : SK.map(s => s.id);
+    ids = shuffle(base.flatMap(id => [id, id, id])).slice(0, 10);
+  }
+  if (!ids.length) return;
+  session = {mode, queue: ids, i: 0, results: []};
+  history.replaceState(null, "", "#" + mode); show("play"); nextQ();
+}
+function currentSkill(){ return session.mode === "skill" ? session.skill : session.queue[session.i]; }
+
+function nextQ(){
+  if (session.mode !== "skill" && session.i >= session.queue.length) return finish();
+  const id = currentSkill(), sk = byId[id];
+  for (let k = 0; k < 6; k++) { q = sk.gen(P.level(id)); if (q.prompt !== lastPrompt[id]) break; }
+  lastPrompt[id] = q.prompt;
+  answered = false; hinted = false; hintIdx = 0;
+  $("#qskill").innerHTML = `${sk.name}　<a class="small" href="${sk.lesson}" target="_blank" rel="noopener">看講義 ↗</a>`;
+  $("#qprompt").innerHTML = q.prompt;
+  $("#hints").hidden = true; $("#hints").innerHTML = ""; $("#feedback").innerHTML = ""; $("#after").innerHTML = "";
+  updateBar();
+  const hintBtn = session.mode === "challenge" ? "" : `<button id="hintbtn" class="ghost">提示</button>`;
+  if (q.kind === "choice") {
+    $("#qinput").innerHTML = `<div class="choices">${q.choices.map((c, i) => `<button data-c="${i}">${c}</button>`).join("")}</div>`;
+    $("#qinput").querySelectorAll("[data-c]").forEach(b => b.onclick = () => submit(q.choices[+b.dataset.c], b));
+  } else {
+    const im = q.mode === "numeric" ? "numeric" : q.mode === "decimal" ? "decimal" : "text";
+    const input = `<input type="text" id="ans" inputmode="${im}" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="${q.placeholder || ""}" aria-label="答案">`;
+    const btns = `<button class="primary" id="sub">送出</button>${hintBtn}`;
+    $("#qinput").innerHTML = q.kind === "bitsovf"
+      ? `<div class="answer-row">${input}</div><div class="ovf" role="radiogroup" aria-label="有沒有溢位"><label><input type="radio" name="ovf" value="no"> 沒有溢位</label><label><input type="radio" name="ovf" value="yes"> 有溢位</label></div><div class="answer-row" style="margin-top:10px">${btns}</div>`
+      : `<div class="answer-row">${input}${btns}</div>`;
+    $("#sub").onclick = () => submit(q.kind === "bitsovf" ? {bits: $("#ans").value, ovf: document.querySelector('input[name=ovf]:checked')?.value} : $("#ans").value);
+    setTimeout(() => $("#ans")?.focus(), 30);
+  }
+  if (q.kind === "choice" && session.mode !== "challenge") $("#after").innerHTML = "";
+  const hb = $("#hintbtn"); if (hb) hb.onclick = giveHint;
+}
+function updateBar(){
+  const id = currentSkill(), st = P.skill(id);
+  if (session.mode === "skill") {
+    $("#progressinfo").innerHTML = st.mastered ? `<span class="badge ok">已精熟 ✓</span> 繼續練習可以讓它更熟` : `連續答對 ${dots(Math.min(st.streak, P.GOAL))} ${st.streak}/${P.GOAL}`;
+  } else {
+    $("#progressinfo").innerHTML = `${session.mode === "review" ? "今日複習" : "混合挑戰（不提供提示）"}：第 ${session.i + 1} / ${session.queue.length} 題`;
+  }
+}
+function giveHint(){
+  const steps = q.steps.length > 1 ? q.steps.slice(0, -1) : ["想一想講義裡的方法，或點「看講義」回去複習。"];
+  if (hintIdx >= steps.length) return;
+  hinted = true;
+  const box = $("#hints"); box.hidden = false;
+  box.insertAdjacentHTML("beforeend", `<div class="h"><b>提示 ${hintIdx + 1}：</b>${steps[hintIdx]}</div>`);
+  hintIdx++;
+  const hb = $("#hintbtn");
+  if (hintIdx >= steps.length) { hb.disabled = true; hb.textContent = "沒有更多提示了"; } else hb.textContent = `下一個提示（${hintIdx}/${steps.length}）`;
+}
+function submit(ans, choiceBtn){
+  if (answered) return;
+  const r = q.check(ans);
+  if (r.invalid) { $("#feedback").innerHTML = `<div class="fb invalid">${r.diag}</div>`; return; }
+  answered = true;
+  const id = currentSkill(), ev = P.record(id, r.ok, hinted);
+  session.results.push({id, ok: r.ok, hinted});
+  if (q.kind === "choice") {
+    $("#qinput").querySelectorAll("[data-c]").forEach(b => { b.disabled = true; if (b.textContent === q.answer) b.classList.add("right"); });
+    if (!r.ok && choiceBtn) choiceBtn.classList.add("wrong");
+  } else {
+    $("#qinput").querySelectorAll("input,button").forEach(el => el.disabled = true);
+  }
+  const sol = `<ol>${q.steps.map(s => `<li>${s}</li>`).join("")}</ol>`;
+  let evMsg = "";
+  if (ev === "mastered") evMsg = `<div class="event">🎉 你已經精熟「${byId[id].name}」！系統會在明天提醒你複習一次。</div>`;
+  if (ev === "reviewed") evMsg = `<div class="event">複習完成 ✓ 下次複習在 ${P.daysUntil(P.skill(id).due)} 天後。</div>`;
+  if (ev === "lapse") evMsg = `<div class="event">這個題型有點生疏了，明天會再請你複習。</div>`;
+  if (r.ok) {
+    $("#feedback").innerHTML = `<div class="fb ok"><div class="t">答對了！</div>${hinted ? `<div class="small">這題用了提示，所以不列入連續答對。下一題試試不看提示！</div>` : ""}${evMsg}
+      <details class="sol"><summary>看完整解法</summary>${sol}</details></div>`;
+  } else {
+    $("#feedback").innerHTML = `<div class="fb bad"><div class="t">還差一點</div><div>${r.diag || ""}</div><div class="ans">正確答案：<b class="mono">${q.answer}</b></div>${evMsg}
+      <details class="sol" open><summary>完整解法</summary>${sol}</details></div>`;
+  }
+  const last = session.mode !== "skill" && session.i >= session.queue.length - 1;
+  $("#after").innerHTML = `<button class="primary" id="nextbtn">${last ? "看結果" : "下一題 →"}</button>`;
+  $("#nextbtn").onclick = advance;
+  $("#nextbtn").focus();
+  updateBar();
+  if (session.mode === "skill") renderHome();
+}
+function advance(){ if (session.mode !== "skill") session.i++; nextQ(); }
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Enter" || $("#play").style.display !== "block") return;
+  if (!answered && document.activeElement?.id === "ans") { e.preventDefault(); $("#sub").click(); }
+  else if (answered && document.activeElement?.id !== "nextbtn") { e.preventDefault(); advance(); }
+});
+
+function finish(){
+  const R = session.results, ok = R.filter(r => r.ok).length;
+  const per = {};
+  for (const r of R) { const p = per[r.id] || (per[r.id] = {n: 0, c: 0}); p.n++; if (r.ok) p.c++; }
+  const weak = Object.entries(per).filter(([, p]) => p.c < p.n).map(([id]) => id);
+  $("#done").innerHTML = `<div class="kicker">${session.mode === "review" ? "今日複習" : "混合挑戰"}・結果</div>
+    <div class="big">${ok} / ${R.length}</div>
+    <p class="lead">${ok === R.length ? "全部答對，太棒了！" : ok / R.length >= 0.7 ? "表現不錯！把錯的題型再練一下就更穩了。" : "沒關係，找出不熟的題型，回去看講義再練習。"}</p>
+    <table class="sumtable"><tr><th>題型</th><th>答對</th><th></th></tr>
+    ${Object.entries(per).map(([id, p]) => `<tr><td>${byId[id].name}</td><td>${p.c} / ${p.n}</td><td>${p.c < p.n ? `<button data-skill="${id}">加強練習</button> <a class="small" href="${byId[id].lesson}">講義</a>` : "✓"}</td></tr>`).join("")}</table>
+    <div class="modes"><button class="primary" id="d-home">回到列表</button>${weak.length ? `<button id="d-weak">只練錯的題型</button>` : ""}</div>`;
+  $("#done").querySelectorAll("[data-skill]").forEach(b => b.onclick = () => startSkill(b.dataset.skill));
+  $("#d-home").onclick = goHome;
+  if (weak.length) $("#d-weak").onclick = () => { session = {mode: "challenge", queue: shuffle(weak.flatMap(id => [id, id, id])), i: 0, results: []}; show("play"); nextQ(); };
+  renderHome(); show("done");
+}
+function goHome(){ history.replaceState(null, "", location.pathname); renderHome(); show("home"); }
+$("#back").onclick = goHome;
+
+/* ---------- 列印練習卷 ---------- */
+function printSheet(){
+  const ids = SK.filter(s => s.id !== "concepts").map(s => s.id);
+  const qs = ids.map(id => ({id, q: byId[id].gen(2)}));
+  $("#print").innerHTML = `<h1>計概・數字系統 紙筆練習卷</h1><p>日期：＿＿＿＿＿＿　建議時間：25 分鐘。請在題目下方寫出計算過程。</p>
+    <ol>${qs.map(x => `<li>${x.q.prompt.replace(/寫出結果的.*$/, "寫出結果的位元，並判斷有沒有溢位。")}</li>`).join("")}</ol>
+    <div class="key"><h1>解答</h1><ol>${qs.map(x => `<li>${x.q.answer}</li>`).join("")}</ol></div>`;
+  window.print();
+}
+
+/* ---------- 進度碼 ---------- */
+$("#exp").onclick = () => { $("#code").value = P.exportCode(); $("#code").select(); $("#toolmsg").textContent = "已產生。複製這串文字，貼到另一台裝置的這個欄位，再按「匯入進度碼」。"; };
+$("#imp").onclick = () => { try { P.importCode($("#code").value); renderHome(); $("#toolmsg").textContent = "匯入成功！"; } catch (e) { $("#toolmsg").textContent = "進度碼格式不對，請確認有完整複製。"; } };
+$("#rst").onclick = () => { if (confirm("確定要清除這台裝置上的所有練習進度嗎？這個動作無法復原。")) { P.reset(); renderHome(); $("#toolmsg").textContent = "已重設。"; } };
+
+/* ---------- 啟動 ---------- */
+function route(){
+  renderHome();
+  const h = location.hash.slice(1);
+  if (h.startsWith("skill=") && byId[h.slice(6)]) startSkill(h.slice(6));
+  else if (h === "review" && dueList().length) startQueue("review");
+  else if (h === "challenge") startQueue("challenge");
+  else show("home");
+}
+window.addEventListener("hashchange", route);
+route();
+})();
+</script>
+</body>
+</html>

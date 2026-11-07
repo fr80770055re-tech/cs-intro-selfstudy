@@ -1,0 +1,1024 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>數字系統互動講義</title>
+<style>
+:root{
+  --bg:#f8f7f3; --surface:#ffffff; --surface-2:#f2f0ea; --text:#1d2127; --muted:#5d6570; --line:#e2ded5;
+  --accent:#2563c9; --accent-soft:#e7effc; --accent-text:#ffffff;
+  --one:#2563c9; --one-text:#ffffff; --zero:#e6e8ec; --zero-text:#4a525c;
+  --sign:#b45309; --sign-soft:#fdf0e1;
+  --ga:#dbe7fb; --gb:#fbe7c6;
+  --ok:#157347; --ok-soft:#e5f4ec; --bad:#b4361c; --bad-soft:#fbe9e4;
+  --hl:#fff4c2;
+  --mono:"Cascadia Mono","Consolas","SF Mono",ui-monospace,monospace;
+  --sans:"Microsoft JhengHei UI","Microsoft JhengHei","PingFang TC","Noto Sans TC","Heiti TC",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15171b; --surface:#1d2025; --surface-2:#252930; --text:#e7e9ec; --muted:#a0a8b3; --line:#343941;
+    --accent:#7aa7f0; --accent-soft:#1f2e47; --accent-text:#0e1320;
+    --one:#5b8fe6; --one-text:#0c1220; --zero:#2c3138; --zero-text:#aab2bc;
+    --sign:#f0a35a; --sign-soft:#3a2a18;
+    --ga:#22344f; --gb:#43361c;
+    --ok:#6cc79a; --ok-soft:#18332a; --bad:#f08a70; --bad-soft:#3d221c;
+    --hl:#3d3718;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15171b; --surface:#1d2025; --surface-2:#252930; --text:#e7e9ec; --muted:#a0a8b3; --line:#343941;
+  --accent:#7aa7f0; --accent-soft:#1f2e47; --accent-text:#0e1320;
+  --one:#5b8fe6; --one-text:#0c1220; --zero:#2c3138; --zero-text:#aab2bc;
+  --sign:#f0a35a; --sign-soft:#3a2a18;
+  --ga:#22344f; --gb:#43361c;
+  --ok:#6cc79a; --ok-soft:#18332a; --bad:#f08a70; --bad-soft:#3d221c;
+  --hl:#3d3718;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:16px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:17px;line-height:1.85;-webkit-text-size-adjust:100%}
+.layout{display:grid;grid-template-columns:250px minmax(0,1fr);max-width:1180px;margin:0 auto}
+nav.toc{position:sticky;top:0;align-self:start;height:100vh;overflow:auto;padding:28px 18px 28px 24px;border-right:1px solid var(--line);font-size:14.5px;line-height:1.6}
+nav.toc .brand{font-weight:700;font-size:16px;margin-bottom:14px}
+nav.toc a{display:block;color:var(--muted);text-decoration:none;padding:4px 8px;border-radius:6px}
+nav.toc a:hover{background:var(--surface-2);color:var(--text)}
+nav.toc a.ch{color:var(--text);font-weight:600;margin-top:12px}
+nav.toc a.sub{padding-left:20px}
+main{padding:36px 40px 120px;max-width:820px}
+h1{font-size:30px;line-height:1.35;margin:0 0 8px}
+h2{font-size:25px;line-height:1.4;margin:72px 0 6px;padding-top:8px;border-top:2px solid var(--text)}
+h3{font-size:20px;line-height:1.45;margin:44px 0 8px}
+h4{font-size:17px;margin:24px 0 4px}
+p{margin:12px 0}
+.lead{color:var(--muted);font-size:18px}
+.kicker{color:var(--accent);font-weight:700;font-size:14px;letter-spacing:.06em}
+code,.mono{font-family:var(--mono);font-size:.95em}
+sub{font-size:.68em}
+b.k{background:var(--hl);padding:0 3px;border-radius:3px}
+ul,ol{padding-left:1.4em}
+li{margin:4px 0}
+.term{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:12px 16px;margin:18px 0}
+.term .t{font-weight:700;display:block;margin-bottom:2px}
+.note{background:var(--surface-2);border-radius:8px;padding:12px 16px;margin:18px 0;font-size:16px}
+.note::before{content:"💡 ";}
+.warnbox{background:var(--sign-soft);border-radius:8px;padding:12px 16px;margin:18px 0;font-size:16px}
+.warnbox::before{content:"⚠️ ";}
+.summary{background:var(--accent-soft);border-radius:10px;padding:16px 20px;margin:26px 0}
+.summary h4{margin-top:0}
+table.plain{border-collapse:collapse;margin:14px 0;font-size:15.5px;width:100%}
+table.plain th,table.plain td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:left}
+table.plain th{color:var(--muted);font-weight:600}
+.tablewrap{overflow-x:auto}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 24px;border-bottom:1px solid var(--line);background:var(--surface)}
+.topbar .logo{font-weight:700;color:var(--text);text-decoration:none;font-size:16px}
+.topbar nav{display:flex;gap:4px;flex-wrap:wrap}
+.topbar nav a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:15px;line-height:1.5}
+.topbar nav a:hover{background:var(--surface-2);color:var(--text)}
+.topbar nav a[aria-current="page"]{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.gopractice{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;background:var(--surface);border:1px dashed var(--accent);border-radius:12px;padding:14px 18px;margin:26px 0}
+.gopractice b{margin-right:4px}
+.gopractice a{display:inline-block;padding:4px 12px;border-radius:8px;background:var(--accent-soft);color:var(--accent);text-decoration:none;font-size:15px;font-weight:600}
+.gopractice a:hover{background:var(--accent);color:var(--accent-text)}
+
+/* widgets */
+.widget{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:22px 0;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.widget .wtitle{font-weight:700;font-size:15px;color:var(--accent);margin-bottom:4px}
+.widget .whint{font-size:14.5px;color:var(--muted);margin:0 0 12px}
+.controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:flex-end;margin-bottom:12px}
+.controls label{display:flex;flex-direction:column;font-size:13.5px;color:var(--muted);gap:4px}
+input[type=text],select{font:inherit;font-size:16px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;min-height:40px}
+input[type=text]{font-family:var(--mono);width:12em}
+input[type=text].narrow{width:6.5em}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+button{font:inherit;font-size:15px;border:1px solid var(--line);background:var(--surface-2);color:var(--text);border-radius:8px;padding:6px 14px;cursor:pointer;min-height:38px}
+button:hover:not(:disabled){border-color:var(--accent)}
+button:disabled{opacity:.4;cursor:default}
+button.primary{background:var(--accent);color:var(--accent-text);border-color:var(--accent)}
+.err{color:var(--bad);background:var(--bad-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:15px}
+
+.results{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:6px 0 14px}
+.rcard{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--bg);min-width:0}
+.rcard.src{border-color:var(--accent);background:var(--accent-soft)}
+.rlabel{font-size:13px;color:var(--muted)}
+.rval{font-family:var(--mono);font-size:18px;word-break:break-all;line-height:1.5}
+.rep{text-decoration:overline;text-decoration-thickness:2px}
+
+.stepper{border-top:1px dashed var(--line);padding-top:12px;margin-top:6px}
+.step-msg{background:var(--surface-2);border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:16px;min-height:3em}
+.step-ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.step-count{font-size:14px;color:var(--muted);margin:0 6px}
+table.calc{border-collapse:collapse;font-family:var(--mono);font-size:16px;margin:4px 0}
+table.calc th{font-family:var(--sans);font-size:13px;color:var(--muted);font-weight:600;padding:2px 12px;text-align:left}
+table.calc td{padding:3px 12px;white-space:nowrap}
+table.calc tr.cur td{background:var(--hl)}
+table.calc td.pick{color:var(--accent);font-weight:700}
+table.calc td.pickall{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.readdir{font-size:14px;color:var(--accent);font-weight:700;margin-top:4px}
+.numline{font-family:var(--mono);font-size:22px;margin:4px 0 8px;letter-spacing:.04em}
+.numline span.d{padding:0 2px;border-radius:4px}
+.numline span.d.on{background:var(--hl);outline:2px solid var(--sign)}
+
+/* bits */
+.bits{display:inline-flex;flex-wrap:wrap;gap:4px;align-items:flex-end}
+.bit{display:inline-flex;align-items:center;justify-content:center;width:30px;height:36px;border-radius:6px;font-family:var(--mono);font-size:18px;font-weight:700;background:var(--zero);color:var(--zero-text)}
+.bit.one{background:var(--one);color:var(--one-text)}
+.bit.sign{box-shadow:0 0 0 2px var(--sign) inset}
+.bit.gap{margin-left:8px}
+.repsrow{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.repsrow:last-child{border-bottom:0}
+.repsname{font-weight:600;font-size:15px}
+.repsname small{display:block;color:var(--muted);font-weight:400;font-size:12.5px}
+.oor{color:var(--bad);font-size:14.5px}
+.legend{font-size:13px;color:var(--muted);margin-top:6px}
+.legend .sw{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:4px;box-shadow:0 0 0 2px var(--sign) inset}
+
+/* switches */
+.switches{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+.swbtn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;min-width:58px;border-radius:10px;border:1px solid var(--line);background:var(--bg)}
+.swbtn .lamp{width:30px;height:30px;border-radius:50%;background:var(--zero);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;color:var(--zero-text)}
+.swbtn.on .lamp{background:#f5b301;color:#3b2a00;box-shadow:0 0 14px rgba(245,179,1,.6)}
+.swbtn .w{font-size:12.5px;color:var(--muted);font-family:var(--mono)}
+.swsum{font-family:var(--mono);font-size:17px;margin-top:8px;word-break:break-word}
+
+/* groups */
+.groups{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.grp{border-radius:10px;padding:6px 8px 8px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.grp.a{background:var(--ga)}.grp.b{background:var(--gb)}
+.grp .ws{display:flex;gap:4px;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.grp .ws span{width:30px;text-align:center}
+.grp .arrow{font-size:13px;color:var(--muted)}
+.grp .gd{font-family:var(--mono);font-size:24px;font-weight:700}
+.grp .gcalc{font-size:12.5px;color:var(--muted);font-family:var(--mono)}
+
+/* adder */
+table.adder{border-collapse:separate;border-spacing:4px 4px;font-family:var(--mono)}
+table.adder th{font-family:var(--sans);font-size:13px;color:var(--muted);font-weight:600;text-align:right;padding-right:6px;white-space:nowrap}
+table.adder td{width:30px;height:32px;text-align:center;border-radius:6px;font-size:17px;font-weight:700}
+table.adder td.carry{font-size:13px;color:var(--sign);font-weight:700;height:20px}
+table.adder td.cur{background:var(--hl)}
+table.adder tr.res td.b{border-top:2px solid var(--text)}
+table.adder td.out{color:var(--muted);text-decoration:line-through}
+.verdict{border-radius:8px;padding:10px 14px;margin-top:10px;font-size:16px}
+.verdict.ok{background:var(--ok-soft)}
+.verdict.bad{background:var(--bad-soft)}
+.verdict > strong:first-child{display:block}
+
+/* exercises */
+details.ex{border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0;background:var(--surface)}
+details.ex summary{cursor:pointer;font-weight:600;color:var(--accent);font-size:15px;margin-top:6px}
+details.ex .q{margin:0}
+details.ex .q b.n{color:var(--muted);margin-right:6px}
+details.ex[open] summary{margin-bottom:6px}
+.loadbtn{font-size:14px;padding:4px 10px;min-height:32px;margin-top:6px}
+.flash{animation:flash 1.2s ease}
+@keyframes flash{0%{box-shadow:0 0 0 4px var(--accent)}100%{box-shadow:0 0 0 0 transparent}}
+
+@media (max-width:860px){
+  .layout{display:block}
+  nav.toc{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);padding:16px}
+  nav.toc .links{display:flex;flex-wrap:wrap;gap:2px 4px}
+  nav.toc a.sub{display:none}
+  nav.toc a.ch{margin-top:0}
+  main{padding:24px 16px 100px}
+  h1{font-size:25px}
+  h2{font-size:22px;margin-top:56px}
+  .widget{padding:14px}
+  .repsrow{grid-template-columns:1fr}
+  .bit{width:24px;height:32px;font-size:16px}
+  .grp .ws span{width:24px}
+  table.adder td{width:24px}
+  input[type=text]{width:10em}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="logo" href="index.html">計概自學・數字系統</a>
+  <nav><a href="index.html">首頁</a><a href="lesson.html" aria-current="page">講義</a><a href="practice.html">練習</a><a href="audio.html">通勤音檔</a></nav>
+</header>
+<div class="layout">
+<nav class="toc" aria-label="目錄">
+  <div class="brand">計算機概論・數字系統</div>
+  <div class="links">
+  <a href="#start" class="ch">怎麼使用這份講義</a>
+  <a href="#ch0" class="ch">第 0 章　開始之前</a>
+  <a href="#ch0-1" class="sub">0.1 電腦只認得 0 和 1</a>
+  <a href="#ch0-2" class="sub">0.2 位元與位元組</a>
+  <a href="#ch0-3" class="sub">0.3 重新認識十進位</a>
+  <a href="#ch0-4" class="sub">0.4 次方的寫法</a>
+  <a href="#ch1" class="ch">第 1 章　進位轉換</a>
+  <a href="#ch1-1" class="sub">1.1 什麼是「進位制」</a>
+  <a href="#ch1-2" class="sub">1.2 任何進位 → 十進位</a>
+  <a href="#ch1-3" class="sub">1.3 十進位 → 其他進位</a>
+  <a href="#ch1-4" class="sub">1.4 小數的轉換</a>
+  <a href="#ch1-5" class="sub">1.5 二進位與八／十六進位的捷徑</a>
+  <a href="#ch1-ex" class="sub">例題</a>
+  <a href="#ch2" class="ch">第 2 章　負數與溢位</a>
+  <a href="#ch2-1" class="sub">2.1 問題：沒有負號可用</a>
+  <a href="#ch2-2" class="sub">2.2 三種表示負數的方法</a>
+  <a href="#ch2-3" class="sub">2.3 用 2 補數做加減法</a>
+  <a href="#ch2-4" class="sub">2.4 溢位</a>
+  <a href="#ch2-ex" class="sub">例題</a>
+  </div>
+</nav>
+
+<main>
+<div class="kicker">計算機概論・自學講義</div>
+<h1>數字系統與資料表示</h1>
+<p class="lead">電腦裡的一切——文字、圖片、影片——最後都會變成一長串的 0 和 1。這份講義從零開始，帶你看懂這些 0 和 1 怎麼表示數字。</p>
+
+<section id="start">
+<h3>怎麼使用這份講義</h3>
+<ul>
+  <li><strong>照順序讀。</strong>後面的章節會用到前面的觀念。完全沒基礎也沒關係，第 0 章就是為你準備的。</li>
+  <li><strong>藍框裡的東西都可以動手玩。</strong>改數字、按按鈕，看看會發生什麼事。自己試一次，比讀三遍還有用。</li>
+  <li><strong>手算過程可以一步一步看。</strong>按「下一步」慢慢看每一步在做什麼，看懂了再往下。</li>
+  <li><strong>每章最後有例題。</strong>先拿紙筆自己算，再點開解答對照；也可以把題目「丟進元件」驗算。</li>
+</ul>
+</section>
+
+<!-- ============ 第 0 章 ============ -->
+<section id="ch0">
+<h2>第 0 章　開始之前</h2>
+<p class="lead">這一章不教任何新算法，只把後面會一直用到的幾個詞和觀念講清楚。</p>
+
+<h3 id="ch0-1">0.1 電腦只認得 0 和 1</h3>
+<p>電腦的核心是數十億個非常小的電子開關（電晶體）。每個開關只有兩種狀態：<strong>通電</strong>或<strong>不通電</strong>。我們把「通電」記成 <code>1</code>，「不通電」記成 <code>0</code>。</p>
+<p>為什麼不像人一樣用 0 到 9 十種狀態？因為要讓電路穩定地分辨「有電／沒電」很容易，要精準分辨十種不同的電壓卻很難，而且容易出錯。所以電腦選擇只用兩種狀態，再用「很多個開關排在一起」來表示大的數字。</p>
+
+<h3 id="ch0-2">0.2 位元與位元組</h3>
+<div class="term"><span class="t">位元（bit）</span>一個 0 或一個 1，也就是一個開關的狀態。這是電腦裡最小的資料單位。bit 是 <em>binary digit</em>（二進位數字）的縮寫。</div>
+<div class="term"><span class="t">位元組（byte）</span>8 個位元排在一起，叫做 1 個位元組。電腦的容量常用它當單位，例如 1 KB 約等於 1000 個位元組。</div>
+<p>下面有 8 個燈泡，剛好是 1 個位元組。點一下燈泡，就能把它打開（1）或關掉（0）。每個燈泡下面寫著它「代表多少」——先不用知道這些數字怎麼來的，自己玩玩看，注意總和怎麼變。</p>
+
+<div class="widget" id="sw">
+  <div class="wtitle">互動：8 個開關＝1 個位元組</div>
+  <p class="whint">點燈泡切換 0／1。試試看：要怎麼點出 5？怎麼點出 255？全部打開時是多少？</p>
+  <div class="switches" id="sw-row"></div>
+  <div class="swsum" id="sw-sum"></div>
+  <div class="step-ctrl"><button id="sw-clear">全部關掉</button><button id="sw-all">全部打開</button></div>
+</div>
+
+<p>你可能已經發現了：每個燈泡代表的數字，從右邊開始是 1、2、4、8、16……，<strong>每往左一格就變成兩倍</strong>。只要決定哪些燈要亮，就能組出 0 到 255 之間的任何一個數。這就是二進位的核心想法，下一節我們用熟悉的十進位來理解它為什麼行得通。</p>
+
+<h3 id="ch0-3">0.3 重新認識十進位</h3>
+<p>我們平常用的數字叫<strong>十進位</strong>：只用 0～9 這十個數字，數到 9 之後再加 1 就要「進位」，變成 10。</p>
+<p>看看 <code>345</code> 這個數。同樣是數字，放在不同位置代表的意思不一樣：</p>
+<div class="tablewrap"><table class="plain">
+<tr><th>位置</th><th>百位</th><th>十位</th><th>個位</th></tr>
+<tr><td>數字</td><td>3</td><td>4</td><td>5</td></tr>
+<tr><td>這一位代表</td><td>100</td><td>10</td><td>1</td></tr>
+<tr><td>相乘</td><td>3 × 100 = 300</td><td>4 × 10 = 40</td><td>5 × 1 = 5</td></tr>
+</table></div>
+<p>所以 345 ＝ 300 ＋ 40 ＋ 5。每一位「代表多少」叫做這一位的<b class="k">位權</b>（weight）。十進位的位權是 1、10、100、1000……，每往左一位就<strong>乘以 10</strong>。</p>
+<div class="term"><span class="t">位權（positional weight）</span>某一個位置代表的大小。一個數字的值 ＝ 每一位的「數字 × 位權」全部加起來。這句話是整份講義最重要的一句話。</div>
+<p>小數點右邊也一樣，只是反過來<strong>除以 10</strong>：十分位代表 0.1、百分位代表 0.01。例如 0.25 ＝ 2 × 0.1 ＋ 5 × 0.01。</p>
+<p>剛剛 8 個燈泡的位權是 1、2、4、8……，每往左乘以 <strong>2</strong>，這就是二進位。規則和十進位完全一樣，只是把 10 換成 2。</p>
+
+<h3 id="ch0-4">0.4 次方的寫法</h3>
+<p>位權一直「乘同一個數」，寫起來很長，所以數學上用<strong>次方</strong>來簡寫：</p>
+<div class="term"><span class="t">次方（指數）</span><code>2³</code> 讀作「2 的 3 次方」，意思是 3 個 2 相乘：2 × 2 × 2 ＝ 8。<br>
+<code>10²</code> ＝ 10 × 10 ＝ 100。<br>
+規定：任何數的 <strong>0 次方都是 1</strong>，例如 2⁰ ＝ 1、10⁰ ＝ 1。<br>
+負的次方代表「除」：2⁻¹ ＝ 1 ÷ 2 ＝ 0.5，2⁻² ＝ 1 ÷ 4 ＝ 0.25。</div>
+<p>用次方來寫，十進位的位權就是 10⁰、10¹、10²……；二進位的位權就是 2⁰、2¹、2²……。常用的 2 的次方建議記起來：</p>
+<div class="tablewrap"><table class="plain mono">
+<tr><th>2⁰</th><th>2¹</th><th>2²</th><th>2³</th><th>2⁴</th><th>2⁵</th><th>2⁶</th><th>2⁷</th><th>2⁸</th><th>2¹⁰</th><th>2¹⁶</th></tr>
+<tr><td>1</td><td>2</td><td>4</td><td>8</td><td>16</td><td>32</td><td>64</td><td>128</td><td>256</td><td>1024</td><td>65536</td></tr>
+</table></div>
+
+<div class="summary"><h4>第 0 章重點</h4>
+<ul>
+<li>電腦用開關的通電／不通電來表示 1 和 0。一個 0 或 1 叫 <strong>位元</strong>，8 個位元叫 <strong>位元組</strong>。</li>
+<li>一個數的值 ＝ 每一位的「數字 × 位權」加起來。</li>
+<li>十進位的位權每往左乘以 10，二進位每往左乘以 2。</li>
+<li><code>2³</code> 是 2×2×2；任何數的 0 次方是 1；負次方是「除」。</li>
+</ul></div>
+<div class="gopractice"><b>讀完了？去練習：</b><a href="practice.html#skill=pow2">2 的次方</a><a href="audio.html#1">🎧 聽第 1 集複習</a></div>
+</section>
+
+<!-- ============ 第 1 章 ============ -->
+<section id="ch1">
+<h2>第 1 章　進位轉換</h2>
+<p class="lead">同一個數量可以用不同的進位制寫出來。這一章學會在二、八、十、十六進位之間互相轉換。</p>
+
+<h3 id="ch1-1">1.1 什麼是「進位制」</h3>
+<p>「幾進位」就是「數到多少要進位」，也就是每往左一位，位權要乘以多少。這個數字叫做<b class="k">基數</b>（base）。</p>
+<div class="tablewrap"><table class="plain">
+<tr><th>名稱</th><th>基數</th><th>可以用的數字</th><th>位權（從右往左）</th><th>常見用途</th></tr>
+<tr><td>二進位 binary</td><td>2</td><td class="mono">0 1</td><td class="mono">1, 2, 4, 8, 16…</td><td>電腦內部</td></tr>
+<tr><td>八進位 octal</td><td>8</td><td class="mono">0～7</td><td class="mono">1, 8, 64, 512…</td><td>Linux 檔案權限</td></tr>
+<tr><td>十進位 decimal</td><td>10</td><td class="mono">0～9</td><td class="mono">1, 10, 100…</td><td>日常生活</td></tr>
+<tr><td>十六進位 hexadecimal</td><td>16</td><td class="mono">0～9, A～F</td><td class="mono">1, 16, 256, 4096…</td><td>記憶體位址、網頁顏色</td></tr>
+</table></div>
+<p>規則：<strong>基數是多少，就只能用比它小的數字。</strong>二進位只有 0 和 1，八進位最大到 7。</p>
+<p>十六進位需要 16 個數字，但阿拉伯數字只有 0～9，所以借用英文字母：</p>
+<div class="tablewrap"><table class="plain mono">
+<tr><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th></tr>
+<tr><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td></tr>
+</table></div>
+<h4>怎麼標示是幾進位</h4>
+<p><code>101</code> 到底是「一百零一」還是二進位的 5？為了不混淆，我們在右下角寫上基數：<code>101<sub>2</sub></code> 是二進位、<code>101<sub>10</sub></code> 是十進位。程式裡常見另一種寫法：<code>0b101</code> 表示二進位、<code>0x1F</code> 表示十六進位。</p>
+<div class="note">讀二進位時，一位一位念：<code>1101<sub>2</sub></code> 念成「一一零一」，不要念成「一千一百零一」，不然很容易跟十進位搞混。</div>
+
+<p>先玩玩看下面的轉換器。在左邊輸入一個數字、選它是幾進位，四種進位的結果會同時出現。</p>
+
+<div class="widget" id="conv">
+  <div class="wtitle">互動：進位轉換器</div>
+  <p class="whint">可以輸入小數（例如 <code>0.625</code>、<code>1A.8</code>）。整數最多 16 位、小數最多 6 位。結果上面有一條橫線的部分代表「無限循環」。</p>
+  <div class="controls">
+    <label>輸入數字<input type="text" id="conv-in" value="13" autocomplete="off" spellcheck="false"></label>
+    <label>它是
+      <select id="conv-base"><option value="10" selected>十進位</option><option value="2">二進位</option><option value="8">八進位</option><option value="16">十六進位</option></select>
+    </label>
+  </div>
+  <div class="results" id="conv-out"></div>
+  <div class="controls" style="margin-bottom:0">
+    <label>手算過程：轉成<select id="conv-target"></select></label>
+  </div>
+  <div class="stepper" id="conv-steps"></div>
+</div>
+
+<h3 id="ch1-2">1.2 任何進位 → 十進位：位權相加</h3>
+<p>這是最直接的方法，就是第 0 章那句話：<strong>每一位的數字 × 它的位權，全部加起來。</strong></p>
+<p>例：<code>1101<sub>2</sub></code></p>
+<div class="tablewrap"><table class="plain mono">
+<tr><th>數字</th><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+<tr><th>位權</th><td>2³ = 8</td><td>2² = 4</td><td>2¹ = 2</td><td>2⁰ = 1</td></tr>
+<tr><th>相乘</th><td>8</td><td>4</td><td>0</td><td>1</td></tr>
+</table></div>
+<p>加起來：8 ＋ 4 ＋ 0 ＋ 1 ＝ <strong>13</strong>，所以 <code>1101<sub>2</sub> = 13<sub>10</sub></code>。</p>
+<p>十六進位也一樣，只是位權變成 16 的次方，字母要先換回數字：<code>2F<sub>16</sub></code> ＝ 2 × 16 ＋ F(15) × 1 ＝ 32 ＋ 15 ＝ <strong>47</strong>。</p>
+<div class="note">在上面的轉換器選「二進位」並輸入 <code>1101</code>，再按「下一步」，就能一位一位看位權相加的過程。</div>
+
+<h3 id="ch1-3">1.3 十進位 → 其他進位：除基取餘</h3>
+<p>反過來的方法是<strong>一直除以基數，記下每次的餘數</strong>。</p>
+<div class="term"><span class="t">餘數</span>除不盡剩下的部分。例如 13 ÷ 2 ＝ 6 餘 1，因為 2 × 6 ＝ 12，13 − 12 ＝ 1。</div>
+<p>例：把 13 轉成二進位</p>
+<div class="tablewrap"><table class="plain mono">
+<tr><th>算式</th><th>商</th><th>餘數</th></tr>
+<tr><td>13 ÷ 2</td><td>6</td><td>1</td></tr>
+<tr><td>6 ÷ 2</td><td>3</td><td>0</td></tr>
+<tr><td>3 ÷ 2</td><td>1</td><td>1</td></tr>
+<tr><td>1 ÷ 2</td><td>0</td><td>1</td></tr>
+</table></div>
+<p>商變成 0 就停。把餘數<strong>由下往上</strong>讀：<code>1101</code>。答案 <code>13<sub>10</sub> = 1101<sub>2</sub></code>，跟 1.2 節的結果剛好對得起來。</p>
+<p><strong>為什麼要由下往上讀？</strong>第一次除以 2 的餘數，代表「拆不成一對的那一個」，也就是最右邊的 1 位（個位）；越後面得到的餘數，代表越大的位權。所以最後一個餘數是最左邊的位數。</p>
+<p>轉八進位就一直除以 8，轉十六進位就一直除以 16，方法完全一樣。十六進位如果餘數是 10～15，要寫成 A～F。</p>
+
+<h3 id="ch1-4">1.4 小數的轉換：乘基取整</h3>
+<p>整數部分用除法，<strong>小數部分要用乘法</strong>，而且兩部分要<strong>分開算</strong>，最後再合起來。</p>
+<p>十進位小數轉二進位：一直乘以 2，每次把乘積的<strong>整數部分</strong>拿出來（只會是 0 或 1），剩下的小數部分繼續乘，直到小數部分變成 0。</p>
+<p>例：把 0.625 轉成二進位</p>
+<div class="tablewrap"><table class="plain mono">
+<tr><th>算式</th><th>取出的整數</th><th>剩下的小數</th></tr>
+<tr><td>0.625 × 2 = 1.25</td><td>1</td><td>0.25</td></tr>
+<tr><td>0.25 × 2 = 0.5</td><td>0</td><td>0.5</td></tr>
+<tr><td>0.5 × 2 = 1.0</td><td>1</td><td>0（停）</td></tr>
+</table></div>
+<p>這次要<strong>由上往下</strong>讀：<code>0.625<sub>10</sub> = 0.101<sub>2</sub></code>。驗算：0.101<sub>2</sub> ＝ 1×0.5 ＋ 0×0.25 ＋ 1×0.125 ＝ 0.625 ✓</p>
+<h4>有些小數永遠算不完</h4>
+<p>試著在轉換器輸入 <code>0.1</code>（十進位），看二進位的結果：<code>0.0<span class="rep">0011</span>…</code>，後面的 0011 會無限重複下去。也就是說，<strong>0.1 在二進位裡沒辦法用有限的位數準確表示</strong>，就像 1/3 在十進位裡是 0.333… 一樣。</p>
+<div class="note">這正是電腦裡 <code>0.1 + 0.2</code> 算出來會是 <code>0.30000000000000004</code> 的原因：電腦只能存有限的位數，只好把循環的部分切掉，產生一點點誤差。之後的「浮點數」單元會再詳細說明。</div>
+
+<h3 id="ch1-5">1.5 二進位與八／十六進位的捷徑：分組</h3>
+<p>因為 8 ＝ 2³、16 ＝ 2⁴，二進位和八／十六進位之間不需要經過十進位，可以直接<strong>分組</strong>：</p>
+<ul>
+<li><strong>二進位 → 十六進位：</strong>從右邊開始，每 <strong>4</strong> 個位元一組（最左邊不夠就補 0），每組換成一個十六進位數字。</li>
+<li><strong>二進位 → 八進位：</strong>從右邊開始，每 <strong>3</strong> 個位元一組。</li>
+<li><strong>反過來：</strong>每個十六進位數字展開成 4 個位元，每個八進位數字展開成 3 個位元。</li>
+</ul>
+<p>4 個位元的位權是 8、4、2、1，所以每一組最大是 8＋4＋2＋1＝15，剛好是一個十六進位數字（F）能表示的範圍。</p>
+
+<div class="widget" id="grp">
+  <div class="wtitle">互動：分組轉換</div>
+  <p class="whint">不同顏色代表不同的組。每組上方的小數字是組內的位權。（這個元件只處理整數。）</p>
+  <div class="controls">
+    <label>輸入數字<input type="text" id="grp-in" value="11010110" autocomplete="off" spellcheck="false"></label>
+    <label>它是
+      <select id="grp-base"><option value="2" selected>二進位</option><option value="16">十六進位</option><option value="8">八進位</option></select>
+    </label>
+    <label id="grp-target-wrap">轉成
+      <select id="grp-target"><option value="16" selected>十六進位（4 個一組）</option><option value="8">八進位（3 個一組）</option></select>
+    </label>
+  </div>
+  <div id="grp-out"></div>
+</div>
+<div class="note">考試時最快的解法：十進位要轉十六進位，可以先轉成二進位，再 4 個一組換成十六進位；八進位和十六進位互轉，也可以先展開成二進位再重新分組。</div>
+
+<div class="summary"><h4>第 1 章重點</h4>
+<ul>
+<li><strong>任何進位 → 十進位：</strong>每位的數字 × 位權，全部相加。</li>
+<li><strong>十進位整數 → 其他進位：</strong>一直除以基數，餘數<strong>由下往上</strong>讀。</li>
+<li><strong>十進位小數 → 其他進位：</strong>一直乘以基數，整數部分<strong>由上往下</strong>讀；有些小數會無限循環。</li>
+<li><strong>二進位 ↔ 十六進位：</strong>4 位一組；<strong>二進位 ↔ 八進位：</strong>3 位一組。</li>
+</ul></div>
+
+<h3 id="ch1-ex">第 1 章例題</h3>
+<p>先用紙筆算，再點開解答。</p>
+
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">1.</b>把 <code>13<sub>10</sub></code> 轉成二進位。</p>
+<p>用除 2 取餘：13→6 餘 1、6→3 餘 0、3→1 餘 1、1→0 餘 1。由下往上讀：<strong><code>1101<sub>2</sub></code></strong>。</p>
+<button class="loadbtn" data-load='[["conv-base","10"],["conv-in","13"],["conv-target","2"]]' data-goto="conv">丟進轉換器看過程</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">2.</b>把 <code>101101<sub>2</sub></code> 轉成十進位。</p>
+<p>位權由左到右是 32、16、8、4、2、1。是 1 的位置：32 ＋ 8 ＋ 4 ＋ 1 ＝ <strong>45</strong>。</p>
+<button class="loadbtn" data-load='[["conv-base","2"],["conv-in","101101"]]' data-goto="conv">丟進轉換器看過程</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">3.</b>把 <code>0.625<sub>10</sub></code> 轉成二進位。</p>
+<p>乘 2 取整：0.625×2＝1.25 取 1；0.25×2＝0.5 取 0；0.5×2＝1.0 取 1，剩 0 停止。由上往下讀：<strong><code>0.101<sub>2</sub></code></strong>。</p>
+<button class="loadbtn" data-load='[["conv-base","10"],["conv-in","0.625"],["conv-target","2"]]' data-goto="conv">丟進轉換器看過程</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">4.</b>把 <code>2F<sub>16</sub></code> 轉成十進位。</p>
+<p>F 代表 15。2 × 16¹ ＋ 15 × 16⁰ ＝ 32 ＋ 15 ＝ <strong>47</strong>。</p>
+<button class="loadbtn" data-load='[["conv-base","16"],["conv-in","2F"]]' data-goto="conv">丟進轉換器看過程</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">5.</b>把 <code>11010110<sub>2</sub></code> 轉成十六進位和八進位。</p>
+<p>十六進位：4 個一組 → <code>1101 0110</code> → 13(D)、6 → <strong><code>D6<sub>16</sub></code></strong>。<br>
+八進位：從右邊 3 個一組 → <code>011 010 110</code>（最左邊補一個 0）→ 3、2、6 → <strong><code>326<sub>8</sub></code></strong>。</p>
+<button class="loadbtn" data-load='[["grp-base","2"],["grp-in","11010110"],["grp-target","16"]]' data-goto="grp">丟進分組轉換</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">6.</b>把 <code>25.75<sub>10</sub></code> 轉成二進位。</p>
+<p>整數和小數分開算。整數 25：除 2 取餘得 <code>11001</code>。小數 0.75：0.75×2＝1.5 取 1，0.5×2＝1.0 取 1 → <code>.11</code>。合起來：<strong><code>11001.11<sub>2</sub></code></strong>。</p>
+<button class="loadbtn" data-load='[["conv-base","10"],["conv-in","25.75"],["conv-target","2"]]' data-goto="conv">丟進轉換器看過程</button>
+</details>
+<div class="gopractice"><b>讀完了？去練習：</b><a href="practice.html#skill=bin2dec">二進位→十進位</a><a href="practice.html#skill=dec2bin">十進位→二進位</a><a href="practice.html#skill=hex2dec">十六進位→十進位</a><a href="practice.html#skill=dec2hex">十進位→十六進位</a><a href="practice.html#skill=bin2hex">分組轉換</a><a href="practice.html#skill=frac2bin">小數</a><a href="audio.html#2">🎧 第 2、3 集</a></div>
+</section>
+
+<!-- ============ 第 2 章 ============ -->
+<section id="ch2">
+<h2>第 2 章　負數與溢位</h2>
+<p class="lead">電腦裡只有 0 和 1，沒有「−」這個符號。那 −5 要怎麼存？這一章介紹三種方法，以及電腦實際使用的「2 補數」。</p>
+
+<h3 id="ch2-1">2.1 問題：沒有負號可用</h3>
+<p>到目前為止我們處理的都是正數。但電腦存數字時，每個數都只有<strong>固定數量的位元</strong>，例如 8 個位元，而且每一格只能放 0 或 1。要表示負數，只能從這些位元裡「挪一些規則」出來代表正負。</p>
+<div class="term"><span class="t">位元寬度（bit width）</span>一個數字用幾個位元來存。寬度固定，能表示的數字個數也就固定：4 個位元有 2⁴ ＝ 16 種組合，8 個位元有 2⁸ ＝ 256 種組合。</div>
+<div class="term"><span class="t">最高位元（MSB）／最低位元（LSB）</span>最左邊的位元叫最高位元（Most Significant Bit），位權最大；最右邊的叫最低位元（Least Significant Bit）。</div>
+
+<h3 id="ch2-2">2.2 三種表示負數的方法</h3>
+<h4>方法一：符號大小表示法（sign-magnitude）</h4>
+<p>最直覺的做法：<strong>最左邊的位元當正負號</strong>（0 是正、1 是負），剩下的位元照常存數字的大小。</p>
+<p>4 位元的例子：+5 ＝ <code><u>0</u>101</code>、−5 ＝ <code><u>1</u>101</code>。</p>
+<p>缺點：0 會有兩種寫法：<code>0000</code>（+0）和 <code>1000</code>（−0）；而且做加法時要先看正負號再決定加還是減，電路很麻煩。</p>
+
+<h4>方法二：1 補數（one's complement）</h4>
+<p>正數照常寫；負數就把對應正數的<strong>每一個位元反轉</strong>（0 變 1、1 變 0）。</p>
+<p>例：+5 ＝ <code>0101</code>，反轉得到 −5 ＝ <code>1010</code>。</p>
+<p>缺點：一樣有兩個 0：<code>0000</code>（+0）和 <code>1111</code>（−0）。</p>
+
+<h4>方法三：2 補數（two's complement）——電腦實際使用的方法</h4>
+<p>正數照常寫；負數就是 <strong>1 補數再加 1</strong>。步驟：</p>
+<ol>
+<li>寫出這個數「去掉負號」後的二進位，補滿位元寬度。例：5 → <code>0101</code></li>
+<li>每個位元反轉（這就是 1 補數）：<code>1010</code></li>
+<li>再加 1：<code>1010 + 1 = 1011</code>。所以 −5 ＝ <code>1011</code></li>
+</ol>
+<p>2 補數的好處：</p>
+<ul>
+<li><strong>只有一個 0</strong>（<code>0000</code>），所以能多表示一個負數。4 位元可以表示 −8 到 +7。</li>
+<li><strong>加法和減法可以用同一套加法電路</strong>，不需要另外判斷正負（2.3 節會看到）。</li>
+<li>最左邊的位元一樣可以看出正負：0 開頭是正數或 0，1 開頭是負數。</li>
+</ul>
+<div class="note">把 2 補數「讀回」十進位的方法：最高位元的位權當成<strong>負的</strong>，其他照常。例：4 位元的 <code>1011</code> ＝ −8 ＋ 0 ＋ 2 ＋ 1 ＝ <strong>−5</strong>。這比「反轉再加 1」快很多。</div>
+
+<div class="widget" id="neg">
+  <div class="wtitle">互動：同一個數，三種表示法</div>
+  <p class="whint">輸入一個十進位整數（可以是負的），切換位元寬度，比較三種方法的結果。試試 <code>0</code>、<code>-1</code>、<code>-8</code>（在 4 位元下）。</p>
+  <div class="controls">
+    <label>十進位整數<input type="text" class="narrow" id="neg-in" value="-5" autocomplete="off" spellcheck="false"></label>
+    <label>位元寬度
+      <select id="neg-w"><option value="4">4 位元</option><option value="8" selected>8 位元</option><option value="16">16 位元</option></select>
+    </label>
+  </div>
+  <div id="neg-out"></div>
+  <div class="legend"><span class="sw"></span>橘色外框是最高位元（正負號）。</div>
+</div>
+
+<h4>每種方法能表示的範圍</h4>
+<p>用 <em>n</em> 個位元時：</p>
+<div class="tablewrap"><table class="plain">
+<tr><th>方法</th><th>範圍（公式）</th><th>4 位元</th><th>8 位元</th></tr>
+<tr><td>符號大小</td><td>−(2<sup>n−1</sup>−1) ～ +(2<sup>n−1</sup>−1)</td><td>−7 ～ +7</td><td>−127 ～ +127</td></tr>
+<tr><td>1 補數</td><td>−(2<sup>n−1</sup>−1) ～ +(2<sup>n−1</sup>−1)</td><td>−7 ～ +7</td><td>−127 ～ +127</td></tr>
+<tr><td>2 補數</td><td>−2<sup>n−1</sup> ～ +(2<sup>n−1</sup>−1)</td><td>−8 ～ +7</td><td>−128 ～ +127</td></tr>
+</table></div>
+<p>下面把 4 位元的全部 16 種組合列出來，對照同一串位元在三種方法下各代表多少。注意 +0／−0 出現的地方，以及 2 補數為什麼能多出一個 −8。</p>
+<div class="tablewrap"><table class="plain mono" id="tbl4"></table></div>
+
+<h3 id="ch2-3">2.3 用 2 補數做加減法</h3>
+<p>二進位加法跟十進位直式加法一樣，從最右邊開始一位一位加，滿 2 就進位：</p>
+<div class="tablewrap"><table class="plain mono">
+<tr><th>算式</th><th>結果</th><th>說明</th></tr>
+<tr><td>0 + 0</td><td>0</td><td>寫 0，不進位</td></tr>
+<tr><td>0 + 1</td><td>1</td><td>寫 1，不進位</td></tr>
+<tr><td>1 + 1</td><td>10</td><td>寫 0，進位 1（因為 2 在二進位是 10）</td></tr>
+<tr><td>1 + 1 + 1（含進位）</td><td>11</td><td>寫 1，進位 1（3 在二進位是 11）</td></tr>
+</table></div>
+<p><strong>減法怎麼辦？</strong>電腦不做減法，而是把減法變成加法：<code>A − B ＝ A ＋ (−B)</code>。而 −B 就是 B 的 2 補數（反轉再加 1）。所以只需要一套加法電路就能同時做加法和減法。</p>
+<p><strong>最左邊進位出去的 1 直接丟掉。</strong>因為位元寬度是固定的，多出來的那一位沒地方放。在 2 補數裡，丟掉它反而會得到正確答案。</p>
+
+<div class="widget" id="add">
+  <div class="wtitle">互動：2 補數加減法</div>
+  <p class="whint">輸入兩個十進位整數，按「下一步」從最右邊一位一位往左加。橘色的小數字是進位。</p>
+  <div class="controls">
+    <label>A<input type="text" class="narrow" id="add-a" value="5" autocomplete="off" spellcheck="false"></label>
+    <label>運算<select id="add-op"><option value="+">＋ 加</option><option value="-">− 減</option></select></label>
+    <label>B<input type="text" class="narrow" id="add-b" value="-3" autocomplete="off" spellcheck="false"></label>
+    <label>位元寬度<select id="add-w"><option value="4" selected>4 位元</option><option value="8">8 位元</option><option value="16">16 位元</option></select></label>
+  </div>
+  <div class="stepper" id="add-steps" style="border-top:0;padding-top:0"></div>
+</div>
+
+<h3 id="ch2-4">2.4 溢位（overflow）</h3>
+<p>位元寬度固定，能表示的範圍就有限。如果計算結果<strong>超出範圍</strong>，就裝不下了，這叫做<b class="k">溢位</b>。</p>
+<p>例：4 位元的範圍是 −8 ～ +7。算 5 ＋ 4 ＝ 9，9 超出範圍。實際算出來是 <code>0101 + 0100 = 1001</code>，而 <code>1001</code> 在 2 補數代表 −7。兩個正數相加卻變成負數，答案完全錯了。</p>
+<h4>怎麼判斷有沒有溢位</h4>
+<ul>
+<li><strong>正數 ＋ 正數，結果卻是負數</strong>（最高位元變成 1）→ 溢位。</li>
+<li><strong>負數 ＋ 負數，結果卻是正數</strong>（最高位元變成 0）→ 溢位。</li>
+<li><strong>一正一負相加，永遠不會溢位</strong>，因為結果一定落在兩數之間。</li>
+</ul>
+<div class="warnbox"><strong>「最左邊有進位出去」不等於溢位！</strong>例如 4 位元的 5 ＋ (−3)：<code>0101 + 1101 = 1 0010</code>，最左邊進位出去一個 1，丟掉後得到 <code>0010</code> ＝ 2，答案正確，沒有溢位。判斷溢位要看<strong>正負號</strong>，不是看有沒有進位出去。這是考試很常考的陷阱。</div>
+<p>在上面的加減法元件試試看：4 位元的 <code>5 + 4</code>、<code>-6 + -5</code>、<code>-8 - 1</code>。</p>
+
+<div class="summary"><h4>第 2 章重點</h4>
+<ul>
+<li>符號大小：最左邊是正負號。1 補數：負數就是每一位反轉。兩者都有 +0 和 −0。</li>
+<li><strong>2 補數：</strong>負數＝反轉再加 1。只有一個 0，範圍是 −2<sup>n−1</sup> ～ 2<sup>n−1</sup>−1。</li>
+<li>2 補數讀回十進位：最高位元的位權當作負的。</li>
+<li>減法 A − B 變成 A ＋ (B 的 2 補數)；最左邊進位出去的位元丟掉。</li>
+<li><strong>溢位：</strong>同號相加，結果卻變號。進位出去不等於溢位。</li>
+</ul></div>
+
+<h3 id="ch2-ex">第 2 章例題</h3>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">1.</b>用 8 位元的 2 補數表示 −5。</p>
+<p>5 ＝ <code>00000101</code> → 反轉 <code>11111010</code> → 加 1 → <strong><code>11111011</code></strong>。</p>
+<button class="loadbtn" data-load='[["neg-w","8"],["neg-in","-5"]]' data-goto="neg">丟進元件驗算</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">2.</b>4 位元的 <code>1010</code>，分別用符號大小、1 補數、2 補數來解讀，各代表多少？</p>
+<p>符號大小：最左 1 代表負，大小 <code>010</code> ＝ 2 → <strong>−2</strong>。<br>
+1 補數：最左是 1 表示負數，反轉回來 <code>0101</code> ＝ 5 → <strong>−5</strong>。<br>
+2 補數：最高位元當 −8：−8 ＋ 2 ＝ <strong>−6</strong>。</p>
+<p>可以在上方 4 位元對照表找到 <code>1010</code> 這一列核對。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">3.</b>8 位元 2 補數能表示的範圍是多少？</p>
+<p>−2⁷ ～ 2⁷ − 1，也就是 <strong>−128 ～ +127</strong>。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">4.</b>4 位元 2 補數計算 3 − 5，寫出過程並判斷是否溢位。</p>
+<p>3 ＝ <code>0011</code>；5 ＝ <code>0101</code>，−5 ＝ 反轉 <code>1010</code> 加 1 ＝ <code>1011</code>。<br>
+<code>0011 + 1011 = 1110</code> → −8 ＋ 4 ＋ 2 ＝ <strong>−2</strong>。一正一負相加，<strong>沒有溢位</strong>。</p>
+<button class="loadbtn" data-load='[["add-w","4"],["add-a","3"],["add-op","-"],["add-b","5"]]' data-goto="add">丟進加減法元件</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">5.</b>4 位元 2 補數計算 5 ＋ 4，是否溢位？</p>
+<p><code>0101 + 0100 = 1001</code>，讀成 −7。兩個正數相加得到負數，<strong>溢位</strong>。正確答案 9 超出 −8 ～ +7 的範圍。</p>
+<button class="loadbtn" data-load='[["add-w","4"],["add-a","5"],["add-op","+"],["add-b","4"]]' data-goto="add">丟進加減法元件</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">6.</b>4 位元 2 補數計算 (−3) ＋ (−4)，最左邊有沒有進位出去？有沒有溢位？</p>
+<p>−3 ＝ <code>1101</code>，−4 ＝ <code>1100</code>。<code>1101 + 1100 = 1 1001</code>，最左邊<strong>有</strong>進位出去，丟掉後 <code>1001</code> ＝ −7。兩個負數相加得到負數，答案正確，<strong>沒有溢位</strong>。這就是「進位出去 ≠ 溢位」的例子。</p>
+<button class="loadbtn" data-load='[["add-w","4"],["add-a","-3"],["add-op","+"],["add-b","-4"]]' data-goto="add">丟進加減法元件</button>
+</details>
+<div class="gopractice"><b>讀完了？去練習：</b><a href="practice.html#skill=tcWrite">寫出 2 補數</a><a href="practice.html#skill=tcRead">讀出 2 補數</a><a href="practice.html#skill=reps">符號大小與 1 補數</a><a href="practice.html#skill=addsub">加減與溢位</a><a href="practice.html#skill=concepts">觀念選擇題</a><a href="audio.html#4">🎧 第 4、5 集</a></div>
+</section>
+</main>
+</div>
+
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const DIGITS = "0123456789ABCDEF";
+const BASE_NAME = {2:"二進位",8:"八進位",10:"十進位",16:"十六進位"};
+const SUP = {"-":"⁻","0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹"};
+const sup = (n) => String(n).split("").map(c => SUP[c]).join("");
+const esc = (s) => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const msg = (html) => `<div class="step-msg">${html}</div>`;
+
+/* ---------- 通用：逐步播放器 ---------- */
+function stepper(el, steps){
+  let i = 0;
+  el.innerHTML = `<div class="step-body"></div>
+    <div class="step-ctrl">
+      <button data-a="first">從頭</button>
+      <button data-a="prev">← 上一步</button>
+      <span class="step-count"></span>
+      <button data-a="next" class="primary">下一步 →</button>
+      <button data-a="all">直接看結果</button>
+    </div>`;
+  const body = el.querySelector(".step-body"), cnt = el.querySelector(".step-count");
+  const bPrev = el.querySelector('[data-a="prev"]'), bNext = el.querySelector('[data-a="next"]');
+  function show(){
+    body.innerHTML = steps[i];
+    cnt.textContent = `第 ${i+1} / ${steps.length} 步`;
+    bPrev.disabled = i === 0; bNext.disabled = i === steps.length - 1;
+  }
+  el.onclick = (e) => {
+    const a = e.target.closest("button")?.dataset.a; if(!a) return;
+    if(a === "prev" && i > 0) i--;
+    if(a === "next" && i < steps.length - 1) i++;
+    if(a === "all") i = steps.length - 1;
+    if(a === "first") i = 0;
+    show();
+  };
+  show();
+}
+
+/* ---------- 數字解析與轉換（BigInt 精確計算） ---------- */
+function parseNum(raw, base){
+  let s = raw.trim().toUpperCase().replace(/\s+/g, "");
+  if(!s) return {err:"請輸入一個數字。"};
+  if(s.startsWith("-")) return {err:"這個元件只處理正數；負數請看第 2 章。"};
+  const m = s.match(/^([0-9A-Z]*)(?:\.([0-9A-Z]*))?$/);
+  if(!m) return {err:"只能輸入數字，以及最多一個小數點。"};
+  let ip = m[1] || "0", fp = m[2] || "";
+  for(const ch of ip + fp){
+    const v = DIGITS.indexOf(ch);
+    if(v < 0 || v >= base){
+      return {err:`「${esc(ch)}」不是${BASE_NAME[base]}可以用的數字。${BASE_NAME[base]}只能用：${DIGITS.slice(0, base).split("").join(" ")}`};
+    }
+  }
+  ip = ip.replace(/^0+(?=.)/, ""); fp = fp.replace(/0+$/, "");
+  if(ip.length > 16) return {err:"整數部分最多 16 位。"};
+  if(fp.length > 6) return {err:"小數部分最多 6 位。"};
+  const B = BigInt(base);
+  let iv = 0n; for(const ch of ip) iv = iv * B + BigInt(DIGITS.indexOf(ch));
+  let fn = 0n, fd = 1n; for(const ch of fp){ fn = fn * B + BigInt(DIGITS.indexOf(ch)); fd *= B; }
+  return {ip, fp, iv, fn, fd, base};
+}
+function intToBase(v, b){
+  const B = BigInt(b); if(v === 0n) return "0";
+  let s = ""; while(v > 0n){ s = DIGITS[Number(v % B)] + s; v /= B; } return s;
+}
+function fracToBase(num, den, b, max){
+  const B = BigInt(b), digits = [], seen = new Map(); let rep = -1;
+  while(num !== 0n){
+    if(seen.has(num)){ rep = seen.get(num); break; }
+    if(digits.length >= max) break;
+    seen.set(num, digits.length);
+    num *= B; digits.push(DIGITS[Number(num / den)]); num %= den;
+  }
+  return {digits, rep, cut: num !== 0n && rep < 0};
+}
+function fracHTML(f){
+  if(f.rep >= 0) return f.digits.slice(0, f.rep).join("") + `<span class="rep">${f.digits.slice(f.rep).join("")}</span>`;
+  return f.digits.join("") + (f.cut ? "…" : "");
+}
+function formatNum(p, b){
+  const int = intToBase(p.iv, b);
+  if(p.fn === 0n) return int;
+  return int + "." + fracHTML(fracToBase(p.fn, p.fd, b, 24));
+}
+function ratToDec(num, den){
+  const i = num / den, r = num % den;
+  if(r === 0n) return i.toString();
+  return i.toString() + "." + fracToBase(r, den, 10, 40).digits.join("");
+}
+function decStr(num, k){ // num / 10^k
+  if(k === 0) return num.toString();
+  const P = 10n ** BigInt(k);
+  const f = (num % P).toString().padStart(k, "0").replace(/0+$/, "");
+  return (num / P).toString() + (f ? "." + f : "");
+}
+
+/* ---------- 第 0 章：8 個開關 ---------- */
+(function(){
+  const row = $("#sw-row"), sum = $("#sw-sum");
+  const state = [0,0,0,0,0,1,0,1];
+  function render(){
+    row.innerHTML = state.map((v, i) => {
+      const w = 2 ** (7 - i);
+      return `<button class="swbtn ${v ? "on" : ""}" data-i="${i}" aria-pressed="${!!v}" aria-label="位權 ${w} 的開關"><span class="lamp">${v}</span><span class="w">${w}</span></button>`;
+    }).join("");
+    const parts = state.map((v, i) => v ? 2 ** (7 - i) : 0).filter(x => x);
+    const total = parts.reduce((a, b) => a + b, 0);
+    sum.innerHTML = `位元：<b>${state.join("")}</b>　→　${parts.length ? parts.join(" + ") + " = " : ""}<b>${total}</b>`;
+  }
+  row.onclick = (e) => { const b = e.target.closest(".swbtn"); if(!b) return; state[+b.dataset.i] ^= 1; render(); };
+  $("#sw-clear").onclick = () => { state.fill(0); render(); };
+  $("#sw-all").onclick = () => { state.fill(1); render(); };
+  render();
+})();
+
+/* ---------- 第 1 章：進位轉換器 ---------- */
+function divTable(rows, t, final){
+  if(!rows.length) return "";
+  let h = `<table class="calc"><tr><th>算式</th><th>商</th><th>餘數</th></tr>`;
+  rows.forEach((r, i) => {
+    const cur = !final && i === rows.length - 1;
+    h += `<tr class="${cur ? "cur" : ""}"><td>${r.v} ÷ ${t}</td><td>${r.q}</td><td class="${final ? "pickall" : (cur ? "pick" : "")}">${DIGITS[Number(r.r)]}${r.r >= 10n ? ` <small>(=${r.r})</small>` : ""}</td></tr>`;
+  });
+  h += `</table>`;
+  if(final) h += `<div class="readdir">↑ 餘數由下往上讀</div>`;
+  return h;
+}
+function mulTable(rows, t, k, final){
+  if(!rows.length) return "";
+  let h = `<table class="calc"><tr><th>算式</th><th>取出的整數</th><th>剩下的小數</th></tr>`;
+  rows.forEach((r, i) => {
+    const cur = !final && i === rows.length - 1;
+    h += `<tr class="${cur ? "cur" : ""}"><td>${decStr(r.x, k)} × ${t} = ${decStr(r.prod, k)}</td><td class="${final ? "pickall" : (cur ? "pick" : "")}">${DIGITS[Number(r.d)]}</td><td>${decStr(r.rest, k)}</td></tr>`;
+  });
+  h += `</table>`;
+  if(final) h += `<div class="readdir">↓ 整數由上往下讀</div>`;
+  return h;
+}
+function decToBaseSteps(p, t){
+  const B = BigInt(t), steps = [], hasFrac = p.fn !== 0n;
+  const intRes = intToBase(p.iv, t);
+  const rows = [];
+  steps.push(msg(hasFrac
+    ? `這個數有整數和小數兩部分，要<strong>分開處理</strong>，最後再合起來。<br>先處理整數部分 <b>${p.iv}</b>：用「除 ${t} 取餘」——一直除以 ${t}，記下每次的餘數，直到商變成 0。`
+    : `用「除 ${t} 取餘」：把 <b>${p.iv}</b> 一直除以 ${t}，每次記下餘數，直到商變成 0。`));
+  let v = p.iv;
+  if(v === 0n) steps.push(msg(`整數部分是 0，轉成任何進位都還是 <b>0</b>。`));
+  while(v > 0n){
+    const q = v / B, r = v % B;
+    rows.push({v, q, r});
+    const hex = r >= 10n ? `（餘數 ${r} 在十六進位要寫成 <b>${DIGITS[Number(r)]}</b>）` : "";
+    steps.push(msg(`${v} ÷ ${t} ＝ ${q} 餘 <b>${r}</b>${hex}。${q === 0n ? "商已經是 0，可以停了。" : `商 ${q} 還不是 0，繼續拿 ${q} 除以 ${t}。`}`) + divTable(rows, t, false));
+    v = q;
+  }
+  if(p.iv > 0n){
+    steps.push(msg(`把餘數<strong>由下往上</strong>讀，得到整數部分：<b class="mono">${intRes}</b><br><small>為什麼由下往上？第一個餘數是最右邊那一位（位權最小），最後一個餘數是最左邊那一位（位權最大）。</small>`) + divTable(rows, t, true));
+  }
+  if(!hasFrac){
+    steps.push(msg(`答案：<b class="mono">${p.iv}<sub>10</sub> ＝ ${intRes}<sub>${t}</sub></b>`) + (rows.length ? divTable(rows, t, true) : ""));
+    return steps;
+  }
+  // 小數部分：乘 t 取整
+  const k = p.fp.length, den = p.fd, fr = [], seen = new Map();
+  let num = p.fn, end = "zero", repIdx = -1;
+  steps.push(msg(`接著處理小數部分 <b>${decStr(num, k)}</b>：用「乘 ${t} 取整」——一直乘以 ${t}，每次把乘積的<strong>整數部分</strong>拿出來，剩下的小數部分繼續乘，直到小數部分變成 0。`));
+  while(true){
+    if(num === 0n){ end = "zero"; break; }
+    if(seen.has(num)){ end = "rep"; repIdx = seen.get(num); break; }
+    if(fr.length >= 12){ end = "cut"; break; }
+    seen.set(num, fr.length);
+    const prod = num * B, d = prod / den, rest = prod % den;
+    fr.push({x:num, prod, d, rest});
+    const dd = d >= 10n ? `（${d} 寫成 ${DIGITS[Number(d)]}）` : "";
+    steps.push(msg(`${decStr(num, k)} × ${t} ＝ ${decStr(prod, k)}。整數部分是 <b>${d}</b>${dd}，把它拿出來；剩下 ${decStr(rest, k)}。${rest === 0n ? "小數部分變成 0 了，可以停。" : "還不是 0，繼續乘。"}`) + mulTable(fr, t, k, false));
+    num = rest;
+  }
+  const fd = fr.map(r => DIGITS[Number(r.d)]);
+  let fh;
+  if(end === "rep"){
+    fh = fd.slice(0, repIdx).join("") + `<span class="rep">${fd.slice(repIdx).join("")}</span>`;
+    steps.push(msg(`注意！剩下的 ${decStr(num, k)} 之前已經出現過了（第 ${repIdx + 1} 列），之後只會一直重複同樣的計算，<strong>永遠算不完</strong>。<br>所以這是無限循環小數，上面加橫線的部分會一直重複：<b class="mono">0.${fh}…</b>`) + mulTable(fr, t, k, true));
+  } else if(end === "cut"){
+    fh = fd.join("") + "…";
+    steps.push(msg(`已經算了 12 位還沒結束，先停在這裡。真正的結果比這更長：<b class="mono">0.${fh}</b>`) + mulTable(fr, t, k, true));
+  } else {
+    fh = fd.join("");
+    steps.push(msg(`把取出的整數<strong>由上往下</strong>讀，得到小數部分：<b class="mono">0.${fh}</b>`) + mulTable(fr, t, k, true));
+  }
+  steps.push(msg(`把兩部分合起來：整數 <b class="mono">${intRes}</b> ＋ 小數 <b class="mono">.${fh}</b><br>答案：<b class="mono">${decStr(p.iv * p.fd + p.fn, k)}<sub>10</sub> ＝ ${intRes}.${fh}${end === "rep" ? "…" : ""}<sub>${t}</sub></b>`));
+  return steps;
+}
+function baseToDecSteps(p, b){
+  const B = BigInt(b), steps = [];
+  const ds = [...p.ip].map((c, j) => ({c, e: p.ip.length - 1 - j}))
+    .concat([...p.fp].map((c, j) => ({c, e: -(j + 1)})));
+  const numline = (on) => `<div class="numline">${[...p.ip].map((c, j) => `<span class="d ${on === j ? "on" : ""}">${c}</span>`).join("")}${p.fp ? "." + [...p.fp].map((c, j) => `<span class="d ${on === p.ip.length + j ? "on" : ""}">${c}</span>`).join("") : ""}<sub>${b}</sub></div>`;
+  const ws = [0,1,2,3].map(e => `${b}${sup(e)}＝${B ** BigInt(e)}`).join("、");
+  steps.push(msg(`用「位權相加」：${BASE_NAME[b]}每往左一位，位權就乘以 ${b}。從小數點往左依序是 ${ws}…${p.fp ? `；小數點往右是 ${b}⁻¹＝${ratToDec(1n, B)}、${b}⁻²＝${ratToDec(1n, B * B)}…` : ""}<br>把<strong>每一位的數字 × 它的位權</strong>全部加起來，就是十進位的值。`) + numline(-1));
+  const rows = [], vals = [];
+  ds.forEach((d, idx) => {
+    const dv = BigInt(DIGITS.indexOf(d.c));
+    let w, val;
+    if(d.e >= 0){ const W = B ** BigInt(d.e); w = W.toString(); val = (dv * W).toString(); }
+    else { const D = B ** BigInt(-d.e); w = ratToDec(1n, D); val = ratToDec(dv, D); }
+    vals.push(val);
+    const label = dv >= 10n ? `${d.c}(=${dv})` : d.c;
+    rows.push(`<td>${label} × ${b}${sup(d.e)}</td><td>＝ ${dv} × ${w}</td><td>＝ ${val}</td>`);
+    const tbl = `<table class="calc"><tr><th>這一位</th><th>數字 × 位權</th><th>結果</th></tr>${rows.map((r, i) => `<tr class="${i === rows.length - 1 ? "cur" : ""}">${r}</tr>`).join("")}</table>`;
+    const extra = dv === 0n ? "數字是 0，0 乘任何數都是 0。" : (dv >= 10n ? `${d.c} 代表 ${dv}。` : "");
+    steps.push(msg(`${d.e >= 0 ? "從小數點往左" : "從小數點往右"}第 ${d.e >= 0 ? d.e + 1 : -d.e} 位是 <b>${d.c}</b>，它的位權是 ${b}${sup(d.e)} ＝ ${w}。${extra}`) + numline(idx) + tbl);
+  });
+  const total = ratToDec(p.iv * p.fd + p.fn, p.fd);
+  const nz = vals.filter(v => !/^0(\.0*)?$/.test(v));
+  const tbl = `<table class="calc"><tr><th>這一位</th><th>數字 × 位權</th><th>結果</th></tr>${rows.map(r => `<tr>${r}</tr>`).join("")}</table>`;
+  steps.push(msg(`全部加起來：${nz.length ? nz.join(" ＋ ") : "0"} ＝ <b>${total}</b><br>答案：<b class="mono">${p.ip}${p.fp ? "." + p.fp : ""}<sub>${b}</sub> ＝ ${total}<sub>10</sub></b>`) + numline(-1) + tbl);
+  return steps;
+}
+(function(){
+  const inp = $("#conv-in"), base = $("#conv-base"), tgt = $("#conv-target"), out = $("#conv-out"), st = $("#conv-steps");
+  function update(){
+    const b = +base.value;
+    if(tgt.dataset.for !== String(b)){
+      const opts = b === 10 ? [2, 8, 16] : [10];
+      tgt.innerHTML = opts.map(o => `<option value="${o}">${BASE_NAME[o]}</option>`).join("");
+      tgt.dataset.for = String(b);
+    }
+    const p = parseNum(inp.value, b);
+    if(p.err){ out.innerHTML = `<div class="err" style="grid-column:1/-1">${p.err}</div>`; st.innerHTML = ""; st.onclick = null; return; }
+    out.innerHTML = [2, 8, 10, 16].map(x => `<div class="rcard ${x === b ? "src" : ""}"><div class="rlabel">${BASE_NAME[x]}${x === b ? "（輸入）" : ""}</div><div class="rval">${formatNum(p, x)}<sub>${x}</sub></div></div>`).join("");
+    const t = +tgt.value;
+    stepper(st, b === 10 ? decToBaseSteps(p, t) : baseToDecSteps(p, b));
+  }
+  inp.addEventListener("input", update); base.addEventListener("change", update); tgt.addEventListener("change", update);
+  update();
+})();
+
+/* ---------- 第 1 章：分組 ---------- */
+(function(){
+  const inp = $("#grp-in"), base = $("#grp-base"), tgt = $("#grp-target"), wrap = $("#grp-target-wrap"), out = $("#grp-out");
+  const bitsHTML = (s) => s.split("").map(c => `<span class="bit ${c === "1" ? "one" : ""}">${c}</span>`).join("");
+  function update(){
+    const b = +base.value;
+    wrap.style.display = b === 2 ? "" : "none";
+    let s = inp.value.trim().toUpperCase().replace(/\s+/g, "");
+    if(!s){ out.innerHTML = `<div class="err">請輸入一個數字。</div>`; return; }
+    for(const ch of s){ const v = DIGITS.indexOf(ch); if(v < 0 || v >= b){ out.innerHTML = `<div class="err">「${esc(ch)}」不是${BASE_NAME[b]}可以用的數字（這個元件只處理整數）。</div>`; return; } }
+    if(s.length > (b === 2 ? 32 : 8)){ out.innerHTML = `<div class="err">太長了，${b === 2 ? "二進位最多 32 位" : "最多 8 位"}。</div>`; return; }
+    let g, groups, resultLabel, result, explain;
+    if(b === 2){
+      const t = +tgt.value; g = t === 16 ? 4 : 3;
+      const pad = (g - s.length % g) % g;
+      const padded = "0".repeat(pad) + s;
+      groups = [];
+      for(let i = 0; i < padded.length; i += g){
+        const bits = padded.slice(i, i + g), v = parseInt(bits, 2);
+        groups.push({bits, digit: DIGITS[v], v});
+      }
+      result = groups.map(x => x.digit).join("").replace(/^0+(?=.)/, "");
+      explain = `從<strong>右邊</strong>開始每 ${g} 個一組${pad ? `，最左邊不夠 ${g} 個，所以補了 ${pad} 個 0` : ""}。每組換成一個${BASE_NAME[t]}數字：`;
+      resultLabel = `<b class="mono">${s}<sub>2</sub> ＝ ${result}<sub>${t}</sub></b>`;
+    } else {
+      g = b === 16 ? 4 : 3;
+      groups = s.split("").map(c => { const v = DIGITS.indexOf(c); return {bits: v.toString(2).padStart(g, "0"), digit: c, v}; });
+      result = groups.map(x => x.bits).join("").replace(/^0+(?=.)/, "");
+      explain = `每個${BASE_NAME[b]}數字展開成 ${g} 個位元：`;
+      resultLabel = `<b class="mono">${s}<sub>${b}</sub> ＝ ${result}<sub>2</sub></b>（最左邊多餘的 0 可以去掉）`;
+    }
+    const weights = g === 4 ? [8, 4, 2, 1] : [4, 2, 1];
+    const html = groups.map((x, i) => {
+      const parts = x.bits.split("").map((c, j) => c === "1" ? weights[j] : 0).filter(Boolean);
+      const calc = parts.length ? parts.join("+") + (parts.length > 1 ? "=" + x.v : "") : "0";
+      const top = `<div class="ws">${weights.map(w => `<span>${w}</span>`).join("")}</div><div class="bits">${bitsHTML(x.bits)}</div>`;
+      const bottom = `<div class="gcalc">${calc}</div><div class="gd">${x.digit}</div>`;
+      return `<div class="grp ${i % 2 ? "b" : "a"}">${b === 2 ? top + `<div class="arrow">↓</div>` + bottom : `<div class="gd">${x.digit}</div><div class="arrow">↓</div>` + top}</div>`;
+    }).join("");
+    out.innerHTML = `<p style="margin:4px 0">${explain}</p><div class="groups">${html}</div><p style="margin:6px 0">${resultLabel}</p>`;
+  }
+  inp.addEventListener("input", update); base.addEventListener("change", update); tgt.addEventListener("change", update);
+  update();
+})();
+
+/* ---------- 第 2 章：三種表示法 ---------- */
+const toBin = (v, w) => v.toString(2).padStart(w, "0");
+const invert = (s) => s.split("").map(c => c === "1" ? "0" : "1").join("");
+function bitBoxes(s, signFirst = true){
+  return `<span class="bits">${s.split("").map((c, i) => `<span class="bit ${c === "1" ? "one" : ""} ${signFirst && i === 0 ? "sign" : ""} ${i > 0 && i % 4 === 0 ? "gap" : ""}">${c}</span>`).join("")}</span>`;
+}
+function parseInt10(raw){
+  const s = raw.trim().replace(/\s+/g, "").replace(/^＋/, "+").replace(/^[−–－]/, "-");
+  if(!/^[+-]?\d+$/.test(s)) return null;
+  const n = Number(s); if(!Number.isSafeInteger(n) || Math.abs(n) > 1e6) return null;
+  return n;
+}
+(function(){
+  const inp = $("#neg-in"), wsel = $("#neg-w"), out = $("#neg-out");
+  function update(){
+    const w = +wsel.value, n = parseInt10(inp.value);
+    if(n === null){ out.innerHTML = `<div class="err">請輸入一個十進位整數，例如 -5 或 12。</div>`; return; }
+    const mx = 2 ** (w - 1) - 1, mn2 = -(2 ** (w - 1));
+    const a = Math.abs(n);
+    const row = (name, sub, body) => `<div class="repsrow"><div class="repsname">${name}<small>${sub}</small></div><div>${body}</div></div>`;
+    const oor = (lo, hi) => `<span class="oor">無法表示：${w} 位元的範圍只有 ${lo} ～ ${hi}</span>`;
+    let sm, oc, tc;
+    if(a <= mx){
+      const smS = (n < 0 ? "1" : "0") + toBin(a, w - 1);
+      sm = bitBoxes(smS) + (n === 0 ? `<div class="legend">另外 <span class="mono">1${"0".repeat(w - 1)}</span> 代表 −0，所以 0 有兩種寫法。</div>` : "");
+      const ocS = n < 0 ? invert(toBin(a, w)) : toBin(a, w);
+      oc = bitBoxes(ocS) + (n === 0 ? `<div class="legend">另外 <span class="mono">${"1".repeat(w)}</span> 代表 −0，0 也有兩種寫法。</div>` : "");
+    } else { sm = oor(-mx, mx); oc = oor(-mx, mx); }
+    if(n >= mn2 && n <= mx){
+      const tcS = n < 0 ? toBin(2 ** w + n, w) : toBin(n, w);
+      let detail = "";
+      if(n < 0){
+        const pos = toBin(a, w), inv = invert(pos);
+        detail = `<div class="legend" style="font-size:14.5px;line-height:1.9">
+          ① 先寫出 ${a} 的二進位，補滿 ${w} 位：<span class="mono">${pos}</span><br>
+          ② 每一位反轉（＝1 補數）：<span class="mono">${inv}</span><br>
+          ③ 再加 1：<span class="mono">${inv} + 1 = <b>${tcS}</b></span><br>
+          驗算：最高位元當 −${2 ** (w - 1)}，其餘位元是 ${2 ** w + n - 2 ** (w - 1)}：−${2 ** (w - 1)} ＋ ${2 ** w + n - 2 ** (w - 1)} ＝ ${n} ✓</div>`;
+      } else {
+        detail = `<div class="legend">正數（或 0）直接寫二進位就好，三種方法相同。</div>`;
+      }
+      tc = bitBoxes(tcS) + detail;
+    } else tc = oor(mn2, mx);
+    out.innerHTML = row("符號大小", "最左邊是正負號", sm) + row("1 補數", "負數＝每位反轉", oc) + row("2 補數", "負數＝反轉再加 1", tc);
+  }
+  inp.addEventListener("input", update); wsel.addEventListener("change", update);
+  update();
+  // 4 位元對照表
+  let h = `<tr><th>位元</th><th>當作正數</th><th>符號大小</th><th>1 補數</th><th>2 補數</th></tr>`;
+  for(let v = 0; v < 16; v++){
+    const s = toBin(v, 4), neg = v >= 8;
+    const smv = neg ? (v - 8 === 0 ? "−0" : "−" + (v - 8)) : String(v);
+    const ocv = neg ? (15 - v === 0 ? "−0" : "−" + (15 - v)) : String(v);
+    const tcv = neg ? "−" + (16 - v) : String(v);
+    h += `<tr><td>${s}</td><td>${v}</td><td>${smv}</td><td>${ocv}</td><td>${tcv}</td></tr>`;
+  }
+  $("#tbl4").innerHTML = h;
+})();
+
+/* ---------- 第 2 章：加減法 ---------- */
+(function(){
+  const ia = $("#add-a"), ib = $("#add-b"), op = $("#add-op"), wsel = $("#add-w"), st = $("#add-steps");
+  const signed = (s) => (s[0] === "1" ? -(2 ** (s.length - 1)) : 0) + parseInt(s.slice(1) || "0", 2);
+  function update(){
+    const w = +wsel.value, A = parseInt10(ia.value), Bv = parseInt10(ib.value), sub = op.value === "-";
+    const mn = -(2 ** (w - 1)), mx = 2 ** (w - 1) - 1;
+    if(A === null || Bv === null){ st.innerHTML = `<div class="err">A 和 B 請輸入十進位整數。</div>`; st.onclick = null; return; }
+    if(A < mn || A > mx || Bv < mn || Bv > mx){ st.innerHTML = `<div class="err">${w} 位元的 2 補數只能表示 ${mn} ～ ${mx}，請輸入這個範圍內的數。</div>`; st.onclick = null; return; }
+    const tc = (n) => n < 0 ? toBin(2 ** w + n, w) : toBin(n, w);
+    const a = tc(A), bOrig = tc(Bv), b = sub ? invert(bOrig) : bOrig, cin = sub ? 1 : 0;
+    // 由右往左（index w-1 是最低位）
+    const c = new Array(w + 1).fill(0), r = new Array(w).fill("0"); c[0] = cin; // c[k] = 第 k 欄（從右數，0 起）的進位輸入
+    const sums = [];
+    for(let k = 0; k < w; k++){
+      const ai = +a[w - 1 - k], bi = +b[w - 1 - k], s = ai + bi + c[k];
+      sums.push({ai, bi, ci: c[k], s});
+      r[w - 1 - k] = String(s & 1); c[k + 1] = s >> 1;
+    }
+    const res = r.join(""), resV = signed(res), trueV = sub ? A - Bv : A + Bv, overflow = trueV < mn || trueV > mx;
+    const bLabel = sub ? `−B 用的位元<br><small>（B 反轉）</small>` : "B";
+    function grid(done){ // done = 已完成的欄數；cur = 正在算的欄
+      const cur = done - 1;
+      let h = `<table class="adder">`;
+      // 進位列
+      h += `<tr><th>進位</th><td class="carry ${done === w && c[w] ? "out" : ""}">${done === w && c[w] ? "1" : ""}</td>`;
+      for(let j = 0; j < w; j++){ const k = w - 1 - j; const show = k === 0 ? (cin ? "+1" : "") : (k <= done && c[k] ? "1" : ""); h += `<td class="carry">${show}</td>`; }
+      h += `</tr>`;
+      const line = (label, s, cls = "") => {
+        let x = `<tr class="${cls}"><th>${label}</th><td class="${cls ? "b" : ""}"></td>`;
+        for(let j = 0; j < w; j++){ const k = w - 1 - j; const on = s[j] === "1"; x += `<td class="${cls ? "b" : ""} ${k === cur ? "cur" : ""}" style="${on ? "color:var(--accent)" : ""}">${s[j]}</td>`; }
+        return x + `</tr>`;
+      };
+      h += line("A", a) + line(bLabel, b);
+      let rr = `<tr class="res"><th>結果</th><td class="b ${done === w && c[w] ? "out" : ""}" style="color:var(--muted)">${done === w && c[w] ? "1" : ""}</td>`;
+      for(let j = 0; j < w; j++){ const k = w - 1 - j; rr += `<td class="b ${k === cur ? "cur" : ""}">${k < done ? res[j] : ""}</td>`; }
+      h += rr + `</tr></table>`;
+      return `<div class="tablewrap">${h}</div>`;
+    }
+    const steps = [];
+    let intro = `把兩個數都寫成 ${w} 位元的 2 補數：A ＝ ${A} → <b class="mono">${a}</b>，B ＝ ${Bv} → <b class="mono">${bOrig}</b>。`;
+    if(sub) intro += `<br>這是減法：<strong>A − B ＝ A ＋ (−B)</strong>。−B 就是 B 的 2 補數＝「反轉再加 1」。先把 B 反轉成 <b class="mono">${b}</b>，而「加 1」就放在最右邊那一欄的進位（右上角的 +1）。`;
+    else intro += `<br>從最右邊那一欄開始，一欄一欄往左加。`;
+    steps.push(msg(intro) + grid(0));
+    sums.forEach((x, k) => {
+      const write = x.s & 1, carry = x.s >> 1;
+      const bin = x.s >= 2 ? `（${x.s} 在二進位是 ${x.s.toString(2)}）` : "";
+      steps.push(msg(`從右邊數第 ${k + 1} 欄：${x.ai} ＋ ${x.bi}${x.ci ? ` ＋ 進位 ${x.ci}` : ""} ＝ ${x.s}${bin} → 寫下 <b>${write}</b>，${carry ? `進位 <b>1</b> 到${k === w - 1 ? "最左邊外面" : "左邊一欄"}` : "不進位"}。`) + grid(k + 1));
+    });
+    let fin = `結果的位元是 <b class="mono">${res}</b>。`;
+    if(c[w]) fin += `最左邊有一個 1 進位出去（劃掉的那個），位元寬度只有 ${w}，所以<strong>直接丟掉</strong>。`;
+    fin += `<br>用 2 補數讀回來：${res[0] === "1" ? `最高位元是 1，當作 −${2 ** (w - 1)}，` : ""}<b>${resV}</b>。`;
+    let verdict;
+    if(overflow){
+      const why = (sub ? (A >= 0 && Bv < 0) : (A >= 0 && Bv >= 0))
+        ? "正數加正數，結果卻變成負數（最高位元是 1）"
+        : "負數加負數，結果卻變成正數（最高位元是 0）";
+      verdict = `<div class="verdict bad"><strong>⚠ 溢位！結果是錯的。</strong>正確答案 ${A} ${sub ? "−" : "＋"} ${Bv < 0 ? `(${Bv})` : Bv} ＝ ${trueV}，超出 ${w} 位元的範圍（${mn} ～ ${mx}），所以「繞了一圈」變成 ${resV}。<br>判斷方法：${why}。</div>`;
+    } else {
+      verdict = `<div class="verdict ok"><strong>✓ 沒有溢位，答案正確：${A} ${sub ? "−" : "＋"} ${Bv < 0 ? `(${Bv})` : Bv} ＝ ${resV}</strong>${c[w] ? "注意：雖然最左邊有進位出去，但這<strong>不是</strong>溢位。判斷溢位要看正負號是否合理，不是看有沒有進位出去。" : "結果落在範圍內。"}</div>`;
+    }
+    steps.push(msg(fin) + grid(w) + verdict);
+    stepper(st, steps);
+  }
+  [ia, ib].forEach(el => el.addEventListener("input", update));
+  [op, wsel].forEach(el => el.addEventListener("change", update));
+  update();
+})();
+
+/* ---------- 例題：丟進元件 ---------- */
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".loadbtn"); if(!btn) return;
+  const pairs = JSON.parse(btn.dataset.load);
+  for(const [id, val] of pairs){
+    const el = document.getElementById(id);
+    el.value = val;
+    el.dispatchEvent(new Event(el.tagName === "SELECT" ? "change" : "input"));
+  }
+  const w = document.getElementById(btn.dataset.goto);
+  w.scrollIntoView({behavior: "smooth", block: "start"});
+  w.classList.remove("flash"); void w.offsetWidth; w.classList.add("flash");
+});
+</script>
+</body>
+</html>

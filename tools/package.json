@@ -1,0 +1,11 @@
+{
+  "name": "cs-intro-tools",
+  "private": true,
+  "description": "產生通勤音檔用的工具（只在本機執行，不會放到網站上）",
+  "scripts": {
+    "audio": "node build-audio.js"
+  },
+  "dependencies": {
+    "lamejs": "1.2.1"
+  }
+}

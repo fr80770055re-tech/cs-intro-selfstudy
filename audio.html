@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>通勤音檔</title>
+<link rel="stylesheet" href="assets/site.css">
+<style>
+.player{position:sticky;top:0;z-index:5;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:18px 0;box-shadow:0 4px 18px rgba(0,0,0,.06)}
+.player .now{font-weight:700;font-size:17px}
+.player .sub{font-size:14px;color:var(--muted)}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.ctrls button{min-width:48px}
+.ctrls .play{min-width:96px;font-size:17px}
+.seek{display:flex;align-items:center;gap:10px;margin-top:10px;font-family:var(--mono);font-size:13px;color:var(--muted)}
+.seek input{flex:1;accent-color:var(--accent)}
+.opts{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:10px;font-size:14px;color:var(--muted)}
+.opts select{min-height:34px;padding:2px 8px;font-size:14px}
+.tracks{list-style:none;padding:0;margin:0}
+.tracks li{display:grid;grid-template-columns:auto 1fr auto;gap:4px 14px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-bottom:8px;cursor:pointer}
+.tracks li:hover{border-color:var(--accent)}
+.tracks li.cur{border-color:var(--accent);background:var(--accent-soft)}
+.tracks .no{width:34px;height:34px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.tracks li.done .no{background:var(--ok-soft);color:var(--ok)}
+.tracks .ti{font-weight:700}
+.tracks .de{font-size:14px;color:var(--muted);line-height:1.55}
+.tracks .rt{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:13px;color:var(--muted)}
+.tracks .rt a{font-size:13px}
+.transcript{margin-top:10px}
+.transcript summary{cursor:pointer;color:var(--accent);font-weight:600}
+.transcript p{margin:8px 0}
+.transcript .q{font-weight:700}
+.transcript .q::before{content:"問　";color:var(--accent)}
+.transcript .a{color:var(--ok)}
+.transcript .a::before{content:"答　";font-weight:700}
+@media (max-width:640px){
+  .tracks li{grid-template-columns:auto 1fr}
+  .tracks .rt{grid-column:2;flex-direction:row;gap:12px;align-items:center}
+  .player{padding:12px 14px;position:static}
+  .ctrls{gap:6px;flex-wrap:nowrap}
+  .ctrls button{padding:6px 8px;min-width:0;flex:1}
+  .ctrls .play{min-width:0;flex:1.6;font-size:16px}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="logo" href="index.html">計概自學・數字系統</a>
+  <nav><a href="index.html">首頁</a><a href="lesson.html">講義</a><a href="practice.html">練習</a><a href="audio.html" aria-current="page">通勤音檔</a></nav>
+</header>
+<div class="wrap">
+  <div class="kicker">通勤音檔</div>
+  <h1>用聽的複習</h1>
+  <p class="lead">8 集語音，每集約 5 分鐘。前 5 集是觀念講解，第 6、7 集是心算問答（聽到問題後先在心裡回答，停頓幾秒後會公布答案），第 8 集是口訣總整理。</p>
+  <div class="note">聽的適合用來理解觀念和複習口訣；真正的計算練習，回家再到<a href="practice.html">練習頁</a>用紙筆做。建議先讀過講義對應的章節再聽，效果最好。</div>
+
+  <div class="player" id="player">
+    <div class="now" id="now">選一集開始聽</div>
+    <div class="sub" id="nowsub"></div>
+    <div class="seek"><span id="cur">0:00</span><input type="range" id="seek" min="0" max="100" value="0" step="1" aria-label="播放進度"><span id="dur">0:00</span></div>
+    <div class="ctrls">
+      <button id="prev" aria-label="上一集">⏮</button>
+      <button id="back10" aria-label="倒退 10 秒">↺ 10</button>
+      <button class="primary play" id="play">▶ 播放</button>
+      <button id="fwd10" aria-label="快轉 10 秒">10 ↻</button>
+      <button id="next" aria-label="下一集">⏭</button>
+    </div>
+    <div class="opts">
+      <label>速度 <select id="rate"><option value="0.8">0.8×</option><option value="1" selected>1×</option><option value="1.2">1.2×</option><option value="1.5">1.5×</option></select></label>
+      <label><input type="checkbox" id="auto" checked> 播完自動下一集</label>
+    </div>
+  </div>
+  <audio id="audio" preload="metadata"></audio>
+
+  <ul class="tracks" id="tracks"></ul>
+
+  <h2>離線收聽</h2>
+  <p>地下室或捷運上網路不穩的話，可以先把音檔下載到手機：點每一集的「下載」。在手機上用瀏覽器開這個網站，也可以把它「加入主畫面」，用起來就像一個 App。</p>
+  <p class="small muted">音檔由電腦語音（Microsoft Yating、Zhiwei）朗讀產生，偶爾發音會有點生硬；每一集下方都有逐字稿可以對照。播放進度會記在這台裝置上，下次打開會從上次的地方繼續。</p>
+</div>
+
+<script src="assets/audio-tracks.js"></script>
+<script>
+(function(){
+"use strict";
+const $ = (s) => document.querySelector(s);
+const T = window.AUDIO_TRACKS || [], A = $("#audio"), KEY = "csintro.audio.v1";
+let st; try { st = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { st = {}; }
+st.pos = st.pos || {}; st.done = st.done || {};
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} };
+const fmt = (s) => { s = Math.max(0, Math.floor(s || 0)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
+const esc = (s) => s.replace(/[&<>]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;"}[c]));
+let cur = -1;
+
+function render(){
+  $("#tracks").innerHTML = T.map((t, i) => `<li data-i="${i}" class="${i === cur ? "cur" : ""} ${st.done[t.id] ? "done" : ""}">
+    <div class="no">${st.done[t.id] ? "✓" : i + 1}</div>
+    <div><div class="ti">${esc(t.title)}</div><div class="de">${esc(t.desc)}</div>
+      <details class="transcript" onclick="event.stopPropagation()"><summary>逐字稿</summary>${t.lines.map(l => `<p class="${l.type}">${esc(l.text)}</p>`).join("")}</details></div>
+    <div class="rt"><span>${fmt(t.duration)}</span><a href="${t.file}" download onclick="event.stopPropagation()">下載</a></div></li>`).join("");
+}
+function load(i, autoplay){
+  if (i < 0 || i >= T.length) return;
+  cur = i; st.last = i; save();
+  const t = T[i];
+  A.src = t.file; A.playbackRate = +$("#rate").value;
+  A.addEventListener("loadedmetadata", function once(){ A.removeEventListener("loadedmetadata", once); const p = st.pos[t.id]; if (p && p < A.duration - 5) A.currentTime = p; A.playbackRate = +$("#rate").value; }, {once: true});
+  $("#now").textContent = t.title; $("#nowsub").textContent = t.desc;
+  if ("mediaSession" in navigator) navigator.mediaSession.metadata = new MediaMetadata({title: t.title, artist: "計概自學・通勤音檔", album: "數字系統"});
+  render();
+  if (autoplay) A.play().catch(() => {});
+}
+$("#tracks").addEventListener("click", (e) => { const li = e.target.closest("li[data-i]"); if (li) load(+li.dataset.i, true); });
+$("#play").onclick = () => { if (cur < 0) return load(0, true); A.paused ? A.play() : A.pause(); };
+$("#prev").onclick = () => load(Math.max(0, cur - 1), true);
+$("#next").onclick = () => load(Math.min(T.length - 1, cur + 1), true);
+$("#back10").onclick = () => { A.currentTime = Math.max(0, A.currentTime - 10); };
+$("#fwd10").onclick = () => { A.currentTime = Math.min(A.duration || 0, A.currentTime + 10); };
+$("#rate").onchange = () => { A.playbackRate = +$("#rate").value; st.rate = $("#rate").value; save(); };
+$("#auto").onchange = () => { st.auto = $("#auto").checked; save(); };
+$("#seek").oninput = () => { if (A.duration) A.currentTime = $("#seek").value / 100 * A.duration; };
+A.onplay = () => { $("#play").textContent = "⏸ 暫停"; };
+A.onpause = () => { $("#play").textContent = "▶ 播放"; };
+let lastSave = 0;
+A.ontimeupdate = () => {
+  $("#cur").textContent = fmt(A.currentTime); $("#dur").textContent = fmt(A.duration);
+  if (A.duration) $("#seek").value = A.currentTime / A.duration * 100;
+  const t = T[cur]; if (!t) return;
+  if (A.duration && A.currentTime / A.duration > 0.9 && !st.done[t.id]) { st.done[t.id] = true; save(); render(); }
+  if (Date.now() - lastSave > 3000) { st.pos[t.id] = A.currentTime; save(); lastSave = Date.now(); }
+};
+A.onended = () => { const t = T[cur]; st.pos[t.id] = 0; st.done[t.id] = true; save(); render(); if ($("#auto").checked && cur < T.length - 1) load(cur + 1, true); };
+if ("mediaSession" in navigator) {
+  navigator.mediaSession.setActionHandler("previoustrack", () => $("#prev").click());
+  navigator.mediaSession.setActionHandler("nexttrack", () => $("#next").click());
+  navigator.mediaSession.setActionHandler("seekbackward", () => $("#back10").click());
+  navigator.mediaSession.setActionHandler("seekforward", () => $("#fwd10").click());
+}
+if (st.rate) $("#rate").value = st.rate;
+if (st.auto === false) $("#auto").checked = false;
+const startAt = /^#(\d+)$/.test(location.hash) ? +location.hash.slice(1) - 1 : (st.last ?? -1);
+render();
+if (startAt >= 0) load(startAt, false);
+})();
+</script>
+</body>
+</html>
