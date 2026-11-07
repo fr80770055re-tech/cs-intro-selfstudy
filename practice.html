@@ -4,108 +4,137 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>練習與精熟</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Serif+TC:wght@700;900&display=swap">
 <link rel="stylesheet" href="assets/site.css">
 <style>
-.howto{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:14px 0}
-.howto div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:15px;line-height:1.65}
-.howto b{display:block;font-size:15.5px;margin-bottom:2px}
-.modes{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
-.next{background:var(--accent-soft);border-radius:12px;padding:14px 18px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;justify-content:space-between}
-.chapter{margin-top:30px}
-.chapter h2{margin:0 0 10px;font-size:19px}
-.skill{display:grid;grid-template-columns:1fr auto;gap:6px 14px;align-items:center;padding:12px 16px;border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-bottom:8px}
+.rules{list-style:none;padding:0;margin:14px 0 0;display:flex;flex-wrap:wrap;gap:6px 26px;font-size:15px;color:var(--muted)}
+.rules b{color:var(--text)}
+.today{margin:26px 0 8px;padding:22px 24px;border-radius:var(--r-lg);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
+.today .rec{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px 24px;align-items:center}
+.today .rec .head{font-family:var(--serif);font-weight:900;font-size:21px;line-height:1.4;margin:0}
+.today .rec .sub{color:var(--muted);font-size:15px;margin:2px 0 0}
+.today .rec .btn,.today .rec button{min-height:46px;font-size:16px;padding:10px 20px}
+.today .stats{display:flex;flex-wrap:wrap;gap:6px 26px;font-size:14.5px;color:var(--muted);margin:16px 0 0;padding-top:14px;border-top:1px solid var(--line)}
+.today .stats b{color:var(--text)}
+.today.due{background:var(--sign-soft);border-color:transparent}
+.modes{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0}
+.modes button .icon{color:var(--accent)}
+
+details.chapter{border-top:1px solid var(--line)}
+details.chapter:first-of-type{margin-top:36px}
+details.chapter > summary{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px 4px;cursor:pointer;list-style:none}
+details.chapter > summary::-webkit-details-marker{display:none}
+details.chapter > summary:hover .t{color:var(--accent)}
+details.chapter .node{width:36px;height:42px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:18px;background:var(--zero);color:var(--zero-text)}
+details.chapter.done .node{background:var(--one);color:var(--one-text)}
+details.chapter .node.serif{font-family:var(--serif);font-size:15px}
+details.chapter .t{font-family:var(--serif);font-weight:900;font-size:18px;line-height:1.4}
+details.chapter .t small{display:block;font-family:var(--sans);font-weight:400;font-size:13.5px;color:var(--muted)}
+details.chapter .cnt{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);white-space:nowrap}
+details.chapter .cnt .meter{width:70px}
+details.chapter .cnt::after{content:"";width:7px;height:7px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin:0 6px 4px 4px;transition:transform .2s}
+details.chapter[open] .cnt::after{transform:rotate(-135deg);margin-bottom:-2px}
+details.chapter .rows{padding:0 0 18px 54px}
+.skill{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:center;padding:12px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-bottom:8px}
 .skill .nm{font-weight:700}
 .skill .ds{font-size:14px;color:var(--muted);line-height:1.6}
-.skill .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
-.skill .acts a.small{font-size:14px}
+.skill .acts{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 .dots{display:inline-flex;gap:3px;vertical-align:middle}
-.dots i{width:10px;height:10px;border-radius:50%;background:var(--zero);display:inline-block}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--zero);display:inline-block}
 .dots i.on{background:var(--gold)}
 .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px;font-size:13px;color:var(--muted)}
 
 #play,#done{display:none}
 .playbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.qcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 24px}
-.qskill{font-size:13.5px;color:var(--accent);font-weight:700}
-.qprompt{font-size:21px;line-height:1.7;margin:8px 0 16px}
-.qprompt code{font-size:1.05em;background:var(--surface-2);padding:1px 6px;border-radius:5px}
+.qcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:24px 26px;box-shadow:var(--shadow)}
+.qskill{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;font-size:14px;color:var(--accent);font-weight:700}
+.qskill a{display:inline-flex;align-items:center;gap:4px;font-weight:400}
+.qskill a .icon{width:14px;height:14px}
+.qprompt{font-size:21px;line-height:1.75;margin:10px 0 18px}
+.qprompt code{font-size:1em;background:var(--surface-2);padding:1px 7px;border-radius:5px}
 .answer-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.answer-row input{flex:1 1 200px;max-width:340px}
-.choices{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
-.choices button{justify-content:flex-start;text-align:left;min-height:48px;font-size:16px;background:var(--bg)}
-.choices button.right{background:var(--ok-soft);border-color:var(--ok)}
-.choices button.wrong{background:var(--bad-soft);border-color:var(--bad)}
-.ovf{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0 2px;font-size:16px}
-.ovf label{display:flex;align-items:center;gap:6px;cursor:pointer;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
-.hintbox{margin-top:14px;border-left:3px solid var(--gold);padding:4px 0 4px 14px}
+.answer-row input{flex:1 1 220px;max-width:360px}
+.choices{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.choices button{justify-content:flex-start;text-align:left;min-height:50px;font-size:16px;background:var(--bg)}
+.choices button.right{background:var(--ok-soft);border-color:var(--ok);opacity:1}
+.choices button.wrong{background:var(--bad-soft);border-color:var(--bad);opacity:1}
+.ovf{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 2px;font-size:16px}
+.ovf label{display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 14px;border:1px solid var(--line-strong);border-radius:9px;background:var(--bg)}
+.ovf label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.hintbox{margin-top:16px;background:var(--surface-2);border-radius:var(--r);padding:8px 16px}
 .hintbox .h{margin:6px 0}
-.fb{margin-top:16px;border-radius:10px;padding:12px 16px}
+.fb{margin-top:18px;border-radius:var(--r);padding:14px 18px}
 .fb.ok{background:var(--ok-soft)}
 .fb.bad{background:var(--bad-soft)}
 .fb.invalid{background:var(--sign-soft)}
 .fb .t{font-weight:700;font-size:17px}
+.fb.ok .t{color:var(--ok)}.fb.bad .t{color:var(--bad)}
 .fb .ans{margin-top:4px}
 .sol{margin-top:12px}
-.sol summary{cursor:pointer;color:var(--accent);font-weight:600}
+.sol summary{cursor:pointer;color:var(--accent);font-weight:700}
 .sol ol{padding-left:1.3em;margin:8px 0}
 .sol li{margin:6px 0}
-.event{margin-top:10px;font-weight:700}
+.event{display:flex;align-items:center;gap:8px;margin-top:10px;font-weight:700}
+.event .icon{color:var(--gold)}
 table.calc{border-collapse:collapse;font-family:var(--mono);font-size:15px;margin:6px 0;display:block;overflow-x:auto}
-table.calc th{font-family:var(--sans);font-size:13px;color:var(--muted);font-weight:600;padding:2px 10px;text-align:left}
+table.calc th{font-family:var(--sans);font-size:13px;color:var(--muted);font-weight:700;padding:2px 10px;text-align:left}
 table.calc td{padding:2px 10px;white-space:nowrap}
 .grpchip{display:inline-flex;flex-direction:column;align-items:center;font-family:var(--mono);background:var(--surface-2);border-radius:8px;padding:2px 10px;margin:2px}
 .grpchip small{color:var(--accent);font-weight:700}
 .after{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.tip{margin-top:14px}
 
 .sumtable{width:100%;border-collapse:collapse;margin:12px 0;font-size:15.5px}
-.sumtable th,.sumtable td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left}
-.big{font-size:40px;font-weight:700;line-height:1.1}
+.sumtable th,.sumtable td{border-bottom:1px solid var(--line);padding:8px;text-align:left}
+.big{font-family:var(--serif);font-size:56px;font-weight:900;line-height:1.1;margin:8px 0}
 
-details.tools{margin-top:40px}
+details.tools{margin-top:44px;border-top:1px solid var(--line);padding-top:14px}
 details.tools summary{cursor:pointer;color:var(--muted)}
 details.tools textarea{width:100%;min-height:80px;font-family:var(--mono);font-size:12px}
 
 #print{display:none}
 @media print{
-  body{background:#fff;color:#000;font-size:14pt}
+  body{background:#fff;color:#000;font-size:13pt}
   .topbar,#home,#play,#done{display:none!important}
+  .wrap{padding:0}
   #print{display:block!important;padding:0 8mm}
-  #print h1{font-size:18pt}
-  #print ol li{margin:0 0 14mm}
-  #print .key{page-break-before:always}
+  #print h1{font-size:18pt;font-family:serif}
+  #print ol li{margin:0 0 12mm;break-inside:avoid}
+  #print .key{break-before:page}
   #print .key li{margin:0 0 3mm}
   #print code{font-family:Consolas,monospace}
 }
 @media (max-width:640px){
-  .qcard{padding:16px}
+  .qcard{padding:18px 16px}
   .qprompt{font-size:19px}
+  .today{padding:18px}
+  .today .rec{grid-template-columns:1fr}
   .skill{grid-template-columns:1fr}
   .skill .acts{justify-content:flex-start}
+  details.chapter .rows{padding-left:0}
+  details.chapter .cnt .meter{display:none}
 }
 </style>
 </head>
 <body>
 <header class="topbar">
-  <a class="logo" href="index.html">計概自學・數字系統</a>
-  <nav><a href="index.html">首頁</a><a href="lesson.html">講義</a><a href="practice.html" aria-current="page">練習</a><a href="audio.html">通勤音檔</a></nav>
+  <a class="logo" href="index.html" aria-label="計概自學・資料表示 首頁"><span class="logo-mark" aria-hidden="true"><i class="on"></i><i></i><i class="on"></i><i class="on"></i></span><span class="logo-text">計概自學・資料表示</span></a>
+  <nav aria-label="主選單"><a href="index.html">首頁</a><a href="lesson.html"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#book"/></svg>講義</a><a href="practice.html" aria-current="page"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#pencil"/></svg>練習</a><a href="audio.html"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>音檔</a></nav>
 </header>
 
-<div class="wrap">
+<main class="wrap">
 <!-- ===== 列表 ===== -->
 <section id="home">
-  <div class="kicker">練習與精熟</div>
-  <h1>把「看懂」變成「會算」</h1>
-  <p class="lead">題目每次都是隨機產生的，可以無限練習。答錯時，系統會告訴你錯在哪一步。</p>
+  <h1>練習與精熟</h1>
+  <p class="lead">題目每次都是隨機產生的，可以一直練。答錯時，系統會告訴你錯在哪一步。</p>
+  <ul class="rules">
+    <li><b>精熟：</b>不看提示，連續答對 5 題。</li>
+    <li><b>複習：</b>精熟後第 1、3、7、14、30 天提醒；答錯就從 1 天後重來。</li>
+    <li><b>卡住了：</b>每題都有提示和「看講義」。</li>
+  </ul>
 
-  <div class="howto">
-    <div><b>① 先讀講義，再練習</b>每個題型旁邊都有「講義」連結，忘記方法就回去看。</div>
-    <div><b>② 連續答對 5 題＝精熟</b>不看提示、連續答對 5 題，就算精熟。用了提示的題目不列入計算。</div>
-    <div><b>③ 定期回來複習</b>精熟後，系統會在 1、3、7、14、30 天後提醒你複習。答錯會從 1 天後重新開始。</div>
-  </div>
-
-  <div class="grid cols-3" id="stats"></div>
-  <div class="modes" id="modes"></div>
-  <div class="next" id="next"></div>
+  <div class="today" id="today"></div>
 
   <div id="skilllist"></div>
 
@@ -113,17 +142,17 @@ details.tools textarea{width:100%;min-height:80px;font-family:var(--mono);font-s
     <summary>在其他裝置繼續／重設進度</summary>
     <p class="small muted">進度只存在這台裝置的瀏覽器裡。想換到手機繼續練習，請在這裡按「產生進度碼」，再到另一台裝置貼上並按「匯入」。</p>
     <div class="modes" style="margin:8px 0">
-      <button id="exp">產生進度碼</button><button id="imp">匯入進度碼</button><button id="rst">重設全部進度</button>
+      <button id="exp">產生進度碼</button><button id="imp">匯入進度碼</button><button id="rst" class="ghost">重設全部進度</button>
     </div>
-    <textarea id="code" placeholder="進度碼會出現在這裡；或把另一台裝置的進度碼貼在這裡" spellcheck="false"></textarea>
-    <p class="small" id="toolmsg"></p>
+    <textarea id="code" placeholder="進度碼會出現在這裡；或把另一台裝置的進度碼貼在這裡" spellcheck="false" aria-label="進度碼"></textarea>
+    <p class="small" id="toolmsg" role="status"></p>
   </details>
 </section>
 
 <!-- ===== 作答 ===== -->
 <section id="play">
   <div class="playbar">
-    <button class="ghost" id="back">← 回到列表</button>
+    <button class="ghost" id="back"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrow-left"/></svg>回到題型列表</button>
     <div id="progressinfo" class="small muted"></div>
   </div>
   <div class="qcard">
@@ -134,7 +163,7 @@ details.tools textarea{width:100%;min-height:80px;font-family:var(--mono);font-s
     <div id="feedback"></div>
     <div class="after" id="after"></div>
   </div>
-  <p class="small muted" style="margin-top:14px">小技巧：按 Enter 可以送出答案，再按一次 Enter 進入下一題。旁邊放一張紙算，效果最好。</p>
+  <p class="small muted tip">小技巧：按 Enter 可以送出答案，再按一次 Enter 進入下一題。旁邊放一張紙算，效果最好。</p>
 </section>
 
 <!-- ===== 結算 ===== -->
@@ -142,16 +171,19 @@ details.tools textarea{width:100%;min-height:80px;font-family:var(--mono);font-s
 
 <!-- ===== 列印 ===== -->
 <section id="print"></section>
-</div>
+</main>
 
 <script src="assets/progress.js"></script>
+<script src="assets/chapters.js"></script>
 <script src="assets/practice-skills.js"></script>
 <script>
 (function(){
 "use strict";
 const $ = (s) => document.querySelector(s);
 const P = window.Progress, SK = window.SKILLS, byId = Object.fromEntries(SK.map(s => [s.id, s]));
-const CH = {0: "第 0 章　開始之前", 1: "第 1 章　進位轉換", 2: "第 2 章　負數與溢位"};
+const CHS = window.CHAPTERS;
+const I = (id) => `<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#${id}"/></svg>`;
+const openState = {};
 const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const dots = (n) => `<span class="dots" aria-label="連續答對 ${n} / ${P.GOAL}">${Array.from({length: P.GOAL}, (_, i) => `<i class="${i < n ? "on" : ""}"></i>`).join("")}</span>`;
 
@@ -173,36 +205,41 @@ function badge(id){
 function renderHome(){
   const D = P.data, mastered = SK.filter(s => P.data.skills[s.id]?.mastered).length, due = dueList();
   const td = D.days[P.today()] || {n: 0, c: 0};
-  $("#stats").innerHTML = `
-    <div class="card stat"><div class="n">${mastered} / ${SK.length}</div><div class="l">已精熟的題型</div></div>
-    <div class="card stat"><div class="n">${due.length}</div><div class="l">今天該複習的題型</div></div>
-    <div class="card stat"><div class="n">${td.n} 題</div><div class="l">今天已練習${td.n ? `・答對 ${Math.round(td.c / td.n * 100)}%` : ""}</div></div>`;
-  $("#modes").innerHTML = `
-    <button class="${due.length ? "primary" : ""}" id="m-review" ${due.length ? "" : "disabled"}>今日複習${due.length ? `（${due.length} 種題型）` : "：目前沒有"}</button>
-    <button id="m-challenge">混合挑戰 10 題</button>
-    <button id="m-print">列印紙筆練習卷</button>`;
-  $("#m-review").onclick = () => startQueue("review");
+  const nextSkill = SK.find(s => !P.data.skills[s.id]?.mastered);
+  let rec;
+  if (due.length) rec = `<div><p class="head">今天有 ${due.length} 種題型該複習</p><p class="sub">先把快忘記的找回來，每種題型 2 題。</p></div><button class="primary" id="go-next">開始今日複習 ${I("arrow-right")}</button>`;
+  else if (nextSkill) rec = `<div><p class="head">建議下一步：${nextSkill.name}</p><p class="sub">${nextSkill.desc}</p></div><button class="primary" id="go-next">開始練習 ${I("arrow-right")}</button>`;
+  else rec = `<div><p class="head">全部題型都精熟了！</p><p class="sub">記得照提醒回來複習，也可以用混合挑戰測試自己。</p></div><button class="primary" id="go-next">混合挑戰 ${I("arrow-right")}</button>`;
+  $("#today").className = "today" + (due.length ? " due" : "");
+  $("#today").innerHTML = `<div class="rec">${rec}</div>
+    <div class="stats"><span>已精熟 <b>${mastered} / ${SK.length}</b> 種題型</span><span>今天練了 <b>${td.n}</b> 題${td.n ? `，答對 ${Math.round(td.c / td.n * 100)}%` : ""}</span>${due.length ? `<span>該複習 <b>${due.length}</b> 種</span>` : ""}</div>
+    <div class="modes">
+      <button id="m-challenge">${I("shuffle")}混合挑戰 10 題</button>
+      <button id="m-print">${I("printer")}列印紙筆練習卷</button>
+    </div>`;
+  $("#go-next").onclick = () => due.length ? startQueue("review") : nextSkill ? startSkill(nextSkill.id) : startQueue("challenge");
   $("#m-challenge").onclick = () => startQueue("challenge");
   $("#m-print").onclick = printSheet;
-  const nextSkill = SK.find(s => !P.data.skills[s.id]?.mastered);
-  $("#next").innerHTML = due.length
-    ? `<div><b>建議下一步：</b>先做今日複習，把快忘記的題型找回來。</div><button class="primary" id="go-next">開始複習</button>`
-    : nextSkill
-      ? `<div><b>建議下一步：</b>${nextSkill.name}<div class="small muted">${nextSkill.desc}</div></div><button class="primary" id="go-next">開始練習</button>`
-      : `<div><b>全部題型都精熟了！</b>記得照提醒回來複習；也可以用混合挑戰測試自己。</div><button class="primary" id="go-next">混合挑戰</button>`;
-  $("#go-next").onclick = () => due.length ? startQueue("review") : nextSkill ? startSkill(nextSkill.id) : startQueue("challenge");
   let h = "";
-  for (const ch of [0, 1, 2]) {
-    h += `<div class="chapter"><h2>${CH[ch]}</h2>`;
-    for (const s of SK.filter(x => x.ch === ch)) {
+  for (const c of CHS) {
+    const list = SK.filter(x => x.ch === c.n); if (!list.length) continue;
+    const mm = list.filter(s => P.data.skills[s.id]?.mastered).length, all = mm === list.length;
+    const active = list.some(s => ["learning", "due"].includes(P.status(s.id))) || (nextSkill && nextSkill.ch === c.n);
+    const open = openState[c.n] ?? active;
+    h += `<details class="chapter ${all ? "done" : ""}" data-ch="${c.n}" ${open ? "open" : ""}><summary>
+      <span class="node ${c.n === 9 ? "serif" : ""}" aria-hidden="true">${c.n === 9 ? "綜" : c.n}</span>
+      <span class="t">${c.n === 9 ? "" : `第 ${c.n} 章　`}${c.title}<small>${list.length} 種題型</small></span>
+      <span class="cnt"><span class="meter ok"><i style="width:${mm / list.length * 100}%"></i></span>${mm}/${list.length} 精熟</span></summary><div class="rows">`;
+    for (const s of list) {
       const st = P.data.skills[s.id];
       h += `<div class="skill"><div><div class="nm">${s.name}</div><div class="ds">${s.desc}</div>
         <div class="meta">${badge(s.id)}${st && !st.mastered ? dots(Math.min(st.streak, P.GOAL)) : ""}${st?.attempts ? `<span>練過 ${st.attempts} 題・答對 ${Math.round(st.correct / st.attempts * 100)}%</span>` : ""}</div></div>
-        <div class="acts"><a class="small" href="${s.lesson}">講義</a><button data-skill="${s.id}" class="${P.status(s.id) === "due" ? "primary" : ""}">練習</button></div></div>`;
+        <div class="acts"><a class="btn ghost" href="${s.lesson}">講義</a><button data-skill="${s.id}" class="${P.status(s.id) === "due" || s === nextSkill ? "primary" : ""}">練習</button></div></div>`;
     }
-    h += `</div>`;
+    h += `</div></details>`;
   }
   $("#skilllist").innerHTML = h;
+  $("#skilllist").querySelectorAll("details.chapter").forEach(d => d.addEventListener("toggle", () => { openState[d.dataset.ch] = d.open; }));
 }
 $("#skilllist").addEventListener("click", (e) => { const b = e.target.closest("[data-skill]"); if (b) startSkill(b.dataset.skill); });
 
@@ -230,7 +267,7 @@ function nextQ(){
   for (let k = 0; k < 6; k++) { q = sk.gen(P.level(id)); if (q.prompt !== lastPrompt[id]) break; }
   lastPrompt[id] = q.prompt;
   answered = false; hinted = false; hintIdx = 0;
-  $("#qskill").innerHTML = `${sk.name}　<a class="small" href="${sk.lesson}" target="_blank" rel="noopener">看講義 ↗</a>`;
+  $("#qskill").innerHTML = `<span>${sk.name}</span><a class="small" href="${sk.lesson}" target="_blank" rel="noopener">看講義${I("external")}<span class="sr">（開新分頁）</span></a>`;
   $("#qprompt").innerHTML = q.prompt;
   $("#hints").hidden = true; $("#hints").innerHTML = ""; $("#feedback").innerHTML = ""; $("#after").innerHTML = "";
   updateBar();
@@ -284,7 +321,7 @@ function submit(ans, choiceBtn){
   }
   const sol = `<ol>${q.steps.map(s => `<li>${s}</li>`).join("")}</ol>`;
   let evMsg = "";
-  if (ev === "mastered") evMsg = `<div class="event">🎉 你已經精熟「${byId[id].name}」！系統會在明天提醒你複習一次。</div>`;
+  if (ev === "mastered") evMsg = `<div class="event">${I("sparkle")}你已經精熟「${byId[id].name}」！系統會在明天提醒你複習一次。</div>`;
   if (ev === "reviewed") evMsg = `<div class="event">複習完成 ✓ 下次複習在 ${P.daysUntil(P.skill(id).due)} 天後。</div>`;
   if (ev === "lapse") evMsg = `<div class="event">這個題型有點生疏了，明天會再請你複習。</div>`;
   if (r.ok) {
@@ -313,11 +350,11 @@ function finish(){
   const per = {};
   for (const r of R) { const p = per[r.id] || (per[r.id] = {n: 0, c: 0}); p.n++; if (r.ok) p.c++; }
   const weak = Object.entries(per).filter(([, p]) => p.c < p.n).map(([id]) => id);
-  $("#done").innerHTML = `<div class="kicker">${session.mode === "review" ? "今日複習" : "混合挑戰"}・結果</div>
+  $("#done").innerHTML = `<h1>${session.mode === "review" ? "今日複習" : "混合挑戰"}結果</h1>
     <div class="big">${ok} / ${R.length}</div>
     <p class="lead">${ok === R.length ? "全部答對，太棒了！" : ok / R.length >= 0.7 ? "表現不錯！把錯的題型再練一下就更穩了。" : "沒關係，找出不熟的題型，回去看講義再練習。"}</p>
     <table class="sumtable"><tr><th>題型</th><th>答對</th><th></th></tr>
-    ${Object.entries(per).map(([id, p]) => `<tr><td>${byId[id].name}</td><td>${p.c} / ${p.n}</td><td>${p.c < p.n ? `<button data-skill="${id}">加強練習</button> <a class="small" href="${byId[id].lesson}">講義</a>` : "✓"}</td></tr>`).join("")}</table>
+    ${Object.entries(per).map(([id, p]) => `<tr><td>${byId[id].name}</td><td>${p.c} / ${p.n}</td><td>${p.c < p.n ? `<button data-skill="${id}">加強練習</button> <a class="small" href="${byId[id].lesson}">講義</a>` : `<span style="color:var(--ok)">全對</span>`}</td></tr>`).join("")}</table>
     <div class="modes"><button class="primary" id="d-home">回到列表</button>${weak.length ? `<button id="d-weak">只練錯的題型</button>` : ""}</div>`;
   $("#done").querySelectorAll("[data-skill]").forEach(b => b.onclick = () => startSkill(b.dataset.skill));
   $("#d-home").onclick = goHome;
@@ -329,9 +366,12 @@ $("#back").onclick = goHome;
 
 /* ---------- 列印練習卷 ---------- */
 function printSheet(){
-  const ids = SK.filter(s => s.id !== "concepts").map(s => s.id);
-  const qs = ids.map(id => ({id, q: byId[id].gen(2)}));
-  $("#print").innerHTML = `<h1>計概・數字系統 紙筆練習卷</h1><p>日期：＿＿＿＿＿＿　建議時間：25 分鐘。請在題目下方寫出計算過程。</p>
+  const tried = SK.filter(s => s.id !== "concepts" && P.data.skills[s.id]?.attempts);
+  const curCh = (SK.find(s => !P.data.skills[s.id]?.mastered) || SK[SK.length - 1]).ch;
+  let pool = tried.length >= 6 ? tried : SK.filter(s => s.id !== "concepts" && s.ch <= Math.max(curCh, 2));
+  if (pool.length > 16) pool = shuffle(pool).slice(0, 16).sort((a, b) => SK.indexOf(a) - SK.indexOf(b));
+  const qs = pool.map(s => ({id: s.id, q: s.gen(2)}));
+  $("#print").innerHTML = `<h1>計概・資料表示　紙筆練習卷</h1><p>日期：＿＿＿＿＿＿　共 ${qs.length} 題，建議時間 ${Math.round(qs.length * 2)} 分鐘。請在題目下方寫出計算過程。題目依你練過的題型挑選。</p>
     <ol>${qs.map(x => `<li>${x.q.prompt.replace(/寫出結果的.*$/, "寫出結果的位元，並判斷有沒有溢位。")}</li>`).join("")}</ol>
     <div class="key"><h1>解答</h1><ol>${qs.map(x => `<li>${x.q.answer}</li>`).join("")}</ol></div>`;
   window.print();

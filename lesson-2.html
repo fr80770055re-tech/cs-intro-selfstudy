@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>講義 ②　更多資料表示</title>
+<meta name="description" content="計概自學講義第 3～5 章：位元寬度與位元運算、浮點數 IEEE 754、文字圖片與聲音的表示方式。">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Serif+TC:wght@700;900&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/lesson.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="logo" href="index.html" aria-label="計概自學・資料表示 首頁"><span class="logo-mark" aria-hidden="true"><i class="on"></i><i></i><i class="on"></i><i class="on"></i></span><span class="logo-text">計概自學・資料表示</span></a>
+  <nav aria-label="主選單"><a href="index.html">首頁</a><a href="lesson.html" aria-current="page"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#book"/></svg>講義</a><a href="practice.html"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#pencil"/></svg>練習</a><a href="audio.html"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>音檔</a></nav>
+</header>
+<div class="layout">
+<nav class="toc" aria-label="目錄"><details open><summary>目錄<span class="cur"></span></summary><div class="links">
+  <div class="part">講義 ①　整數</div>
+  <a href="lesson.html#ch0" class="ch other">第 0 章　開始之前</a>
+  <a href="lesson.html#ch1" class="ch other">第 1 章　進位轉換</a>
+  <a href="lesson.html#ch2" class="ch other">第 2 章　負數與溢位</a>
+  <div class="part">講義 ②　更多資料表示</div>
+  <a href="#start" class="ch">這份講義要學什麼</a>
+  <a href="#ch3" class="ch">第 3 章　位元寬度與位元運算</a>
+  <a href="#ch3-1" class="sub">3.1 無號數與有號數</a>
+  <a href="#ch3-2" class="sub">3.2 擴充位元寬度</a>
+  <a href="#ch3-3" class="sub">3.3 邏輯運算</a>
+  <a href="#ch3-4" class="sub">3.4 移位</a>
+  <a href="#ch3-ex" class="sub">例題</a>
+  <a href="#ch4" class="ch">第 4 章　浮點數</a>
+  <a href="#ch4-1" class="sub">4.1 為什麼需要浮點數</a>
+  <a href="#ch4-2" class="sub">4.2 二進位的科學記號</a>
+  <a href="#ch4-3" class="sub">4.3 偏移表示法</a>
+  <a href="#ch4-4" class="sub">4.4 IEEE 754 單精度</a>
+  <a href="#ch4-5" class="sub">4.5 浮點數的極限</a>
+  <a href="#ch4-ex" class="sub">例題</a>
+  <a href="#ch5" class="ch">第 5 章　文字、圖片與聲音</a>
+  <a href="#ch5-1" class="sub">5.1 容量單位</a>
+  <a href="#ch5-2" class="sub">5.2 文字</a>
+  <a href="#ch5-3" class="sub">5.3 圖片</a>
+  <a href="#ch5-4" class="sub">5.4 聲音</a>
+  <a href="#ch5-5" class="sub">5.5 壓縮</a>
+  <a href="#ch5-ex" class="sub">例題</a>
+  </div></details></nav>
+
+<main>
+<h1>講義 ②　更多資料表示</h1>
+<p class="lead">講義 ① 學會了用 0 和 1 表示整數。這一份往外延伸：同一串位元還能怎麼解讀、怎麼運算，小數怎麼存，文字、圖片、聲音又是怎麼變成 0 和 1 的。</p>
+
+<section id="start">
+<h2 class="minor">這份講義要學什麼</h2>
+<ul>
+  <li><strong>第 3 章</strong>延續第 2 章：同一串位元當作「無號數」或「有號數」會有不同的值，位元寬度怎麼加長，以及電腦最基本的位元運算。</li>
+  <li><strong>第 4 章</strong>延續 1.4 節的小數轉換：電腦怎麼用科學記號存小數，以及為什麼 <code>0.1 + 0.2</code> 不會剛好等於 <code>0.3</code>。</li>
+  <li><strong>第 5 章</strong>把前面學的全部用上：文字、圖片、聲音怎麼變成數字，以及檔案大小怎麼算。</li>
+</ul>
+<div class="note">還沒讀講義 ① 的話，建議先讀完第 0～2 章，尤其是<strong>位權</strong>、<strong>十六進位</strong>和 <strong>2 補數</strong>，這份講義會一直用到。</div>
+</section>
+
+<!-- ============ 第 3 章 ============ -->
+<section id="ch3">
+<h2 class="chapter"><span class="no">第 3 章</span>位元寬度與位元運算</h2>
+<p class="lead">電腦不知道一串位元「代表什麼」，要看程式怎麼解讀它。這一章學同一串位元的兩種讀法、怎麼把位元寬度加長，以及直接對位元動手的運算。</p>
+
+<h3 id="ch3-1">3.1 無號數與有號數</h3>
+<p>第 2 章的 2 補數可以表示負數，但有些東西根本不會是負的，例如人數、像素的亮度、檔案大小。這時候不需要正負號，可以把<strong>所有位元都拿來表示大小</strong>，能表示的最大值就變成兩倍。</p>
+<div class="term"><span class="t">無號數（unsigned）</span>沒有正負號，每一位都照一般的位權計算。<em>n</em> 個位元的範圍是 0 ～ 2<sup>n</sup> − 1。8 位元的範圍是 0 ～ 255。</div>
+<div class="term"><span class="t">有號數（signed）</span>可以表示負數的整數。現在的電腦都用 2 補數，<em>n</em> 個位元的範圍是 −2<sup>n−1</sup> ～ 2<sup>n−1</sup> − 1。8 位元的範圍是 −128 ～ +127。</div>
+<p>重點來了：<strong>同一串位元，用不同的方式解讀，會得到不同的值。</strong>例如 8 位元的 <code>11111111</code>：</p>
+<ul>
+<li>當作無號數：128 ＋ 64 ＋ 32 ＋ 16 ＋ 8 ＋ 4 ＋ 2 ＋ 1 ＝ <strong>255</strong></li>
+<li>當作有號數（2 補數）：最高位元的位權當作負的，−128 ＋ 127 ＝ <strong>−1</strong></li>
+</ul>
+<p>兩種讀法的差別只在最高位元：無號數把它當作 ＋2<sup>n−1</sup>，有號數把它當作 −2<sup>n−1</sup>。所以<strong>最高位元是 0 的時候，兩種讀法的值一樣；最高位元是 1 的時候，兩者剛好差 2<sup>n</sup></strong>（8 位元就是差 256：255 − 256 ＝ −1）。</p>
+
+<h3 id="ch3-2">3.2 擴充位元寬度：零延伸與符號延伸</h3>
+<p>有時候要把一個 4 位元的數放進 8 位元的空間，例如把一個小變數複製到大變數。左邊多出來的位元要填什麼？要看它是哪一種數：</p>
+<div class="term"><span class="t">零延伸（zero extension）</span>用在<strong>無號數</strong>：左邊全部補 0。就像十進位的 7 寫成 007，值不變。</div>
+<div class="term"><span class="t">符號延伸（sign extension）</span>用在<strong>有號數</strong>：左邊全部補「原本的最高位元」。正數補 0、負數補 1，值才會不變。</div>
+<p>例：4 位元的 <code>1011</code>。</p>
+<ul>
+<li>如果它是無號數（代表 11）→ 零延伸成 8 位元：<code>0000 1011</code>，還是 11。</li>
+<li>如果它是有號數（代表 −5）→ 符號延伸成 8 位元：<code>1111 1011</code>，用 2 補數讀：−128 ＋ 123 ＝ −5，還是 −5。</li>
+</ul>
+<div class="warnbox">有號的負數如果錯用零延伸，<code>1011</code>（−5）會變成 <code>0000 1011</code>（＋11），正負號整個不見了。</div>
+
+<div class="widget" id="ext">
+  <div class="wtitle">互動：同一串位元的兩種讀法</div>
+  <p class="whint">點方塊切換 0／1。看看同一串位元當作無號數、有號數各是多少，以及加長位元寬度時兩種延伸方法的差別。</p>
+  <div class="controls">
+    <label>位元寬度<select id="ext-w"><option value="4" selected>4 位元 → 擴充成 8 位元</option><option value="8">8 位元 → 擴充成 16 位元</option></select></label>
+    <label>直接輸入位元<input type="text" id="ext-in" value="1011" autocomplete="off" spellcheck="false" inputmode="numeric"></label>
+  </div>
+  <div id="ext-bits"></div>
+  <div id="ext-out"></div>
+</div>
+
+<h3 id="ch3-3">3.3 邏輯運算：AND、OR、XOR、NOT</h3>
+<p>除了加減法，電腦還能對位元做<strong>邏輯運算</strong>。把 1 想成「是／真」、0 想成「否／假」：</p>
+<div class="tablewrap"><table class="truth">
+<tr><th>A</th><th>B</th><th>A AND B<br><small>兩個都是 1</small></th><th>A OR B<br><small>至少一個是 1</small></th><th>A XOR B<br><small>兩個不一樣</small></th></tr>
+<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>0</td><td>1</td><td>0</td><td class="on">1</td><td class="on">1</td></tr>
+<tr><td>1</td><td>0</td><td>0</td><td class="on">1</td><td class="on">1</td></tr>
+<tr><td>1</td><td>1</td><td class="on">1</td><td class="on">1</td><td>0</td></tr>
+</table></div>
+<p><strong>NOT</strong> 只需要一個輸入：0 變 1、1 變 0。你已經見過它了，就是第 2 章的「1 補數」。所以 2 補數也可以說成「NOT 再加 1」。</p>
+<p>這種表叫<b class="k">真值表</b>（truth table），列出所有輸入組合和對應的輸出。對一整串位元做邏輯運算時，<strong>每一欄各算各的，不會進位</strong>：</p>
+<div class="formula">　　0110 1100<br>AND 0000 1111<br>──────────<br>　　0000 1100</div>
+<p>這些運算在實務上有固定的用途，常被稱為<b class="k">遮罩</b>（mask）：</p>
+<div class="tablewrap"><table class="plain">
+<tr><th>想做的事</th><th>用什麼</th><th>遮罩怎麼設</th><th>原理</th></tr>
+<tr><td>只保留某幾位，其他清成 0</td><td>AND</td><td>要保留的位置放 1</td><td>x AND 1 ＝ x，x AND 0 ＝ 0</td></tr>
+<tr><td>把某幾位設成 1</td><td>OR</td><td>要設定的位置放 1</td><td>x OR 1 ＝ 1，x OR 0 ＝ x</td></tr>
+<tr><td>把某幾位反轉</td><td>XOR</td><td>要反轉的位置放 1</td><td>x XOR 1 ＝ NOT x，x XOR 0 ＝ x</td></tr>
+</table></div>
+
+<div class="widget" id="logic">
+  <div class="wtitle">互動：位元邏輯運算</div>
+  <p class="whint">點 A、B 的方塊切換位元，選一種運算。也可以按下面的「常見用法」看遮罩怎麼用。</p>
+  <div class="opbtns" id="logic-ops" role="group" aria-label="選擇運算">
+    <button data-op="AND" aria-pressed="true">AND</button><button data-op="OR" aria-pressed="false">OR</button><button data-op="XOR" aria-pressed="false">XOR</button><button data-op="NOT" aria-pressed="false">NOT（只看 A）</button>
+  </div>
+  <div id="logic-grid" style="margin-top:14px"></div>
+  <div class="step-msg" id="logic-msg" style="margin-top:12px"></div>
+  <div class="row small" style="margin-top:8px"><span class="muted">常見用法：</span>
+    <button class="loadbtn" data-preset="mask">只保留右邊 4 位</button>
+    <button class="loadbtn" data-preset="set">把最右邊一位設成 1</button>
+    <button class="loadbtn" data-preset="flip">全部反轉</button>
+  </div>
+</div>
+
+<h3 id="ch3-4">3.4 移位（shift）</h3>
+<p>移位就是把整串位元往左或往右推。十進位的數字往左移一位（後面補 0），值會乘以 10；二進位往左移一位，值就<strong>乘以 2</strong>。</p>
+<div class="term"><span class="t">左移（shift left）</span>全部往左移，右邊空出來的補 0，最左邊被擠出去的位元丟掉。左移 1 位 ＝ ×2，左移 <em>k</em> 位 ＝ ×2<sup>k</sup>（前提是沒有把重要的位元擠掉）。</div>
+<div class="term"><span class="t">邏輯右移（logical shift right）</span>全部往右移，左邊空出來的<strong>補 0</strong>，最右邊被擠出去的丟掉。用在無號數：右移 1 位 ＝ ÷2（捨去餘數）。</div>
+<div class="term"><span class="t">算術右移（arithmetic shift right）</span>全部往右移，左邊空出來的<strong>補原本的最高位元</strong>（就像符號延伸）。用在有號數，負數右移後還是負數：右移 1 位 ＝ ÷2 再往下取整。</div>
+<p>例：8 位元的 <code>11111010</code>（有號數是 −6）。</p>
+<ul>
+<li>邏輯右移 1 位 → <code>01111101</code> ＝ 125。左邊補 0，負數變成一個很大的正數，對有號數來說是錯的。</li>
+<li>算術右移 1 位 → <code>11111101</code> ＝ −3。左邊補 1，−6 ÷ 2 ＝ −3，正確。</li>
+</ul>
+<div class="note">為什麼要學移位？因為對電腦來說，移位比乘除法快得多。程式裡的 <code>x * 8</code> 常會被自動換成「左移 3 位」。</div>
+
+<div class="widget" id="shift">
+  <div class="wtitle">互動：移位</div>
+  <p class="whint">點方塊設定位元，再按移位按鈕。金色框是新補進來的位元，虛線方塊是被擠出去的位元。</p>
+  <div class="controls">
+    <label>直接輸入 8 位元<input type="text" id="shift-in" value="00010110" autocomplete="off" spellcheck="false" inputmode="numeric"></label>
+  </div>
+  <div id="shift-bits"></div>
+  <div class="step-ctrl">
+    <button data-sh="L">← 左移</button><button data-sh="LR">邏輯右移 →</button><button data-sh="AR">算術右移 →</button><button data-sh="reset" class="ghost">還原</button>
+  </div>
+  <div id="shift-log" class="step-msg" style="margin-top:12px"></div>
+</div>
+
+<div class="summary"><h4>第 3 章重點</h4>
+<ul>
+<li>同一串位元，當<strong>無號數</strong>（0 ～ 2<sup>n</sup>−1）或<strong>有號數</strong>（2 補數）解讀，值可能不同；最高位元是 1 時兩者差 2<sup>n</sup>。</li>
+<li>加長位元寬度：無號數用<strong>零延伸</strong>（補 0），有號數用<strong>符號延伸</strong>（補最高位元）。</li>
+<li>AND：都 1 才 1；OR：有 1 就 1；XOR：不同才 1；NOT：反轉。每一欄各算各的，不進位。</li>
+<li>遮罩：AND 保留、OR 設成 1、XOR 反轉。</li>
+<li>左移 1 位 ＝ ×2；邏輯右移補 0（無號數 ÷2）；算術右移補最高位元（有號數 ÷2）。</li>
+</ul></div>
+
+<h3 id="ch3-ex">第 3 章例題</h3>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">1.</b>8 位元的 <code>10000001</code>，當作無號數是多少？當作有號數（2 補數）是多少？</p>
+<p>無號數：128 ＋ 1 ＝ <strong>129</strong>。有號數：−128 ＋ 1 ＝ <strong>−127</strong>。兩者剛好差 256。</p>
+<button class="loadbtn" data-load='[["ext-w","8"],["ext-in","10000001"]]' data-goto="ext">丟進元件驗算</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">2.</b>4 位元有號數 <code>1110</code>（−2）擴充成 8 位元，要寫成什麼？</p>
+<p>有號數用符號延伸，最高位元是 1，左邊補四個 1：<strong><code>11111110</code></strong>，讀回來是 −128 ＋ 126 ＝ −2。</p>
+<button class="loadbtn" data-load='[["ext-w","4"],["ext-in","1110"]]' data-goto="ext">丟進元件驗算</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">3.</b>計算 <code>1100 1010 AND 0000 1111</code>、<code>1100 1010 OR 0000 1111</code>、<code>1100 1010 XOR 0000 1111</code>。</p>
+<p>AND：右邊 4 位保留、左邊清成 0 → <strong><code>0000 1010</code></strong>。<br>
+OR：右邊 4 位全部設成 1 → <strong><code>1100 1111</code></strong>。<br>
+XOR：右邊 4 位反轉、左邊不變 → <strong><code>1100 0101</code></strong>。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">4.</b>8 位元無號數 <code>00001101</code>（13）左移 2 位，結果是什麼？代表多少？</p>
+<p>往左推 2 格、右邊補兩個 0：<strong><code>00110100</code></strong> ＝ 52。剛好是 13 × 2² ＝ 13 × 4。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">5.</b>8 位元有號數 <code>10010000</code>（−112）分別做邏輯右移 1 位、算術右移 1 位，結果各是多少？</p>
+<p>邏輯右移（補 0）：<code>01001000</code> ＝ <strong>72</strong>，正負號不見了。<br>
+算術右移（補最高位元 1）：<code>11001000</code> ＝ −128 ＋ 72 ＝ <strong>−56</strong>，剛好是 −112 ÷ 2。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">6.</b>某個數 x 和自己做 XOR，結果是什麼？為什麼？</p>
+<p>每一欄的兩個位元都一樣，「不一樣才是 1」，所以全部是 0。<strong>x XOR x ＝ 0</strong>。組合語言常用這招把變數清成 0。</p>
+</details>
+<div class="gopractice"><b>讀完了？去練習：</b><a href="practice.html#skill=unsRead">無號數與有號數</a><a href="practice.html#skill=signExt">零延伸與符號延伸</a><a href="practice.html#skill=bitwise">AND／OR／XOR</a><a href="practice.html#skill=shift">移位</a><a href="audio.html#9"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>聽第 9 集複習</a></div>
+</section>
+
+<!-- ============ 第 4 章 ============ -->
+<section id="ch4">
+<h2 class="chapter"><span class="no">第 4 章</span>浮點數</h2>
+<p class="lead">到目前為止，位元寬度固定時，能表示的數字範圍很小。這一章學電腦怎麼用「二進位的科學記號」存很大、很小的數和小數。這是計概考試的必考題。</p>
+
+<h3 id="ch4-1">4.1 為什麼需要浮點數</h3>
+<p>32 位元的 2 補數整數，最大大約是 21 億。但科學和工程常常需要更大或更小的數：光速約 300,000,000 公尺／秒，電子的質量約 0.000…（小數點後 30 個 0）…911 公斤。如果每一位都老老實實存下來，需要非常多位元。</p>
+<p>人類的解法是<b class="k">科學記號</b>：把數字寫成「一個不大的數 × 10 的幾次方」。</p>
+<div class="formula">300,000,000 ＝ 3.0 × 10<sup>8</sup><br>0.00000625 ＝ 6.25 × 10<sup>−6</sup></div>
+<p>只要記住「有效數字」和「次方」，就能表示非常大或非常小的數。小數點的位置可以隨著次方「浮動」，所以叫<strong>浮點數</strong>（floating-point number）。</p>
+
+<h3 id="ch4-2">4.2 二進位的科學記號：正規化</h3>
+<p>電腦用的是二進位，所以要寫成「1.xxx × <strong>2</strong> 的幾次方」。做法：先把十進位轉成二進位（第 1 章學過），再把小數點移到<strong>最左邊的 1 後面</strong>。</p>
+<div class="term"><span class="t">正規化（normalization）</span>把二進位數寫成 1.xxxx × 2<sup>e</sup> 的形式，小數點前面<strong>剛好只有一個 1</strong>。小數點往左移幾格，e 就是正幾；往右移幾格，e 就是負幾。</div>
+<p>例：</p>
+<ul>
+<li>6.25 → 二進位 <code>110.01</code> → 小數點往左移 2 格 → <code>1.1001 × 2<sup>2</sup></code></li>
+<li>0.375 → 二進位 <code>0.011</code> → 小數點往右移 2 格 → <code>1.1 × 2<sup>−2</sup></code></li>
+<li>13 → 二進位 <code>1101</code>（也就是 <code>1101.0</code>）→ 往左移 3 格 → <code>1.101 × 2<sup>3</sup></code></li>
+</ul>
+<p>正規化後，小數點前面<strong>一定是 1</strong>（除了 0 這個數以外）。既然一定是 1，就不必存它，可以省下一個位元。這個沒存起來的 1 叫做<b class="k">隱藏位元</b>（hidden bit）。</p>
+
+<h3 id="ch4-3">4.3 偏移表示法（excess／bias）</h3>
+<p>次方 e 可能是正的也可能是負的。浮點數不用 2 補數存它，而是用另一種方法：<strong>先加上一個固定的數，再用無號數存起來</strong>。</p>
+<div class="term"><span class="t">偏移表示法（excess notation，又稱 biased notation、超額表示法）</span>存起來的值 ＝ 實際的值 ＋ 偏移量（bias）。讀回來時再減掉偏移量。<em>n</em> 個位元通常用 2<sup>n−1</sup> 或 2<sup>n−1</sup> − 1 當偏移量。</div>
+<p>先看一個小例子：4 位元、偏移量 8（課本常叫它 excess-8）。存的時候加 8，讀的時候減 8：</p>
+<div class="tablewrap"><table class="plain mono">
+<tr><th>存的位元</th><td>0000</td><td>0001</td><td>0010</td><td>…</td><td>0111</td><td>1000</td><td>1001</td><td>…</td><td>1111</td></tr>
+<tr><th>無號數</th><td>0</td><td>1</td><td>2</td><td>…</td><td>7</td><td>8</td><td>9</td><td>…</td><td>15</td></tr>
+<tr><th>代表（減 8）</th><td>−8</td><td>−7</td><td>−6</td><td>…</td><td>−1</td><td>0</td><td>1</td><td>…</td><td>7</td></tr>
+</table></div>
+<p>好處是：<strong>位元越大，代表的值就越大</strong>，比較大小時可以直接當作無號數比，不必管正負號。IEEE 754 單精度的指數用 8 位元、偏移量 <strong>127</strong>：實際指數 2 存成 2 ＋ 127 ＝ 129 ＝ <code>10000001</code>。</p>
+
+<h3 id="ch4-4">4.4 IEEE 754 單精度浮點數</h3>
+<p>現在幾乎所有電腦都照 <b class="k">IEEE 754</b> 這個標準存浮點數。最常考的是 32 位元的<strong>單精度</strong>（single precision，程式裡的 <code>float</code>），分成三段：</p>
+<div class="layoutbar" aria-hidden="true"><span class="s">S</span><span class="e">指數 E（8 位元）</span><span class="m">尾數 M（23 位元）</span></div>
+<div class="tablewrap"><table class="plain">
+<tr><th>欄位</th><th>位元數</th><th>存什麼</th></tr>
+<tr><td style="color:var(--sign);font-weight:700">符號 S（sign）</td><td>1</td><td>0 是正、1 是負</td></tr>
+<tr><td style="color:var(--exp);font-weight:700">指數 E（exponent）</td><td>8</td><td>實際指數 ＋ 127（偏移表示法）</td></tr>
+<tr><td style="color:var(--accent);font-weight:700">尾數 M（mantissa／fraction）</td><td>23</td><td>正規化後「1.」後面的部分，不足 23 位右邊補 0</td></tr>
+</table></div>
+<p>讀回來的公式：</p>
+<div class="formula">值 ＝ (−1)<sup class="s">S</sup> × <span class="m">1.M</span> × 2<sup class="e">E − 127</sup></div>
+<h4>十進位 → IEEE 754 的步驟（例：−6.25）</h4>
+<ol>
+<li><strong>符號：</strong>負數，S ＝ <code>1</code>。</li>
+<li><strong>轉二進位：</strong>6.25 ＝ <code>110.01</code>（6 ＝ 110，0.25 ＝ .01）。</li>
+<li><strong>正規化：</strong><code>1.1001 × 2<sup>2</sup></code>，實際指數 e ＝ 2。</li>
+<li><strong>指數加偏移：</strong>E ＝ 2 ＋ 127 ＝ 129 ＝ <code>10000001</code>。</li>
+<li><strong>尾數：</strong>取「1.」後面的 <code>1001</code>，右邊補 0 到 23 位：<code>10010000000000000000000</code>。</li>
+<li><strong>組合：</strong><code>1 10000001 10010000000000000000000</code>，每 4 位一組寫成十六進位：<strong><code>C0C80000</code></strong>。</li>
+</ol>
+<p>反過來讀也是同樣的步驟倒著做：拆出 S、E、M → 實際指數 ＝ E − 127 → 在 M 前面補回「1.」 → 把小數點移回去 → 轉十進位、加上正負號。</p>
+
+<div class="widget" id="fp">
+  <div class="wtitle">互動：IEEE 754 單精度轉換器</div>
+  <p class="whint">輸入一個十進位數，看它怎麼一步步變成 32 個位元。也可以直接點下面的位元方塊，看看改一位會變成什麼數。</p>
+  <div class="controls">
+    <label>十進位數<input type="text" id="fp-in" value="-6.25" autocomplete="off" spellcheck="false" inputmode="decimal"></label>
+    <div class="row small"><span class="muted">試試：</span><button class="loadbtn" data-load='[["fp-in","0.1"]]' data-goto="fp">0.1</button><button class="loadbtn" data-load='[["fp-in","13.5"]]' data-goto="fp">13.5</button><button class="loadbtn" data-load='[["fp-in","0.375"]]' data-goto="fp">0.375</button><button class="loadbtn" data-load='[["fp-in","1"]]' data-goto="fp">1</button></div>
+  </div>
+  <div id="fp-bits"></div>
+  <div id="fp-read"></div>
+  <div class="stepper" id="fp-steps"></div>
+</div>
+
+<h3 id="ch4-5">4.5 浮點數的極限</h3>
+<p>浮點數能表示很大的範圍，代價是<strong>精確度有限</strong>：</p>
+<ul>
+<li><strong>尾數只有 23 位</strong>，大約只能保留十進位 7 位有效數字。更多的位數會被<b class="k">捨入</b>（rounding）。</li>
+<li><strong>很多十進位小數換成二進位是無限循環小數。</strong>1.4 節學過，0.1 ＝ <code>0.0<span class="rep">0011</span></code><sub>2</sub>（0011 一直循環）。23 位放不下無限多位，只好存一個「非常接近 0.1」的值。在上面的轉換器輸入 0.1，可以看到實際存下來的是 0.100000001490116…。</li>
+<li>所以在大部分程式語言裡，<code>0.1 + 0.2</code> 會算出 <code>0.30000000000000004</code>，而不是剛好 0.3。這不是電腦算錯，是浮點數本來就有誤差。<strong>錢的計算</strong>通常不用浮點數，就是這個原因。</li>
+</ul>
+<h4>特殊值</h4>
+<p>指數全是 0 或全是 1 的組合被保留下來表示特殊的值：</p>
+<div class="tablewrap"><table class="plain">
+<tr><th>指數 E</th><th>尾數 M</th><th>代表</th></tr>
+<tr><td class="mono">全 0</td><td class="mono">全 0</td><td>0（依 S 有 +0 和 −0）</td></tr>
+<tr><td class="mono">全 1</td><td class="mono">全 0</td><td>無限大 ∞（依 S 有 +∞ 和 −∞），例如 1 ÷ 0</td></tr>
+<tr><td class="mono">全 1</td><td class="mono">不是全 0</td><td>NaN（Not a Number，不是數字），例如 0 ÷ 0</td></tr>
+</table></div>
+<p>另外還有 64 位元的<strong>倍精度</strong>（double precision，程式裡的 <code>double</code>）：1 位符號、11 位指數（偏移量 1023）、52 位尾數，大約有 15～16 位有效數字。觀念完全一樣，只是每一段比較長。</p>
+
+<div class="summary"><h4>第 4 章重點</h4>
+<ul>
+<li>浮點數＝二進位的科學記號：(−1)<sup>S</sup> × 1.M × 2<sup>E − 127</sup>。</li>
+<li>正規化：小數點移到最左邊的 1 後面；那個 1 不存（隱藏位元）。</li>
+<li>偏移表示法：存的值 ＝ 實際值 ＋ 偏移量。單精度指數的偏移量是 127。</li>
+<li>單精度 32 位元 ＝ 符號 1 ＋ 指數 8 ＋ 尾數 23。倍精度 64 位元 ＝ 1 ＋ 11 ＋ 52。</li>
+<li>很多小數（像 0.1）存不精準，所以浮點數會有誤差。</li>
+</ul></div>
+
+<h3 id="ch4-ex">第 4 章例題</h3>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">1.</b>用 excess-8（4 位元、偏移量 8）表示 −3。<code>1101</code> 代表多少？</p>
+<p>−3 ＋ 8 ＝ 5 ＝ <strong><code>0101</code></strong>。<code>1101</code> ＝ 13，13 − 8 ＝ <strong>5</strong>。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">2.</b>把 13.5 正規化成 1.xxx × 2<sup>e</sup> 的形式。</p>
+<p>13.5 ＝ <code>1101.1</code>，小數點往左移 3 格：<strong><code>1.1011 × 2<sup>3</sup></code></strong>。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">3.</b>把 13.5 用 IEEE 754 單精度表示，寫成十六進位。</p>
+<p>S ＝ 0；e ＝ 3，E ＝ 130 ＝ <code>10000010</code>；M ＝ <code>1011</code> 補 0 到 23 位。<br>
+<code>0 10000010 10110000000000000000000</code> → 4 位一組 <code>0100 0001 0101 1000 0000…</code> → <strong><code>41580000</code></strong>。</p>
+<button class="loadbtn" data-load='[["fp-in","13.5"]]' data-goto="fp">丟進轉換器看過程</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">4.</b>IEEE 754 單精度 <code>3EC00000</code> 代表哪個十進位數？</p>
+<p>展開成二進位：<code>0011 1110 1100 0000 …</code> → S ＝ <code>0</code>，E ＝ <code>01111101</code> ＝ 125，M ＝ <code>1000…</code>。<br>
+實際指數 125 − 127 ＝ −2。補回隱藏位元：<code>1.1 × 2<sup>−2</sup></code> ＝ <code>0.011</code> ＝ 0.25 ＋ 0.125 ＝ <strong>0.375</strong>。</p>
+<button class="loadbtn" data-load='[["fp-in","0.375"]]' data-goto="fp">丟進轉換器驗算</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">5.</b>為什麼 IEEE 754 不存正規化後小數點前面的 1？</p>
+<p>正規化後小數點前面一定是 1，存了也沒有資訊。省下這一位可以多存一位尾數，<strong>讓精確度多一個位元</strong>。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">6.</b>單精度的指數欄位 <code>10000000</code> 代表實際指數多少？<code>01111111</code> 呢？</p>
+<p><code>10000000</code> ＝ 128，128 − 127 ＝ <strong>1</strong>。<code>01111111</code> ＝ 127，127 − 127 ＝ <strong>0</strong>（也就是 × 2<sup>0</sup> ＝ × 1）。</p>
+</details>
+<div class="gopractice"><b>讀完了？去練習：</b><a href="practice.html#skill=bias">偏移表示法</a><a href="practice.html#skill=normalize">正規化</a><a href="practice.html#skill=fpEncode">十進位 → IEEE 754</a><a href="practice.html#skill=fpDecode">IEEE 754 → 十進位</a><a href="audio.html#10"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>聽第 10 集複習</a></div>
+</section>
+
+<!-- ============ 第 5 章 ============ -->
+<section id="ch5">
+<h2 class="chapter"><span class="no">第 5 章</span>文字、圖片與聲音</h2>
+<p class="lead">電腦裡的所有東西最後都是數字。這一章看文字、圖片、聲音分別怎麼變成數字，以及怎麼算出一個檔案有多大。</p>
+
+<h3 id="ch5-1">5.1 容量單位</h3>
+<p>第 0 章說過，8 個位元是 1 個位元組（byte）。檔案大小通常用位元組當單位，寫成大寫 <strong>B</strong>；位元則寫成小寫 <strong>b</strong>。網路速度常用位元：100 Mbps 是每秒 100 百萬<strong>位元</strong>，換成位元組要除以 8，約 12.5 MB／秒。</p>
+<p>比較麻煩的是「K、M、G」到底是 1000 還是 1024。現在的標準是兩種分開寫：</p>
+<div class="tablewrap"><table class="plain">
+<tr><th>十進位（1000 倍）</th><th>二進位（1024 倍）</th></tr>
+<tr><td>1 KB（kilobyte）＝ 1,000 B</td><td>1 KiB（kibibyte）＝ 2<sup>10</sup> ＝ 1,024 B</td></tr>
+<tr><td>1 MB ＝ 1,000 KB ＝ 10<sup>6</sup> B</td><td>1 MiB ＝ 1,024 KiB ＝ 2<sup>20</sup> B</td></tr>
+<tr><td>1 GB ＝ 1,000 MB ＝ 10<sup>9</sup> B</td><td>1 GiB ＝ 1,024 MiB ＝ 2<sup>30</sup> B</td></tr>
+<tr><td>1 TB ＝ 1,000 GB ＝ 10<sup>12</sup> B</td><td>1 TiB ＝ 1,024 GiB ＝ 2<sup>40</sup> B</td></tr>
+</table></div>
+<div class="note">硬碟廠商用 1000 算，Windows 卻用 1024 算、還寫成「GB」。所以買 1 TB 的硬碟，Windows 只顯示約 931 GB：10<sup>12</sup> ÷ 2<sup>30</sup> ≈ 931。容量其實沒有少，只是單位不同。考試題目如果沒說清楚，通常 K ＝ 1024。</div>
+
+<h3 id="ch5-2">5.2 文字：ASCII、Unicode 與 UTF-8</h3>
+<p>文字的做法很簡單：<strong>給每個字一個編號</strong>，存的時候存編號。大家約定好同一套編號表，這張表就叫<b class="k">字元編碼</b>（character encoding）。</p>
+<h4>ASCII</h4>
+<p>最早廣泛使用的是 <strong>ASCII</strong>（美國資訊交換標準碼）。它用 <strong>7 個位元</strong>，共 2<sup>7</sup> ＝ 128 個編號，包含英文字母、數字、標點符號和一些控制字元。電腦通常用 1 個位元組存一個 ASCII 字元（最高位元是 0）。</p>
+<div class="tablewrap"><table class="plain mono">
+<tr><th>字元</th><th>十進位</th><th>十六進位</th><th>二進位</th></tr>
+<tr><td>空白</td><td>32</td><td>20</td><td>0010 0000</td></tr>
+<tr><td>'0'</td><td>48</td><td>30</td><td>0011 0000</td></tr>
+<tr><td>'A'</td><td>65</td><td>41</td><td>0100 0001</td></tr>
+<tr><td>'a'</td><td>97</td><td>61</td><td>0110 0001</td></tr>
+</table></div>
+<p>只要記住這幾個，其他都能推：字母是連續編號的，'B' 是 66、'C' 是 67……；數字 '0'～'9' 是 48～57。</p>
+<ul>
+<li><strong>大寫和小寫剛好差 32</strong>（'a' − 'A' ＝ 97 − 65）。32 ＝ <code>0010 0000</code>，所以大小寫只差在一個位元，用 3.3 節的 XOR 反轉這一位就能切換大小寫。</li>
+<li><strong>字元 '5' 不等於數字 5。</strong>字元 '5' 存的是 53。把字元變成數字要減掉 48。</li>
+</ul>
+<h4>Unicode</h4>
+<p>128 個編號只夠英文用。中文、日文、阿拉伯文、表情符號加起來有十幾萬個字，於是有了 <strong>Unicode</strong>（萬國碼）：替全世界的每一個字元都編一個號碼，叫做<b class="k">碼位</b>（code point），習慣寫成 <code>U+</code> 加十六進位。例如：</p>
+<ul>
+<li>'A' 是 <code>U+0041</code>（和 ASCII 一樣，前 128 個完全相容）</li>
+<li>「中」是 <code>U+4E2D</code></li>
+<li>😀 是 <code>U+1F600</code></li>
+</ul>
+<h4>UTF-8</h4>
+<p>Unicode 只規定了「編號」，沒規定「怎麼存成位元組」。最常用的存法是 <strong>UTF-8</strong>，它是<strong>變動長度</strong>的：編號小的字用比較少的位元組。</p>
+<div class="tablewrap"><table class="plain">
+<tr><th>碼位範圍</th><th>位元組數</th><th>包含</th><th>位元組的樣子</th></tr>
+<tr><td class="mono">U+0000～007F</td><td>1</td><td>ASCII（英文、數字）</td><td class="mono">0xxxxxxx</td></tr>
+<tr><td class="mono">U+0080～07FF</td><td>2</td><td>拉丁字母變體、希臘文等</td><td class="mono">110xxxxx 10xxxxxx</td></tr>
+<tr><td class="mono">U+0800～FFFF</td><td>3</td><td><strong>大部分中文字</strong></td><td class="mono">1110xxxx 10xxxxxx 10xxxxxx</td></tr>
+<tr><td class="mono">U+10000 以上</td><td>4</td><td>表情符號、罕用字</td><td class="mono">11110xxx 10xxxxxx ×3</td></tr>
+</table></div>
+<p>好處是英文檔案和 ASCII 完全一樣，不會變大；缺點是中文字一個要 3 個位元組。網頁幾乎都用 UTF-8。台灣早期常用的 <strong>Big5</strong> 編碼，中文字是 2 個位元組。</p>
+<div class="warnbox"><strong>亂碼怎麼來的？</strong>存檔時用一種編碼，打開時卻用另一種編碼解讀，同樣的位元組就會被翻譯成錯的字。解決方法是用正確的編碼重新打開。</div>
+
+<div class="widget" id="utf">
+  <div class="wtitle">互動：文字變成位元組</div>
+  <p class="whint">輸入任何文字（英文、中文、表情符號都可以），看每個字的 Unicode 碼位，以及 UTF-8 存成哪些位元組。</p>
+  <div class="controls">
+    <label>文字<input type="text" class="wide" id="utf-in" value="Hi 中文😀" autocomplete="off" spellcheck="false"></label>
+  </div>
+  <div class="chars" id="utf-chars"></div>
+  <div class="tally" id="utf-tally"></div>
+</div>
+
+<h3 id="ch5-3">5.3 圖片：像素與 RGB</h3>
+<p>把一張圖片放大到極限，會看到它是由一格一格的小方塊組成的，每一格叫做一個<b class="k">像素</b>（pixel）。1920 × 1080 的螢幕，就是橫 1920、直 1080 個像素。存圖片就是把每個像素的顏色依序存成數字，這種圖叫<strong>點陣圖</strong>（bitmap）。</p>
+<p>每個像素用幾個位元，叫做<b class="k">色彩深度</b>（color depth）：</p>
+<ul>
+<li><strong>1 位元：</strong>只有黑白兩色。</li>
+<li><strong>8 位元：</strong>256 種顏色或 256 階灰色。</li>
+<li><strong>24 位元（全彩）：</strong>紅（R）、綠（G）、藍（B）三種光各用 8 位元，各有 0～255 共 256 階。總共 2<sup>24</sup> ≈ 1,677 萬種顏色。</li>
+</ul>
+<p>網頁上常看到 <code>#FF8800</code> 這樣的顏色碼，就是 24 位元全彩的<strong>十六進位</strong>寫法：兩位一組，依序是 R、G、B。<code>FF</code> ＝ 255、<code>88</code> ＝ 136、<code>00</code> ＝ 0，也就是紅光最亮、綠光中等、沒有藍光，混出來是橘色。這正是第 1 章分組捷徑的應用：每個十六進位數字剛好代表 4 個位元。</p>
+
+<div class="widget" id="rgb">
+  <div class="wtitle">互動：調一個顏色</div>
+  <p class="whint">拉動三個滑桿混合紅、綠、藍光，看顏色碼和 24 個位元怎麼變。也可以直接輸入顏色碼。</p>
+  <div class="rgb">
+    <div>
+      <div class="sl r"><span>R</span><input type="range" id="rgb-r" min="0" max="255" value="255" aria-label="紅色 R"><output id="rgb-rv">255</output></div>
+      <div class="sl g"><span>G</span><input type="range" id="rgb-g" min="0" max="255" value="136" aria-label="綠色 G"><output id="rgb-gv">136</output></div>
+      <div class="sl b"><span>B</span><input type="range" id="rgb-b" min="0" max="255" value="0" aria-label="藍色 B"><output id="rgb-bv">0</output></div>
+      <div class="controls" style="margin:12px 0 0"><label>顏色碼<input type="text" class="narrow" id="rgb-hex" value="#FF8800" autocomplete="off" spellcheck="false"></label></div>
+    </div>
+    <div class="swatch" id="rgb-sw"><span id="rgb-swl">#FF8800</span></div>
+  </div>
+  <div class="rgbbits" id="rgb-bits"></div>
+</div>
+
+<p><strong>圖片大小怎麼算：</strong>沒有壓縮的點陣圖，</p>
+<div class="formula">位元組數 ＝ 寬 × 高 × 色彩深度（位元）÷ 8</div>
+<p>例：1920 × 1080 的全彩圖片 ＝ 1920 × 1080 × 24 ÷ 8 ＝ 6,220,800 位元組，約 6.2 MB。手機照片通常只有幾 MB，是因為有壓縮（5.5 節）。</p>
+
+<h3 id="ch5-4">5.4 聲音：取樣與量化</h3>
+<p>聲音是空氣的振動，畫出來是一條連續起伏的波。電腦沒辦法存「連續」的東西，只能每隔一小段時間<strong>量一次</strong>波的高度，把它記成數字。</p>
+<div class="term"><span class="t">取樣（sampling）與取樣頻率（sample rate）</span>每隔固定時間量一次波的高度。每秒量幾次叫取樣頻率，單位是赫茲（Hz）。CD 是每秒 44,100 次（44.1 kHz）。</div>
+<div class="term"><span class="t">量化（quantization）與位元深度（bit depth）</span>量到的高度要用幾個位元記錄。位元越多，可以分越多階、越接近原本的高度。CD 用 16 位元，共 65,536 階。</div>
+<p>取樣頻率越高、位元深度越大，聲音越接近原音，但檔案也越大。人耳大約聽得到 20,000 Hz 的聲音，而取樣頻率至少要是最高頻率的兩倍才能還原（這叫<strong>取樣定理</strong>），所以 CD 選了 44.1 kHz。</p>
+
+<div class="widget" id="wave">
+  <div class="wtitle">互動：取樣與量化</div>
+  <p class="whint">灰色虛線是原本的聲波，橘點是取樣點，藍線是電腦實際存下來的樣子。把兩個滑桿往右拉，藍線會越來越接近原本的聲波。</p>
+  <div class="controls">
+    <label>取樣次數（這段時間內）<input type="range" id="wave-n" min="4" max="64" value="12"></label>
+    <label>位元深度<input type="range" id="wave-b" min="1" max="6" value="3"></label>
+  </div>
+  <svg class="wave" id="wave-svg" viewBox="0 0 640 220" role="img" aria-label="取樣與量化示意圖"></svg>
+  <p class="small" id="wave-msg" style="margin-bottom:0"></p>
+</div>
+
+<p><strong>聲音大小怎麼算：</strong>沒有壓縮的聲音，</p>
+<div class="formula">位元組數 ＝ 取樣頻率 × 位元深度 × 聲道數 × 秒數 ÷ 8</div>
+<p>例：CD 音質（44,100 Hz、16 位元、立體聲 2 聲道）1 分鐘 ＝ 44,100 × 16 × 2 × 60 ÷ 8 ＝ 10,584,000 位元組，約 10.6 MB。</p>
+
+<div class="widget" id="size">
+  <div class="wtitle">互動：檔案大小計算機</div>
+  <p class="whint">改改看數字，看看哪個因素對檔案大小影響最大。</p>
+  <div class="controls">
+    <label>圖片寬<input type="text" class="narrow" id="size-w" value="1920" inputmode="numeric"></label>
+    <label>圖片高<input type="text" class="narrow" id="size-h" value="1080" inputmode="numeric"></label>
+    <label>色彩深度<select id="size-d"><option value="1">1 位元（黑白）</option><option value="8">8 位元</option><option value="24" selected>24 位元（全彩）</option><option value="32">32 位元</option></select></label>
+  </div>
+  <div class="calcout" id="size-img"></div>
+  <div class="controls" style="margin-top:16px">
+    <label>取樣頻率<select id="size-r"><option value="8000">8,000 Hz（電話）</option><option value="22050">22,050 Hz</option><option value="44100" selected>44,100 Hz（CD）</option><option value="48000">48,000 Hz</option></select></label>
+    <label>位元深度<select id="size-b"><option value="8">8 位元</option><option value="16" selected>16 位元</option><option value="24">24 位元</option></select></label>
+    <label>聲道<select id="size-c"><option value="1">單聲道</option><option value="2" selected>立體聲</option></select></label>
+    <label>秒數<input type="text" class="narrow" id="size-s" value="60" inputmode="numeric"></label>
+  </div>
+  <div class="calcout" id="size-aud"></div>
+</div>
+
+<h3 id="ch5-5">5.5 壓縮</h3>
+<p>未壓縮的圖片和聲音都很大，所以通常會<b class="k">壓縮</b>（compression）：用比較少的位元表達同樣（或差不多）的內容。</p>
+<div class="term"><span class="t">無失真壓縮（lossless）</span>解壓縮後和原本<strong>一模一樣</strong>。例：ZIP、PNG、FLAC。最簡單的方法是<strong>連續長度編碼</strong>（run-length encoding）：<code>AAAAABBB</code> 記成 <code>5A3B</code>，8 個字變 4 個字。</div>
+<div class="term"><span class="t">失真壓縮（lossy）</span>丟掉人眼、人耳不容易察覺的細節，換取小很多的檔案；解壓縮後<strong>回不到原本</strong>。例：JPEG、MP3、MP4。這個網站的通勤音檔就是 MP3。</div>
+<p>文字和程式檔一個位元都不能錯，只能用無失真壓縮；照片、音樂、影片可以接受一點點失真，所以多半用失真壓縮。</p>
+
+<div class="summary"><h4>第 5 章重點</h4>
+<ul>
+<li>B 是位元組、b 是位元。KB ＝ 1000 B，KiB ＝ 1024 B。</li>
+<li>ASCII：7 位元、128 個字。'A' ＝ 65、'a' ＝ 97、'0' ＝ 48，大小寫差 32。</li>
+<li>Unicode 替每個字編號（碼位）；UTF-8 用 1～4 個位元組存，英文 1 個、大部分中文 3 個。</li>
+<li>圖片：像素 × 色彩深度；全彩 24 位元，顏色碼 #RRGGBB。大小 ＝ 寬 × 高 × 深度 ÷ 8。</li>
+<li>聲音：取樣頻率 × 位元深度 × 聲道 × 秒 ÷ 8。</li>
+<li>無失真壓縮可完全還原；失真壓縮丟掉不易察覺的細節。</li>
+</ul></div>
+
+<h3 id="ch5-ex">第 5 章例題</h3>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">1.</b>已知 'A' 的 ASCII 碼是 65。'H' 和 'h' 的 ASCII 碼各是多少？</p>
+<p>H 是第 8 個字母，65 ＋ 7 ＝ <strong>72</strong>。小寫多 32：72 ＋ 32 ＝ <strong>104</strong>。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">2.</b>字串「計概 OK」用 UTF-8 存，需要幾個位元組？</p>
+<p>「計」「概」各 3 個位元組，空白、O、K 各 1 個：3 ＋ 3 ＋ 1 ＋ 1 ＋ 1 ＝ <strong>9 個位元組</strong>。</p>
+<button class="loadbtn" data-load='[["utf-in","計概 OK"]]' data-goto="utf">丟進元件驗算</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">3.</b>顏色碼 <code>#3366CC</code> 的 R、G、B 各是多少？</p>
+<p>33 ＝ 3 × 16 ＋ 3 ＝ <strong>51</strong>；66 ＝ 6 × 16 ＋ 6 ＝ <strong>102</strong>；CC ＝ 12 × 16 ＋ 12 ＝ <strong>204</strong>。</p>
+<button class="loadbtn" data-load='[["rgb-hex","#3366CC"]]' data-goto="rgb">丟進元件看顏色</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">4.</b>一張 800 × 600、8 位元灰階的圖片，不壓縮要幾個位元組？</p>
+<p>800 × 600 × 8 ÷ 8 ＝ <strong>480,000 位元組</strong>（約 480 KB）。</p>
+<button class="loadbtn" data-load='[["size-w","800"],["size-h","600"],["size-d","8"]]' data-goto="size">丟進計算機</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">5.</b>電話音質（8,000 Hz、8 位元、單聲道）錄 10 秒，不壓縮要幾個位元組？</p>
+<p>8000 × 8 × 1 × 10 ÷ 8 ＝ <strong>80,000 位元組</strong>。</p>
+<button class="loadbtn" data-load='[["size-r","8000"],["size-b","8"],["size-c","1"],["size-s","10"]]' data-goto="size">丟進計算機</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">6.</b>4 KiB 是幾個位元組？4 KB 呢？</p>
+<p>4 KiB ＝ 4 × 1024 ＝ <strong>4,096</strong> 位元組；4 KB ＝ 4 × 1000 ＝ <strong>4,000</strong> 位元組。</p>
+</details>
+<div class="gopractice"><b>讀完了？去練習：</b><a href="practice.html#skill=units">容量單位</a><a href="practice.html#skill=ascii">ASCII</a><a href="practice.html#skill=utf8">UTF-8 位元組數</a><a href="practice.html#skill=hexColor">顏色碼</a><a href="practice.html#skill=mediaSize">圖片與聲音大小</a><a href="audio.html#11"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>聽第 11 集複習</a></div>
+</section>
+
+<nav class="pager" aria-label="其他講義"><a href="lesson.html"><small>上一份講義</small><b>← 講義 ①　整數</b><span class="small muted">位元、進位轉換、負數與溢位</span></a><a class="next" href="practice.html"><small>全部讀完了</small><b>去練習頁 →</b><span class="small muted">用混合挑戰檢查自己</span></a></nav>
+</main>
+</div>
+<script src="assets/lesson-core.js"></script>
+<script src="assets/lesson-2.js"></script>
+</body>
+</html>

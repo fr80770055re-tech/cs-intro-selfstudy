@@ -4,54 +4,61 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>通勤音檔</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Serif+TC:wght@700;900&display=swap">
 <link rel="stylesheet" href="assets/site.css">
 <style>
-.player{position:sticky;top:0;z-index:5;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:18px 0;box-shadow:0 4px 18px rgba(0,0,0,.06)}
-.player .now{font-weight:700;font-size:17px}
+.player{position:sticky;top:68px;z-index:5;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px 20px;margin:22px 0 28px;box-shadow:var(--shadow)}
+.player .now{font-family:var(--serif);font-weight:900;font-size:19px;line-height:1.4}
 .player .sub{font-size:14px;color:var(--muted)}
-.ctrls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
-.ctrls button{min-width:48px}
-.ctrls .play{min-width:96px;font-size:17px}
+.ctrls{display:flex;gap:8px;align-items:center;margin-top:12px}
+.ctrls button{min-width:48px;padding:8px 12px}
+.ctrls button .icon{width:20px;height:20px}
+.ctrls .play{min-width:112px;font-size:16px}
 .seek{display:flex;align-items:center;gap:10px;margin-top:10px;font-family:var(--mono);font-size:13px;color:var(--muted)}
-.seek input{flex:1;accent-color:var(--accent)}
-.opts{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:10px;font-size:14px;color:var(--muted)}
-.opts select{min-height:34px;padding:2px 8px;font-size:14px}
+.seek input{flex:1}
+.opts{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-top:12px;font-size:14px;color:var(--muted)}
+.opts label{display:flex;align-items:center;gap:6px}
+.opts select{min-height:36px;padding:2px 8px;font-size:14px}
+.parth{font-size:14px;font-weight:700;color:var(--muted);letter-spacing:.04em;margin:26px 0 10px}
 .tracks{list-style:none;padding:0;margin:0}
-.tracks li{display:grid;grid-template-columns:auto 1fr auto;gap:4px 14px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-bottom:8px;cursor:pointer}
+.tracks li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 16px;align-items:start;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-bottom:8px;cursor:pointer;transition:border-color .15s}
 .tracks li:hover{border-color:var(--accent)}
-.tracks li.cur{border-color:var(--accent);background:var(--accent-soft)}
-.tracks .no{width:34px;height:34px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
-.tracks li.done .no{background:var(--ok-soft);color:var(--ok)}
-.tracks .ti{font-weight:700}
-.tracks .de{font-size:14px;color:var(--muted);line-height:1.55}
-.tracks .rt{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:13px;color:var(--muted)}
-.tracks .rt a{font-size:13px}
-.transcript{margin-top:10px}
-.transcript summary{cursor:pointer;color:var(--accent);font-weight:600}
-.transcript p{margin:8px 0}
+.tracks li.cur{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.tracks .no{width:36px;height:42px;border-radius:7px;background:var(--zero);color:var(--zero-text);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:16px}
+.tracks li.done .no{background:var(--one);color:var(--one-text)}
+.tracks li.cur .no{background:var(--surface);color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.tracks .ti{font-weight:700;line-height:1.5}
+.tracks .de{font-size:14.5px;color:var(--muted);line-height:1.6}
+.tracks .rt{display:flex;flex-direction:column;align-items:flex-end;gap:4px;font-size:13.5px;color:var(--muted);font-family:var(--mono)}
+.tracks .rt a{display:inline-flex;align-items:center;gap:4px;font-family:var(--sans);font-size:13.5px}
+.tracks .rt a .icon{width:15px;height:15px}
+.transcript{margin-top:8px}
+.transcript summary{cursor:pointer;color:var(--accent);font-weight:700;font-size:14.5px}
+.transcript p{margin:8px 0;font-size:15.5px}
 .transcript .q{font-weight:700}
 .transcript .q::before{content:"問　";color:var(--accent)}
 .transcript .a{color:var(--ok)}
 .transcript .a::before{content:"答　";font-weight:700}
 @media (max-width:640px){
-  .tracks li{grid-template-columns:auto 1fr}
-  .tracks .rt{grid-column:2;flex-direction:row;gap:12px;align-items:center}
-  .player{padding:12px 14px;position:static}
-  .ctrls{gap:6px;flex-wrap:nowrap}
-  .ctrls button{padding:6px 8px;min-width:0;flex:1}
-  .ctrls .play{min-width:0;flex:1.6;font-size:16px}
+  .tracks li{grid-template-columns:auto minmax(0,1fr);gap:4px 12px}
+  .tracks .rt{grid-column:2;flex-direction:row;gap:14px;align-items:center}
+  .player{padding:14px;position:sticky;top:52px;border-radius:0 0 var(--r-lg) var(--r-lg);margin:12px -16px 24px}
+  .player .sub{display:none}
+  .ctrls{gap:6px}
+  .ctrls button{padding:6px 4px;min-width:0;flex:1}
+  .ctrls .play{min-width:0;flex:1.7}
 }
 </style>
 </head>
 <body>
 <header class="topbar">
-  <a class="logo" href="index.html">計概自學・數字系統</a>
-  <nav><a href="index.html">首頁</a><a href="lesson.html">講義</a><a href="practice.html">練習</a><a href="audio.html" aria-current="page">通勤音檔</a></nav>
+  <a class="logo" href="index.html" aria-label="計概自學・資料表示 首頁"><span class="logo-mark" aria-hidden="true"><i class="on"></i><i></i><i class="on"></i><i class="on"></i></span><span class="logo-text">計概自學・資料表示</span></a>
+  <nav aria-label="主選單"><a href="index.html">首頁</a><a href="lesson.html"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#book"/></svg>講義</a><a href="practice.html"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#pencil"/></svg>練習</a><a href="audio.html" aria-current="page"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>音檔</a></nav>
 </header>
-<div class="wrap">
-  <div class="kicker">通勤音檔</div>
-  <h1>用聽的複習</h1>
-  <p class="lead">8 集語音，每集約 5 分鐘。前 5 集是觀念講解，第 6、7 集是心算問答（聽到問題後先在心裡回答，停頓幾秒後會公布答案），第 8 集是口訣總整理。</p>
+<main class="wrap">
+  <h1>通勤音檔</h1>
+  <p class="lead">每集約 5 分鐘，可以在捷運或公車上聽。講解觀念的集數最後都有幾題問答：聽到問題先在心裡回答，停頓幾秒後才會公布答案。</p>
   <div class="note">聽的適合用來理解觀念和複習口訣；真正的計算練習，回家再到<a href="practice.html">練習頁</a>用紙筆做。建議先讀過講義對應的章節再聽，效果最好。</div>
 
   <div class="player" id="player">
@@ -59,11 +66,11 @@
     <div class="sub" id="nowsub"></div>
     <div class="seek"><span id="cur">0:00</span><input type="range" id="seek" min="0" max="100" value="0" step="1" aria-label="播放進度"><span id="dur">0:00</span></div>
     <div class="ctrls">
-      <button id="prev" aria-label="上一集">⏮</button>
-      <button id="back10" aria-label="倒退 10 秒">↺ 10</button>
-      <button class="primary play" id="play">▶ 播放</button>
-      <button id="fwd10" aria-label="快轉 10 秒">10 ↻</button>
-      <button id="next" aria-label="下一集">⏭</button>
+      <button id="prev" aria-label="上一集"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#skip-back"/></svg></button>
+      <button id="back10" aria-label="倒退 10 秒"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#back10"/></svg></button>
+      <button class="primary play" id="play"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#play"/></svg><span>播放</span></button>
+      <button id="fwd10" aria-label="快轉 10 秒"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#fwd10"/></svg></button>
+      <button id="next" aria-label="下一集"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#skip-fwd"/></svg></button>
     </div>
     <div class="opts">
       <label>速度 <select id="rate"><option value="0.8">0.8×</option><option value="1" selected>1×</option><option value="1.2">1.2×</option><option value="1.5">1.5×</option></select></label>
@@ -72,12 +79,12 @@
   </div>
   <audio id="audio" preload="metadata"></audio>
 
-  <ul class="tracks" id="tracks"></ul>
+  <div id="tracks"></div>
 
   <h2>離線收聽</h2>
   <p>地下室或捷運上網路不穩的話，可以先把音檔下載到手機：點每一集的「下載」。在手機上用瀏覽器開這個網站，也可以把它「加入主畫面」，用起來就像一個 App。</p>
   <p class="small muted">音檔由電腦語音（Microsoft Yating、Zhiwei）朗讀產生，偶爾發音會有點生硬；每一集下方都有逐字稿可以對照。播放進度會記在這台裝置上，下次打開會從上次的地方繼續。</p>
-</div>
+</main>
 
 <script src="assets/audio-tracks.js"></script>
 <script>
@@ -92,12 +99,14 @@ const fmt = (s) => { s = Math.max(0, Math.floor(s || 0)); return `${Math.floor(s
 const esc = (s) => s.replace(/[&<>]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;"}[c]));
 let cur = -1;
 
+const PARTS = [[0, "講義 ①　整數（第 1～8 集）"], [8, "講義 ②　更多資料表示（第 9 集起）"]];
+const DL = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#download"/></svg>';
 function render(){
-  $("#tracks").innerHTML = T.map((t, i) => `<li data-i="${i}" class="${i === cur ? "cur" : ""} ${st.done[t.id] ? "done" : ""}">
-    <div class="no">${st.done[t.id] ? "✓" : i + 1}</div>
+  $("#tracks").innerHTML = PARTS.map(([from, label], pi) => { const to = PARTS[pi + 1] ? PARTS[pi + 1][0] : T.length; if (from >= T.length) return ""; return `<h2 class="parth">${label}</h2><ul class="tracks">` + T.slice(from, to).map((t, j) => { const i = from + j; return `<li data-i="${i}" class="${i === cur ? "cur" : ""} ${st.done[t.id] ? "done" : ""}">
+    <div class="no" aria-label="${st.done[t.id] ? "已聽完" : ""}">${i + 1}</div>
     <div><div class="ti">${esc(t.title)}</div><div class="de">${esc(t.desc)}</div>
       <details class="transcript" onclick="event.stopPropagation()"><summary>逐字稿</summary>${t.lines.map(l => `<p class="${l.type}">${esc(l.text)}</p>`).join("")}</details></div>
-    <div class="rt"><span>${fmt(t.duration)}</span><a href="${t.file}" download onclick="event.stopPropagation()">下載</a></div></li>`).join("");
+    <div class="rt"><span>${fmt(t.duration)}</span><a href="${t.file}" download onclick="event.stopPropagation()">${DL}下載</a></div></li>`; }).join("") + "</ul>"; }).join("");
 }
 function load(i, autoplay){
   if (i < 0 || i >= T.length) return;
@@ -106,7 +115,7 @@ function load(i, autoplay){
   A.src = t.file; A.playbackRate = +$("#rate").value;
   A.addEventListener("loadedmetadata", function once(){ A.removeEventListener("loadedmetadata", once); const p = st.pos[t.id]; if (p && p < A.duration - 5) A.currentTime = p; A.playbackRate = +$("#rate").value; }, {once: true});
   $("#now").textContent = t.title; $("#nowsub").textContent = t.desc;
-  if ("mediaSession" in navigator) navigator.mediaSession.metadata = new MediaMetadata({title: t.title, artist: "計概自學・通勤音檔", album: "數字系統"});
+  if ("mediaSession" in navigator) navigator.mediaSession.metadata = new MediaMetadata({title: t.title, artist: "計概自學・通勤音檔", album: "資料表示"});
   render();
   if (autoplay) A.play().catch(() => {});
 }
@@ -119,8 +128,9 @@ $("#fwd10").onclick = () => { A.currentTime = Math.min(A.duration || 0, A.curren
 $("#rate").onchange = () => { A.playbackRate = +$("#rate").value; st.rate = $("#rate").value; save(); };
 $("#auto").onchange = () => { st.auto = $("#auto").checked; save(); };
 $("#seek").oninput = () => { if (A.duration) A.currentTime = $("#seek").value / 100 * A.duration; };
-A.onplay = () => { $("#play").textContent = "⏸ 暫停"; };
-A.onpause = () => { $("#play").textContent = "▶ 播放"; };
+const PLAY = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#play"/></svg><span>播放</span>', PAUSE = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#pause"/></svg><span>暫停</span>';
+A.onplay = () => { $("#play").innerHTML = PAUSE; };
+A.onpause = () => { $("#play").innerHTML = PLAY; };
 let lastSave = 0;
 A.ontimeupdate = () => {
   $("#cur").textContent = fmt(A.currentTime); $("#dur").textContent = fmt(A.duration);

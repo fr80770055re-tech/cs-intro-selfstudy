@@ -3,206 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>數字系統互動講義</title>
-<style>
-:root{
-  --bg:#f8f7f3; --surface:#ffffff; --surface-2:#f2f0ea; --text:#1d2127; --muted:#5d6570; --line:#e2ded5;
-  --accent:#2563c9; --accent-soft:#e7effc; --accent-text:#ffffff;
-  --one:#2563c9; --one-text:#ffffff; --zero:#e6e8ec; --zero-text:#4a525c;
-  --sign:#b45309; --sign-soft:#fdf0e1;
-  --ga:#dbe7fb; --gb:#fbe7c6;
-  --ok:#157347; --ok-soft:#e5f4ec; --bad:#b4361c; --bad-soft:#fbe9e4;
-  --hl:#fff4c2;
-  --mono:"Cascadia Mono","Consolas","SF Mono",ui-monospace,monospace;
-  --sans:"Microsoft JhengHei UI","Microsoft JhengHei","PingFang TC","Noto Sans TC","Heiti TC",system-ui,sans-serif;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#15171b; --surface:#1d2025; --surface-2:#252930; --text:#e7e9ec; --muted:#a0a8b3; --line:#343941;
-    --accent:#7aa7f0; --accent-soft:#1f2e47; --accent-text:#0e1320;
-    --one:#5b8fe6; --one-text:#0c1220; --zero:#2c3138; --zero-text:#aab2bc;
-    --sign:#f0a35a; --sign-soft:#3a2a18;
-    --ga:#22344f; --gb:#43361c;
-    --ok:#6cc79a; --ok-soft:#18332a; --bad:#f08a70; --bad-soft:#3d221c;
-    --hl:#3d3718;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#15171b; --surface:#1d2025; --surface-2:#252930; --text:#e7e9ec; --muted:#a0a8b3; --line:#343941;
-  --accent:#7aa7f0; --accent-soft:#1f2e47; --accent-text:#0e1320;
-  --one:#5b8fe6; --one-text:#0c1220; --zero:#2c3138; --zero-text:#aab2bc;
-  --sign:#f0a35a; --sign-soft:#3a2a18;
-  --ga:#22344f; --gb:#43361c;
-  --ok:#6cc79a; --ok-soft:#18332a; --bad:#f08a70; --bad-soft:#3d221c;
-  --hl:#3d3718;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:16px}
-body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:17px;line-height:1.85;-webkit-text-size-adjust:100%}
-.layout{display:grid;grid-template-columns:250px minmax(0,1fr);max-width:1180px;margin:0 auto}
-nav.toc{position:sticky;top:0;align-self:start;height:100vh;overflow:auto;padding:28px 18px 28px 24px;border-right:1px solid var(--line);font-size:14.5px;line-height:1.6}
-nav.toc .brand{font-weight:700;font-size:16px;margin-bottom:14px}
-nav.toc a{display:block;color:var(--muted);text-decoration:none;padding:4px 8px;border-radius:6px}
-nav.toc a:hover{background:var(--surface-2);color:var(--text)}
-nav.toc a.ch{color:var(--text);font-weight:600;margin-top:12px}
-nav.toc a.sub{padding-left:20px}
-main{padding:36px 40px 120px;max-width:820px}
-h1{font-size:30px;line-height:1.35;margin:0 0 8px}
-h2{font-size:25px;line-height:1.4;margin:72px 0 6px;padding-top:8px;border-top:2px solid var(--text)}
-h3{font-size:20px;line-height:1.45;margin:44px 0 8px}
-h4{font-size:17px;margin:24px 0 4px}
-p{margin:12px 0}
-.lead{color:var(--muted);font-size:18px}
-.kicker{color:var(--accent);font-weight:700;font-size:14px;letter-spacing:.06em}
-code,.mono{font-family:var(--mono);font-size:.95em}
-sub{font-size:.68em}
-b.k{background:var(--hl);padding:0 3px;border-radius:3px}
-ul,ol{padding-left:1.4em}
-li{margin:4px 0}
-.term{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:12px 16px;margin:18px 0}
-.term .t{font-weight:700;display:block;margin-bottom:2px}
-.note{background:var(--surface-2);border-radius:8px;padding:12px 16px;margin:18px 0;font-size:16px}
-.note::before{content:"💡 ";}
-.warnbox{background:var(--sign-soft);border-radius:8px;padding:12px 16px;margin:18px 0;font-size:16px}
-.warnbox::before{content:"⚠️ ";}
-.summary{background:var(--accent-soft);border-radius:10px;padding:16px 20px;margin:26px 0}
-.summary h4{margin-top:0}
-table.plain{border-collapse:collapse;margin:14px 0;font-size:15.5px;width:100%}
-table.plain th,table.plain td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:left}
-table.plain th{color:var(--muted);font-weight:600}
-.tablewrap{overflow-x:auto}
-
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 24px;border-bottom:1px solid var(--line);background:var(--surface)}
-.topbar .logo{font-weight:700;color:var(--text);text-decoration:none;font-size:16px}
-.topbar nav{display:flex;gap:4px;flex-wrap:wrap}
-.topbar nav a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:15px;line-height:1.5}
-.topbar nav a:hover{background:var(--surface-2);color:var(--text)}
-.topbar nav a[aria-current="page"]{background:var(--accent-soft);color:var(--accent);font-weight:700}
-.gopractice{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;background:var(--surface);border:1px dashed var(--accent);border-radius:12px;padding:14px 18px;margin:26px 0}
-.gopractice b{margin-right:4px}
-.gopractice a{display:inline-block;padding:4px 12px;border-radius:8px;background:var(--accent-soft);color:var(--accent);text-decoration:none;font-size:15px;font-weight:600}
-.gopractice a:hover{background:var(--accent);color:var(--accent-text)}
-
-/* widgets */
-.widget{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:22px 0;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-.widget .wtitle{font-weight:700;font-size:15px;color:var(--accent);margin-bottom:4px}
-.widget .whint{font-size:14.5px;color:var(--muted);margin:0 0 12px}
-.controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:flex-end;margin-bottom:12px}
-.controls label{display:flex;flex-direction:column;font-size:13.5px;color:var(--muted);gap:4px}
-input[type=text],select{font:inherit;font-size:16px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;min-height:40px}
-input[type=text]{font-family:var(--mono);width:12em}
-input[type=text].narrow{width:6.5em}
-input:focus,select:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
-button{font:inherit;font-size:15px;border:1px solid var(--line);background:var(--surface-2);color:var(--text);border-radius:8px;padding:6px 14px;cursor:pointer;min-height:38px}
-button:hover:not(:disabled){border-color:var(--accent)}
-button:disabled{opacity:.4;cursor:default}
-button.primary{background:var(--accent);color:var(--accent-text);border-color:var(--accent)}
-.err{color:var(--bad);background:var(--bad-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:15px}
-
-.results{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:6px 0 14px}
-.rcard{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--bg);min-width:0}
-.rcard.src{border-color:var(--accent);background:var(--accent-soft)}
-.rlabel{font-size:13px;color:var(--muted)}
-.rval{font-family:var(--mono);font-size:18px;word-break:break-all;line-height:1.5}
-.rep{text-decoration:overline;text-decoration-thickness:2px}
-
-.stepper{border-top:1px dashed var(--line);padding-top:12px;margin-top:6px}
-.step-msg{background:var(--surface-2);border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:16px;min-height:3em}
-.step-ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
-.step-count{font-size:14px;color:var(--muted);margin:0 6px}
-table.calc{border-collapse:collapse;font-family:var(--mono);font-size:16px;margin:4px 0}
-table.calc th{font-family:var(--sans);font-size:13px;color:var(--muted);font-weight:600;padding:2px 12px;text-align:left}
-table.calc td{padding:3px 12px;white-space:nowrap}
-table.calc tr.cur td{background:var(--hl)}
-table.calc td.pick{color:var(--accent);font-weight:700}
-table.calc td.pickall{background:var(--accent-soft);color:var(--accent);font-weight:700}
-.readdir{font-size:14px;color:var(--accent);font-weight:700;margin-top:4px}
-.numline{font-family:var(--mono);font-size:22px;margin:4px 0 8px;letter-spacing:.04em}
-.numline span.d{padding:0 2px;border-radius:4px}
-.numline span.d.on{background:var(--hl);outline:2px solid var(--sign)}
-
-/* bits */
-.bits{display:inline-flex;flex-wrap:wrap;gap:4px;align-items:flex-end}
-.bit{display:inline-flex;align-items:center;justify-content:center;width:30px;height:36px;border-radius:6px;font-family:var(--mono);font-size:18px;font-weight:700;background:var(--zero);color:var(--zero-text)}
-.bit.one{background:var(--one);color:var(--one-text)}
-.bit.sign{box-shadow:0 0 0 2px var(--sign) inset}
-.bit.gap{margin-left:8px}
-.repsrow{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
-.repsrow:last-child{border-bottom:0}
-.repsname{font-weight:600;font-size:15px}
-.repsname small{display:block;color:var(--muted);font-weight:400;font-size:12.5px}
-.oor{color:var(--bad);font-size:14.5px}
-.legend{font-size:13px;color:var(--muted);margin-top:6px}
-.legend .sw{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:4px;box-shadow:0 0 0 2px var(--sign) inset}
-
-/* switches */
-.switches{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
-.swbtn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;min-width:58px;border-radius:10px;border:1px solid var(--line);background:var(--bg)}
-.swbtn .lamp{width:30px;height:30px;border-radius:50%;background:var(--zero);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;color:var(--zero-text)}
-.swbtn.on .lamp{background:#f5b301;color:#3b2a00;box-shadow:0 0 14px rgba(245,179,1,.6)}
-.swbtn .w{font-size:12.5px;color:var(--muted);font-family:var(--mono)}
-.swsum{font-family:var(--mono);font-size:17px;margin-top:8px;word-break:break-word}
-
-/* groups */
-.groups{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
-.grp{border-radius:10px;padding:6px 8px 8px;display:flex;flex-direction:column;align-items:center;gap:4px}
-.grp.a{background:var(--ga)}.grp.b{background:var(--gb)}
-.grp .ws{display:flex;gap:4px;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
-.grp .ws span{width:30px;text-align:center}
-.grp .arrow{font-size:13px;color:var(--muted)}
-.grp .gd{font-family:var(--mono);font-size:24px;font-weight:700}
-.grp .gcalc{font-size:12.5px;color:var(--muted);font-family:var(--mono)}
-
-/* adder */
-table.adder{border-collapse:separate;border-spacing:4px 4px;font-family:var(--mono)}
-table.adder th{font-family:var(--sans);font-size:13px;color:var(--muted);font-weight:600;text-align:right;padding-right:6px;white-space:nowrap}
-table.adder td{width:30px;height:32px;text-align:center;border-radius:6px;font-size:17px;font-weight:700}
-table.adder td.carry{font-size:13px;color:var(--sign);font-weight:700;height:20px}
-table.adder td.cur{background:var(--hl)}
-table.adder tr.res td.b{border-top:2px solid var(--text)}
-table.adder td.out{color:var(--muted);text-decoration:line-through}
-.verdict{border-radius:8px;padding:10px 14px;margin-top:10px;font-size:16px}
-.verdict.ok{background:var(--ok-soft)}
-.verdict.bad{background:var(--bad-soft)}
-.verdict > strong:first-child{display:block}
-
-/* exercises */
-details.ex{border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0;background:var(--surface)}
-details.ex summary{cursor:pointer;font-weight:600;color:var(--accent);font-size:15px;margin-top:6px}
-details.ex .q{margin:0}
-details.ex .q b.n{color:var(--muted);margin-right:6px}
-details.ex[open] summary{margin-bottom:6px}
-.loadbtn{font-size:14px;padding:4px 10px;min-height:32px;margin-top:6px}
-.flash{animation:flash 1.2s ease}
-@keyframes flash{0%{box-shadow:0 0 0 4px var(--accent)}100%{box-shadow:0 0 0 0 transparent}}
-
-@media (max-width:860px){
-  .layout{display:block}
-  nav.toc{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);padding:16px}
-  nav.toc .links{display:flex;flex-wrap:wrap;gap:2px 4px}
-  nav.toc a.sub{display:none}
-  nav.toc a.ch{margin-top:0}
-  main{padding:24px 16px 100px}
-  h1{font-size:25px}
-  h2{font-size:22px;margin-top:56px}
-  .widget{padding:14px}
-  .repsrow{grid-template-columns:1fr}
-  .bit{width:24px;height:32px;font-size:16px}
-  .grp .ws span{width:24px}
-  table.adder td{width:24px}
-  input[type=text]{width:10em}
-}
-</style>
+<title>講義 ①　整數</title>
+<meta name="description" content="計概自學講義第 0～2 章：位元、進位轉換、負數與溢位。">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Serif+TC:wght@700;900&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/lesson.css">
 </head>
 <body>
 <header class="topbar">
-  <a class="logo" href="index.html">計概自學・數字系統</a>
-  <nav><a href="index.html">首頁</a><a href="lesson.html" aria-current="page">講義</a><a href="practice.html">練習</a><a href="audio.html">通勤音檔</a></nav>
+  <a class="logo" href="index.html" aria-label="計概自學・資料表示 首頁"><span class="logo-mark" aria-hidden="true"><i class="on"></i><i></i><i class="on"></i><i class="on"></i></span><span class="logo-text">計概自學・資料表示</span></a>
+  <nav aria-label="主選單"><a href="index.html">首頁</a><a href="lesson.html" aria-current="page"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#book"/></svg>講義</a><a href="practice.html"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#pencil"/></svg>練習</a><a href="audio.html"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>音檔</a></nav>
 </header>
 <div class="layout">
-<nav class="toc" aria-label="目錄">
-  <div class="brand">計算機概論・數字系統</div>
-  <div class="links">
+<nav class="toc" aria-label="目錄"><details open><summary>目錄<span class="cur"></span></summary><div class="links">
+  <div class="part">講義 ①　整數</div>
   <a href="#start" class="ch">怎麼使用這份講義</a>
   <a href="#ch0" class="ch">第 0 章　開始之前</a>
   <a href="#ch0-1" class="sub">0.1 電腦只認得 0 和 1</a>
@@ -214,27 +29,29 @@ details.ex[open] summary{margin-bottom:6px}
   <a href="#ch1-2" class="sub">1.2 任何進位 → 十進位</a>
   <a href="#ch1-3" class="sub">1.3 十進位 → 其他進位</a>
   <a href="#ch1-4" class="sub">1.4 小數的轉換</a>
-  <a href="#ch1-5" class="sub">1.5 二進位與八／十六進位的捷徑</a>
+  <a href="#ch1-5" class="sub">1.5 分組捷徑</a>
   <a href="#ch1-ex" class="sub">例題</a>
   <a href="#ch2" class="ch">第 2 章　負數與溢位</a>
-  <a href="#ch2-1" class="sub">2.1 問題：沒有負號可用</a>
+  <a href="#ch2-1" class="sub">2.1 沒有負號可用</a>
   <a href="#ch2-2" class="sub">2.2 三種表示負數的方法</a>
   <a href="#ch2-3" class="sub">2.3 用 2 補數做加減法</a>
   <a href="#ch2-4" class="sub">2.4 溢位</a>
   <a href="#ch2-ex" class="sub">例題</a>
-  </div>
-</nav>
+  <div class="part">講義 ②　更多資料表示</div>
+  <a href="lesson-2.html#ch3" class="ch other">第 3 章　位元寬度與位元運算</a>
+  <a href="lesson-2.html#ch4" class="ch other">第 4 章　浮點數</a>
+  <a href="lesson-2.html#ch5" class="ch other">第 5 章　文字、圖片與聲音</a>
+  </div></details></nav>
 
 <main>
-<div class="kicker">計算機概論・自學講義</div>
-<h1>數字系統與資料表示</h1>
-<p class="lead">電腦裡的一切——文字、圖片、影片——最後都會變成一長串的 0 和 1。這份講義從零開始，帶你看懂這些 0 和 1 怎麼表示數字。</p>
+<h1>講義 ①　整數</h1>
+<p class="lead">電腦裡的一切——文字、圖片、影片——最後都會變成一長串的 0 和 1。這份講義從零開始，帶你看懂這些 0 和 1 怎麼表示整數。讀完再接著讀<a href="lesson-2.html">講義 ②</a>。</p>
 
 <section id="start">
-<h3>怎麼使用這份講義</h3>
+<h2 class="minor">怎麼使用這份講義</h2>
 <ul>
   <li><strong>照順序讀。</strong>後面的章節會用到前面的觀念。完全沒基礎也沒關係，第 0 章就是為你準備的。</li>
-  <li><strong>藍框裡的東西都可以動手玩。</strong>改數字、按按鈕，看看會發生什麼事。自己試一次，比讀三遍還有用。</li>
+  <li><strong>標題寫著「互動」的方塊都可以動手玩。</strong>改數字、按按鈕，看看會發生什麼事。自己試一次，比讀三遍還有用。</li>
   <li><strong>手算過程可以一步一步看。</strong>按「下一步」慢慢看每一步在做什麼，看懂了再往下。</li>
   <li><strong>每章最後有例題。</strong>先拿紙筆自己算，再點開解答對照；也可以把題目「丟進元件」驗算。</li>
 </ul>
@@ -242,7 +59,7 @@ details.ex[open] summary{margin-bottom:6px}
 
 <!-- ============ 第 0 章 ============ -->
 <section id="ch0">
-<h2>第 0 章　開始之前</h2>
+<h2 class="chapter"><span class="no">第 0 章</span>開始之前</h2>
 <p class="lead">這一章不教任何新算法，只把後面會一直用到的幾個詞和觀念講清楚。</p>
 
 <h3 id="ch0-1">0.1 電腦只認得 0 和 1</h3>
@@ -297,12 +114,12 @@ details.ex[open] summary{margin-bottom:6px}
 <li>十進位的位權每往左乘以 10，二進位每往左乘以 2。</li>
 <li><code>2³</code> 是 2×2×2；任何數的 0 次方是 1；負次方是「除」。</li>
 </ul></div>
-<div class="gopractice"><b>讀完了？去練習：</b><a href="practice.html#skill=pow2">2 的次方</a><a href="audio.html#1">🎧 聽第 1 集複習</a></div>
+<div class="gopractice"><b>讀完了？去練習：</b><a href="practice.html#skill=pow2">2 的次方</a><a href="audio.html#1"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>聽第 1 集複習</a></div>
 </section>
 
 <!-- ============ 第 1 章 ============ -->
 <section id="ch1">
-<h2>第 1 章　進位轉換</h2>
+<h2 class="chapter"><span class="no">第 1 章</span>進位轉換</h2>
 <p class="lead">同一個數量可以用不同的進位制寫出來。這一章學會在二、八、十、十六進位之間互相轉換。</p>
 
 <h3 id="ch1-1">1.1 什麼是「進位制」</h3>
@@ -451,12 +268,12 @@ details.ex[open] summary{margin-bottom:6px}
 <p>整數和小數分開算。整數 25：除 2 取餘得 <code>11001</code>。小數 0.75：0.75×2＝1.5 取 1，0.5×2＝1.0 取 1 → <code>.11</code>。合起來：<strong><code>11001.11<sub>2</sub></code></strong>。</p>
 <button class="loadbtn" data-load='[["conv-base","10"],["conv-in","25.75"],["conv-target","2"]]' data-goto="conv">丟進轉換器看過程</button>
 </details>
-<div class="gopractice"><b>讀完了？去練習：</b><a href="practice.html#skill=bin2dec">二進位→十進位</a><a href="practice.html#skill=dec2bin">十進位→二進位</a><a href="practice.html#skill=hex2dec">十六進位→十進位</a><a href="practice.html#skill=dec2hex">十進位→十六進位</a><a href="practice.html#skill=bin2hex">分組轉換</a><a href="practice.html#skill=frac2bin">小數</a><a href="audio.html#2">🎧 第 2、3 集</a></div>
+<div class="gopractice"><b>讀完了？去練習：</b><a href="practice.html#skill=bin2dec">二進位→十進位</a><a href="practice.html#skill=dec2bin">十進位→二進位</a><a href="practice.html#skill=hex2dec">十六進位→十進位</a><a href="practice.html#skill=dec2hex">十進位→十六進位</a><a href="practice.html#skill=bin2hex">分組轉換</a><a href="practice.html#skill=frac2bin">小數</a><a href="audio.html#2"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>第 2、3 集</a></div>
 </section>
 
 <!-- ============ 第 2 章 ============ -->
 <section id="ch2">
-<h2>第 2 章　負數與溢位</h2>
+<h2 class="chapter"><span class="no">第 2 章</span>負數與溢位</h2>
 <p class="lead">電腦裡只有 0 和 1，沒有「−」這個符號。那 −5 要怎麼存？這一章介紹三種方法，以及電腦實際使用的「2 補數」。</p>
 
 <h3 id="ch2-1">2.1 問題：沒有負號可用</h3>
@@ -592,49 +409,16 @@ details.ex[open] summary{margin-bottom:6px}
 <p>−3 ＝ <code>1101</code>，−4 ＝ <code>1100</code>。<code>1101 + 1100 = 1 1001</code>，最左邊<strong>有</strong>進位出去，丟掉後 <code>1001</code> ＝ −7。兩個負數相加得到負數，答案正確，<strong>沒有溢位</strong>。這就是「進位出去 ≠ 溢位」的例子。</p>
 <button class="loadbtn" data-load='[["add-w","4"],["add-a","-3"],["add-op","+"],["add-b","-4"]]' data-goto="add">丟進加減法元件</button>
 </details>
-<div class="gopractice"><b>讀完了？去練習：</b><a href="practice.html#skill=tcWrite">寫出 2 補數</a><a href="practice.html#skill=tcRead">讀出 2 補數</a><a href="practice.html#skill=reps">符號大小與 1 補數</a><a href="practice.html#skill=addsub">加減與溢位</a><a href="practice.html#skill=concepts">觀念選擇題</a><a href="audio.html#4">🎧 第 4、5 集</a></div>
+<div class="gopractice"><b>讀完了？去練習：</b><a href="practice.html#skill=tcWrite">寫出 2 補數</a><a href="practice.html#skill=tcRead">讀出 2 補數</a><a href="practice.html#skill=reps">符號大小與 1 補數</a><a href="practice.html#skill=addsub">加減與溢位</a><a href="practice.html#skill=concepts">觀念選擇題</a><a href="audio.html#4"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>第 4、5 集</a></div>
 </section>
+<nav class="pager" aria-label="下一份講義"><a class="next" href="lesson-2.html"><small>下一份講義</small><b>講義 ②　更多資料表示 →</b><span class="small muted">位元運算、浮點數、文字圖片聲音</span></a></nav>
 </main>
 </div>
 
+<script src="assets/lesson-core.js"></script>
 <script>
-"use strict";
-const $ = (s) => document.querySelector(s);
 const DIGITS = "0123456789ABCDEF";
 const BASE_NAME = {2:"二進位",8:"八進位",10:"十進位",16:"十六進位"};
-const SUP = {"-":"⁻","0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹"};
-const sup = (n) => String(n).split("").map(c => SUP[c]).join("");
-const esc = (s) => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const msg = (html) => `<div class="step-msg">${html}</div>`;
-
-/* ---------- 通用：逐步播放器 ---------- */
-function stepper(el, steps){
-  let i = 0;
-  el.innerHTML = `<div class="step-body"></div>
-    <div class="step-ctrl">
-      <button data-a="first">從頭</button>
-      <button data-a="prev">← 上一步</button>
-      <span class="step-count"></span>
-      <button data-a="next" class="primary">下一步 →</button>
-      <button data-a="all">直接看結果</button>
-    </div>`;
-  const body = el.querySelector(".step-body"), cnt = el.querySelector(".step-count");
-  const bPrev = el.querySelector('[data-a="prev"]'), bNext = el.querySelector('[data-a="next"]');
-  function show(){
-    body.innerHTML = steps[i];
-    cnt.textContent = `第 ${i+1} / ${steps.length} 步`;
-    bPrev.disabled = i === 0; bNext.disabled = i === steps.length - 1;
-  }
-  el.onclick = (e) => {
-    const a = e.target.closest("button")?.dataset.a; if(!a) return;
-    if(a === "prev" && i > 0) i--;
-    if(a === "next" && i < steps.length - 1) i++;
-    if(a === "all") i = steps.length - 1;
-    if(a === "first") i = 0;
-    show();
-  };
-  show();
-}
 
 /* ---------- 數字解析與轉換（BigInt 精確計算） ---------- */
 function parseNum(raw, base){
@@ -994,7 +778,7 @@ function parseInt10(raw){
       const why = (sub ? (A >= 0 && Bv < 0) : (A >= 0 && Bv >= 0))
         ? "正數加正數，結果卻變成負數（最高位元是 1）"
         : "負數加負數，結果卻變成正數（最高位元是 0）";
-      verdict = `<div class="verdict bad"><strong>⚠ 溢位！結果是錯的。</strong>正確答案 ${A} ${sub ? "−" : "＋"} ${Bv < 0 ? `(${Bv})` : Bv} ＝ ${trueV}，超出 ${w} 位元的範圍（${mn} ～ ${mx}），所以「繞了一圈」變成 ${resV}。<br>判斷方法：${why}。</div>`;
+      verdict = `<div class="verdict bad"><strong>溢位！結果是錯的。</strong>正確答案 ${A} ${sub ? "−" : "＋"} ${Bv < 0 ? `(${Bv})` : Bv} ＝ ${trueV}，超出 ${w} 位元的範圍（${mn} ～ ${mx}），所以「繞了一圈」變成 ${resV}。<br>判斷方法：${why}。</div>`;
     } else {
       verdict = `<div class="verdict ok"><strong>✓ 沒有溢位，答案正確：${A} ${sub ? "−" : "＋"} ${Bv < 0 ? `(${Bv})` : Bv} ＝ ${resV}</strong>${c[w] ? "注意：雖然最左邊有進位出去，但這<strong>不是</strong>溢位。判斷溢位要看正負號是否合理，不是看有沒有進位出去。" : "結果落在範圍內。"}</div>`;
     }
@@ -1006,19 +790,6 @@ function parseInt10(raw){
   update();
 })();
 
-/* ---------- 例題：丟進元件 ---------- */
-document.addEventListener("click", (e) => {
-  const btn = e.target.closest(".loadbtn"); if(!btn) return;
-  const pairs = JSON.parse(btn.dataset.load);
-  for(const [id, val] of pairs){
-    const el = document.getElementById(id);
-    el.value = val;
-    el.dispatchEvent(new Event(el.tagName === "SELECT" ? "change" : "input"));
-  }
-  const w = document.getElementById(btn.dataset.goto);
-  w.scrollIntoView({behavior: "smooth", block: "start"});
-  w.classList.remove("flash"); void w.offsetWidth; w.classList.add("flash");
-});
 </script>
 </body>
 </html>

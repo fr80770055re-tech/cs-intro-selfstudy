@@ -1,0 +1,68 @@
+/* 首頁 */
+.home{max-width:880px}
+.hero{padding:24px 0 8px}
+.hero h1{font-size:clamp(32px,5.4vw,52px);line-height:1.22;letter-spacing:0;margin-bottom:16px}
+.hero .lead{font-size:clamp(17px,1.9vw,19px)}
+.br-sm{display:none}
+
+/* 繼續學習 */
+.resume{margin:32px 0 8px;padding:24px 26px;border-radius:var(--r-lg);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px 28px;align-items:center}
+.resume .head{font-family:var(--serif);font-weight:900;font-size:clamp(21px,2.6vw,25px);line-height:1.4;margin:0}
+.resume .sub{color:var(--muted);margin:4px 0 0;font-size:16px}
+.resume .acts{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}
+.resume .acts .btn{min-height:46px;padding:10px 20px;font-size:16px}
+.resume .totals{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px 28px;padding-top:16px;border-top:1px solid var(--line);font-size:14.5px;color:var(--muted)}
+.resume .totals > span{display:flex;align-items:center;gap:10px;min-width:220px;flex:1}
+.resume .totals .meter{flex:1;min-width:80px}
+.resume .totals b{color:var(--text)}
+.resume.due{background:var(--sign-soft);border-color:transparent}
+.resume.due .totals{border-color:color-mix(in srgb,var(--sign) 25%,transparent)}
+
+.sechead{margin-top:64px}
+.sechead h2{margin:0 0 6px}
+.sechead p{margin:0 0 22px;max-width:40em}
+
+/* 學習路線：每章是一個「位元」節點，練熟了就點亮成 1 的顏色 */
+.route{list-style:none;margin:0;padding:0;position:relative}
+.route::before{content:"";position:absolute;left:23px;top:24px;bottom:40px;width:2px;background:var(--line-strong)}
+.route li{position:relative;display:grid;grid-template-columns:48px minmax(0,1fr);gap:0 20px;padding:0 0 28px}
+.route li.partrow{display:block;padding:0}
+.route .node{position:relative;z-index:1;width:48px;height:56px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:24px;font-weight:700;background:var(--zero);color:var(--zero-text);border:3px solid var(--bg);transition:background-color .4s,color .4s}
+.route li.done .node{background:var(--one);color:var(--one-text)}
+.route li.cur .node{background:var(--surface);color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.route li.extra .node{font-family:var(--serif);font-size:18px}
+.route .body{padding-top:4px;min-width:0}
+.route .top{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 12px}
+.route h3{margin:0;font-size:20px}
+.route .days{font-size:13.5px;color:var(--muted)}
+.route li.cur .days::after{content:"・你在這裡";color:var(--accent);font-weight:700}
+.route p{margin:2px 0 10px;color:var(--muted);font-size:15.5px;max-width:38em}
+.route .links{display:flex;flex-wrap:wrap;gap:8px}
+.route .links a{display:inline-flex;align-items:center;gap:7px;padding:6px 13px;border-radius:99px;border:1px solid var(--line-strong);background:var(--surface);color:var(--text);text-decoration:none;font-size:14.5px;line-height:1.5}
+.route .links a:hover{border-color:var(--accent);color:var(--accent)}
+.route .links a .icon{width:16px;height:16px;color:var(--accent)}
+.route .links a .ct{color:var(--muted)}
+.route .links a.ok .ct,.route .links a .ct.ok{color:var(--ok);font-weight:700}
+.route .part{position:relative;z-index:1;display:inline-block;margin:4px 0 18px 68px;font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.04em}
+
+.daily{display:flex;gap:12px;align-items:flex-start;background:var(--surface-2);border-radius:var(--r);padding:14px 18px;margin:8px 0 0;font-size:15.5px}
+.daily .icon{color:var(--accent);margin-top:5px}
+
+.scope{margin:16px 0 0;display:grid;grid-template-columns:190px minmax(0,1fr)}
+.scope dt,.scope dd{margin:0;padding:12px 0;border-top:1px solid var(--line)}
+.scope dt{font-weight:700;padding-right:16px}
+.scope dd{font-size:15.5px}
+
+@media (max-width:720px){
+  .br-sm{display:inline}
+  .resume{grid-template-columns:1fr;padding:20px}
+  .resume .acts{justify-content:flex-start}
+  .resume .acts .btn{flex:1 1 auto}
+  .route li{grid-template-columns:40px minmax(0,1fr);gap:0 14px}
+  .route::before{left:19px}
+  .route .node{width:40px;height:48px;font-size:20px}
+  .route .part{margin-left:54px}
+  .scope{grid-template-columns:1fr}
+  .scope dt{padding-bottom:0}
+  .scope dd{border-top:0;padding-top:4px}
+}
