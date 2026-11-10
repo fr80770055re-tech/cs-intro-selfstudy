@@ -53,7 +53,7 @@
 </head>
 <body>
 <header class="topbar">
-  <a class="logo" href="index.html" aria-label="計概自學・資料表示 首頁"><span class="logo-mark" aria-hidden="true"><i class="on"></i><i></i><i class="on"></i><i class="on"></i></span><span class="logo-text">計概自學・資料表示</span></a>
+  <a class="logo" href="index.html" aria-label="計概自學 首頁"><span class="logo-mark" aria-hidden="true"><i class="on"></i><i></i><i class="on"></i><i class="on"></i></span><span class="logo-text">計概自學</span></a>
   <nav aria-label="主選單"><a href="index.html">首頁</a><a href="lesson.html"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#book"/></svg>講義</a><a href="practice.html"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#pencil"/></svg>練習</a><a href="audio.html" aria-current="page"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>音檔</a></nav>
 </header>
 <main class="wrap">
@@ -99,7 +99,7 @@ const fmt = (s) => { s = Math.max(0, Math.floor(s || 0)); return `${Math.floor(s
 const esc = (s) => s.replace(/[&<>]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;"}[c]));
 let cur = -1;
 
-const PARTS = [[0, "講義 ①　整數（第 1～8 集）"], [8, "講義 ②　更多資料表示（第 9 集起）"]];
+const PARTS = [[0, "講義 ①　整數（第 1～8 集）"], [8, "講義 ②　更多資料表示（第 9～12 集）"], [12, "講義 ③　電腦、網路與軟體（第 13 集起）"]];
 const DL = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#download"/></svg>';
 function render(){
   $("#tracks").innerHTML = PARTS.map(([from, label], pi) => { const to = PARTS[pi + 1] ? PARTS[pi + 1][0] : T.length; if (from >= T.length) return ""; return `<h2 class="parth">${label}</h2><ul class="tracks">` + T.slice(from, to).map((t, j) => { const i = from + j; return `<li data-i="${i}" class="${i === cur ? "cur" : ""} ${st.done[t.id] ? "done" : ""}">

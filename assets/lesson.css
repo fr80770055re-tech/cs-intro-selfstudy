@@ -254,3 +254,92 @@ details.ex .q b.n{color:var(--muted);margin-right:6px;font-family:var(--mono)}
   .layout{display:block}
   details.ex{break-inside:avoid}
 }
+
+/* ---------- 第 6 章：邏輯閘、迷你電腦 ---------- */
+.gname{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.03em;margin-bottom:6px}
+.gates{display:grid;grid-template-columns:auto 1fr;gap:16px 24px;align-items:start}
+.gates .gin{display:flex;gap:8px}
+.gates .gout{display:flex;flex-wrap:wrap;gap:10px}
+.gate{border:1px solid var(--line);border-radius:var(--r);background:var(--bg);padding:8px 12px;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:84px}
+.gate .gname{margin:0;font-family:var(--mono)}
+.lamp{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--zero);font-family:var(--mono);font-weight:700;color:var(--zero-text);transition:background-color .2s,box-shadow .3s}
+.lamp.on{background:#f5b301;color:#3b2a00;box-shadow:0 2px 12px rgba(245,179,1,.55)}
+.hadder{grid-column:1/-1;border-top:1px dashed var(--line-strong);padding-top:12px}
+.harow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;font-weight:700;font-size:15px;margin:4px 0 6px}
+.cpuwrap{display:grid;grid-template-columns:minmax(220px,2fr) minmax(0,3fr);gap:16px;margin-bottom:12px}
+.cpubox,.membox{border:1px solid var(--line);border-radius:var(--r);background:var(--bg);padding:12px 14px;min-width:0}
+.regs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.reg{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;display:flex;flex-direction:column}
+.reg span{font-size:12px;color:var(--muted);font-weight:700}
+.reg b{font-size:17px;white-space:nowrap}
+.phases{display:flex;align-items:center;gap:6px;margin:12px 0 10px;font-size:14px;font-weight:700;color:var(--muted)}
+.phases span{padding:3px 10px;border-radius:99px;border:1px solid var(--line)}
+.phases span.on{background:var(--accent);color:var(--accent-text);border-color:var(--accent)}
+.phases i{font-style:normal;color:var(--line-strong)}
+.screen{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:15px}
+.memgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.mcell{border:1px solid var(--line);border-radius:7px;background:var(--surface);padding:4px 7px;font-size:12.5px;line-height:1.5;min-width:0}
+.mcell.pc{box-shadow:0 0 0 2px var(--accent) inset;border-color:var(--accent)}
+.mcell.cur{background:var(--hl)}
+.mcell .ma{color:var(--muted);font-weight:700}
+.mcell .mv{font-size:13px;font-weight:700;white-space:nowrap}
+.mcell .mi{display:flex;justify-content:space-between;gap:4px;font-family:var(--mono);font-size:11.5px;color:var(--accent);white-space:nowrap}
+table.plain.mono-first td:first-child{font-family:var(--mono)}
+
+/* ---------- 第 7 章：圖靈機 ---------- */
+.tape{display:flex;gap:4px;overflow-x:auto;padding:14px 4px 10px;align-items:center}
+.tape .cell{flex:none;width:38px;height:44px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line-strong);border-radius:6px;background:var(--surface);font-family:var(--mono);font-size:19px;font-weight:700}
+.tape .cell.blank{color:var(--line-strong);border-style:dashed}
+.tape .cell.head{box-shadow:0 0 0 3px var(--sign);background:var(--sign-soft);position:relative;color:var(--text)}
+.tape .cell.head::after{content:"▲";position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:12px;color:var(--sign)}
+.tmstate{margin:14px 0 10px;font-size:15.5px}
+table.rules tr.cur td{background:var(--hl)}
+table.rules tr.next td{box-shadow:0 1px 0 var(--accent) inset,0 -1px 0 var(--accent) inset}
+table.rules tr.next td:first-child{box-shadow:0 1px 0 var(--accent) inset,0 -1px 0 var(--accent) inset,1px 0 0 var(--accent) inset}
+table.rules tr.next td:last-child{box-shadow:0 1px 0 var(--accent) inset,0 -1px 0 var(--accent) inset,-1px 0 0 var(--accent) inset}
+
+/* ---------- 第 8 章：IP ---------- */
+.ipgrid{display:flex;flex-direction:column;gap:6px}
+.iprow{display:grid;grid-template-columns:140px 150px 1fr;gap:6px 12px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+.iprow.res{border-bottom:0;background:var(--accent-soft);border-radius:8px;padding:8px 8px}
+.iprow .lab{font-size:14px;font-weight:700}
+.iprow .dec{font-size:16px}
+.binrow{display:flex;flex-wrap:wrap;gap:4px 10px;font-family:var(--mono);font-size:14px}
+.binrow .oct{display:inline-flex;gap:1px}
+.binrow i{font-style:normal;width:14px;text-align:center;border-radius:3px;color:var(--zero-text)}
+.binrow i.one{font-weight:700;color:var(--text)}
+.binrow i.netpart{background:var(--ga)}
+.binrow i.hostpart{background:var(--gb)}
+.legend .sw.netpart{background:var(--ga);box-shadow:none}
+.legend .sw.hostpart{background:var(--gb);box-shadow:none}
+
+/* ---------- 第 9 章：追蹤 ---------- */
+.tracewrap{display:grid;grid-template-columns:minmax(0,3fr) minmax(200px,2fr);gap:14px;margin-bottom:12px}
+pre.code{margin:0;background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:10px 0;font-family:var(--mono);font-size:14.5px;line-height:1.7;overflow-x:auto}
+pre.code .ln{display:block;padding:0 14px 0 8px;white-space:pre}
+pre.code .ln .no{display:inline-block;width:2em;color:var(--muted);user-select:none}
+pre.code .ln.cur{background:var(--hl)}
+pre.code .ln.cur .no{color:var(--sign);font-weight:700}
+.vars table.plain{margin:0;font-size:14.5px}
+.vars table.plain td,.vars table.plain th{padding:4px 8px}
+
+/* ---------- 第 10 章：資料表、SQL ---------- */
+.dbpair{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;margin:14px 0}
+table.db{width:auto;margin:0;font-size:14.5px}
+table.db caption{text-align:left;font-weight:700;font-family:var(--serif);font-size:16px;padding:0 0 6px}
+table.db th{white-space:nowrap}
+table.db td.num{font-family:var(--mono);text-align:right}
+.keytag{display:inline-block;font-size:11px;font-weight:700;padding:0 6px;border-radius:99px;background:var(--sign-soft);color:var(--sign);vertical-align:1px}
+.keytag.fk{background:var(--exp-soft);color:var(--exp)}
+#sql-in{width:100%;font-family:var(--mono);font-size:15px;resize:vertical;line-height:1.6}
+#sql-presets button{min-height:34px;padding:4px 12px;font-size:14px}
+
+@media (max-width:900px){
+  .gates{grid-template-columns:1fr}
+  .cpuwrap{grid-template-columns:1fr}
+  .memgrid{grid-template-columns:repeat(2,1fr)}
+  .iprow{grid-template-columns:1fr;gap:3px}
+  .tracewrap{grid-template-columns:1fr}
+  .dbpair{grid-template-columns:1fr}
+  .tablewrap table.db{min-width:0}
+}

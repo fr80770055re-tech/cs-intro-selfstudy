@@ -80,6 +80,10 @@ details.chapter .rows{padding:0 0 18px 54px}
 table.calc{border-collapse:collapse;font-family:var(--mono);font-size:15px;margin:6px 0;display:block;overflow-x:auto}
 table.calc th{font-family:var(--sans);font-size:13px;color:var(--muted);font-weight:700;padding:2px 10px;text-align:left}
 table.calc td{padding:2px 10px;white-space:nowrap}
+table.calc.dbq{display:table;font-family:var(--sans);font-size:14.5px;margin:10px 0}
+table.calc.dbq td,table.calc.dbq th{border-bottom:1px solid var(--line);padding:4px 12px}
+pre.qcode{font-family:var(--mono);font-size:15px;line-height:1.65;background:var(--surface-2);border-radius:var(--r);padding:10px 14px;margin:10px 0;overflow-x:auto;white-space:pre}
+.prompt pre.qcode{font-weight:400}
 .grpchip{display:inline-flex;flex-direction:column;align-items:center;font-family:var(--mono);background:var(--surface-2);border-radius:8px;padding:2px 10px;margin:2px}
 .grpchip small{color:var(--accent);font-weight:700}
 .after{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
@@ -119,7 +123,7 @@ details.tools textarea{width:100%;min-height:80px;font-family:var(--mono);font-s
 </head>
 <body>
 <header class="topbar">
-  <a class="logo" href="index.html" aria-label="計概自學・資料表示 首頁"><span class="logo-mark" aria-hidden="true"><i class="on"></i><i></i><i class="on"></i><i class="on"></i></span><span class="logo-text">計概自學・資料表示</span></a>
+  <a class="logo" href="index.html" aria-label="計概自學 首頁"><span class="logo-mark" aria-hidden="true"><i class="on"></i><i></i><i class="on"></i><i class="on"></i></span><span class="logo-text">計概自學</span></a>
   <nav aria-label="主選單"><a href="index.html">首頁</a><a href="lesson.html"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#book"/></svg>講義</a><a href="practice.html" aria-current="page"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#pencil"/></svg>練習</a><a href="audio.html"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>音檔</a></nav>
 </header>
 
@@ -227,8 +231,8 @@ function renderHome(){
     const active = list.some(s => ["learning", "due"].includes(P.status(s.id))) || (nextSkill && nextSkill.ch === c.n);
     const open = openState[c.n] ?? active;
     h += `<details class="chapter ${all ? "done" : ""}" data-ch="${c.n}" ${open ? "open" : ""}><summary>
-      <span class="node ${c.n === 9 ? "serif" : ""}" aria-hidden="true">${c.n === 9 ? "綜" : c.n}</span>
-      <span class="t">${c.n === 9 ? "" : `第 ${c.n} 章　`}${c.title}<small>${list.length} 種題型</small></span>
+      <span class="node ${c.n === 99 ? "serif" : ""}" aria-hidden="true">${c.n === 99 ? "綜" : c.n}</span>
+      <span class="t">${c.n === 99 ? "" : `第 ${c.n} 章　`}${c.title}<small>${list.length} 種題型</small></span>
       <span class="cnt"><span class="meter ok"><i style="width:${mm / list.length * 100}%"></i></span>${mm}/${list.length} 精熟</span></summary><div class="rows">`;
     for (const s of list) {
       const st = P.data.skills[s.id];

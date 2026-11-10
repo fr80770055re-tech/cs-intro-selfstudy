@@ -27,7 +27,7 @@
     acts = `<a class="btn" href="practice.html#skill=pow2">先看看練習題</a><a class="btn primary" href="lesson.html#ch0">開始讀講義 ${I("arrow-right")}</a>`;
   } else if (next) {
     const c = chOf(next.ch), st = P.data.skills[next.id];
-    head = `繼續：${c.n === 9 ? "綜合練習" : `第 ${c.n} 章　${c.title}`}`;
+    head = `繼續：${c.n === 99 ? "綜合練習" : `第 ${c.n} 章　${c.title}`}`;
     sub = `下一個要練熟的題型是「${next.name}」${st && st.streak ? `，目前連續答對 ${Math.min(st.streak, P.GOAL)} / ${P.GOAL}` : ""}。忘記方法就先回講義看一下。`;
     acts = `<a class="btn" href="${next.lesson}">回講義</a><a class="btn primary" href="practice.html#skill=${next.id}">練習 ${I("arrow-right")}</a>`;
   } else {
@@ -42,17 +42,17 @@
   /* ---------- 學習路線 ---------- */
   let h = "", lastPart = -1;
   for (const c of CH) {
-    if (c.part && c.part !== lastPart) { h += `<li class="partrow"><span class="part">講義 ${c.part === 1 ? "①　整數" : "②　更多資料表示"}</span></li>`; lastPart = c.part; }
+    if (c.part && c.part !== lastPart) { h += `<li class="partrow"><span class="part">${(window.PARTS || {})[c.part] || ""}</span></li>`; lastPart = c.part; }
     const ss = SK.filter((s) => s.ch === c.n), mm = ss.filter(mastered).length, all = ss.length > 0 && mm === ss.length;
     const cls = all ? "done" : c.n === curCh ? "cur" : "";
     const firstOpen = ss.find((s) => !mastered(s)) || ss[0];
     const ah = c.audio.map((n) => `<a href="audio.html#${n}">${I("headphones")}第 ${n} 集${heard(n) ? ` <span class="ct ok">✓</span>` : ""}</a>`).join("");
-    const lessonLink = c.n === 9 ? `<a href="practice.html#challenge">${I("shuffle")}混合挑戰</a>` : `<a href="${c.lesson}">${I("book")}讀講義</a>`;
+    const lessonLink = c.n === 99 ? `<a href="practice.html#challenge">${I("shuffle")}混合挑戰</a>` : `<a href="${c.lesson}">${I("book")}讀講義</a>`;
     const practice = firstOpen ? `<a href="practice.html#skill=${firstOpen.id}" class="${all ? "ok" : ""}">${I("pencil")}練習 <span class="ct">${mm}/${ss.length}</span></a>` : "";
-    h += `<li class="${cls} ${c.n === 9 ? "extra" : ""}">
-      <div class="node" aria-hidden="true">${c.n === 9 ? "綜" : c.n}</div>
+    h += `<li class="${cls} ${c.n === 99 ? "extra" : ""}">
+      <div class="node" aria-hidden="true">${c.n === 99 ? "綜" : c.n}</div>
       <div class="body">
-        <div class="top"><h3>${c.n === 9 ? "" : `<span class="sr">第 ${c.n} 章 </span>`}${c.title}</h3><span class="days">${c.days}${all ? "・已精熟" : ""}</span></div>
+        <div class="top"><h3>${c.n === 99 ? "" : `<span class="sr">第 ${c.n} 章 </span>`}${c.title}</h3><span class="days">${c.days}${all ? "・已精熟" : ""}</span></div>
         <p>${c.sum}</p>
         <div class="links">${lessonLink}${practice}${ah}</div>
       </div></li>`;

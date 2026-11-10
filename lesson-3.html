@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>講義 ③　電腦、網路與軟體</title>
+<meta name="description" content="計概自學講義第 6～10 章：電腦的構成、圖靈機與馮紐曼模型、電腦網路、程式語言、資料庫。">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Serif+TC:wght@700;900&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/lesson.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="logo" href="index.html" aria-label="計概自學 首頁"><span class="logo-mark" aria-hidden="true"><i class="on"></i><i></i><i class="on"></i><i class="on"></i></span><span class="logo-text">計概自學</span></a>
+  <nav aria-label="主選單"><a href="index.html">首頁</a><a href="lesson.html" aria-current="page"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#book"/></svg>講義</a><a href="practice.html"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#pencil"/></svg>練習</a><a href="audio.html"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>音檔</a></nav>
+</header>
+<div class="layout">
+<nav class="toc" aria-label="目錄"><details open><summary>目錄<span class="cur"></span></summary><div class="links">
+  <div class="part">講義 ①　整數</div>
+  <a href="lesson.html#ch0" class="ch other">第 0 章　開始之前</a>
+  <a href="lesson.html#ch1" class="ch other">第 1 章　進位轉換</a>
+  <a href="lesson.html#ch2" class="ch other">第 2 章　負數與溢位</a>
+  <div class="part">講義 ②　更多資料表示</div>
+  <a href="lesson-2.html#ch3" class="ch other">第 3 章　位元寬度與位元運算</a>
+  <a href="lesson-2.html#ch4" class="ch other">第 4 章　浮點數</a>
+  <a href="lesson-2.html#ch5" class="ch other">第 5 章　文字、圖片與聲音</a>
+  <div class="part">講義 ③　電腦、網路與軟體</div>
+  <a href="#start" class="ch">這份講義要學什麼</a>
+  <a href="#ch6" class="ch">第 6 章　電腦的構成</a>
+  <a href="#ch6-1" class="sub">6.1 五大單元</a>
+  <a href="#ch6-2" class="sub">6.2 從邏輯閘到加法器</a>
+  <a href="#ch6-3" class="sub">6.3 CPU 裡面有什麼</a>
+  <a href="#ch6-4" class="sub">6.4 指令週期</a>
+  <a href="#ch6-5" class="sub">6.5 記憶體階層</a>
+  <a href="#ch6-6" class="sub">6.6 匯流排與周邊</a>
+  <a href="#ch6-ex" class="sub">例題</a>
+  <a href="#ch7" class="ch">第 7 章　圖靈機與馮紐曼模型</a>
+  <a href="#ch7-1" class="sub">7.1 什麼是「計算」</a>
+  <a href="#ch7-2" class="sub">7.2 圖靈機</a>
+  <a href="#ch7-3" class="sub">7.3 馮紐曼模型</a>
+  <a href="#ch7-4" class="sub">7.4 電腦的世代</a>
+  <a href="#ch7-ex" class="sub">例題</a>
+  <a href="#ch8" class="ch">第 8 章　電腦網路</a>
+  <a href="#ch8-1" class="sub">8.1 網路是什麼</a>
+  <a href="#ch8-2" class="sub">8.2 封包與分層</a>
+  <a href="#ch8-3" class="sub">8.3 IP 位址</a>
+  <a href="#ch8-4" class="sub">8.4 名字與網址</a>
+  <a href="#ch8-5" class="sub">8.5 速度與時間</a>
+  <a href="#ch8-ex" class="sub">例題</a>
+  <a href="#ch9" class="ch">第 9 章　程式語言</a>
+  <a href="#ch9-1" class="sub">9.1 機器語言到高階語言</a>
+  <a href="#ch9-2" class="sub">9.2 變數與型別</a>
+  <a href="#ch9-3" class="sub">9.3 三種流程</a>
+  <a href="#ch9-4" class="sub">9.4 函式與程式庫</a>
+  <a href="#ch9-5" class="sub">9.5 演算法的好壞</a>
+  <a href="#ch9-6" class="sub">9.6 語言地圖</a>
+  <a href="#ch9-ex" class="sub">例題</a>
+  <a href="#ch10" class="ch">第 10 章　資料庫</a>
+  <a href="#ch10-1" class="sub">10.1 為什麼需要資料庫</a>
+  <a href="#ch10-2" class="sub">10.2 關聯式模型</a>
+  <a href="#ch10-3" class="sub">10.3 SQL</a>
+  <a href="#ch10-4" class="sub">10.4 交易與 ACID</a>
+  <a href="#ch10-5" class="sub">10.5 索引、備份與 NoSQL</a>
+  <a href="#ch10-ex" class="sub">例題</a>
+  </div></details></nav>
+
+<main>
+<h1>講義 ③　電腦、網路與軟體</h1>
+<p class="lead">前兩份講義回答了「資料怎麼變成 0 和 1」。這一份回答另外三個問題：電腦這台機器是怎麼把 0 和 1 算出結果的、電腦和電腦之間怎麼溝通，以及人怎麼叫電腦做事：寫程式、存資料。</p>
+
+<section id="start">
+<h2 class="minor">這份講義要學什麼</h2>
+<ul>
+  <li><strong>第 6 章</strong>打開機殼：五大單元、CPU 裡面有什麼、一條指令怎麼被執行、記憶體為什麼分好幾層。</li>
+  <li><strong>第 7 章</strong>退一步看理論：圖靈用一台想像中的機器定義了「計算」，馮紐曼則畫出了所有現代電腦的藍圖。</li>
+  <li><strong>第 8 章</strong>把電腦接起來：封包、分層、IP 位址、網址、下載要多久。</li>
+  <li><strong>第 9 章</strong>學程式語言的共同骨架：變數、型別、三種流程、函式，以及編譯和直譯的差別。</li>
+  <li><strong>第 10 章</strong>學資料怎麼有條理地存：資料表、主鍵、外來鍵，並且親手下 SQL 查詢。</li>
+</ul>
+<div class="note">這份講義的計算題比前兩份少，觀念題比較多。前面學過的東西會一直回來：IP 位址就是 4 個位元組，子網路就是 AND 遮罩，整數變數的範圍就是 2 補數的範圍。看到「回想一下」的地方，不確定就點回去翻。</div>
+</section>
+
+<!-- ============ 第 6 章 ============ -->
+<section id="ch6">
+<h2 class="chapter"><span class="no">第 6 章</span>電腦的構成</h2>
+<p class="lead">一台電腦不管長得像手機、筆電還是機房裡的伺服器，裡面都是同樣的幾個部分在合作。這一章從最粗的分法開始，一路放大到 CPU 裡面怎麼執行一條指令。</p>
+
+<h3 id="ch6-1">6.1 五大單元</h3>
+<p>最傳統的分法把電腦分成五個單元。這五個名字幾乎每本計概課本和每場考試都會出現：</p>
+<div class="tablewrap"><table class="plain">
+<tr><th>單元</th><th>做什麼</th><th>常見的實物</th></tr>
+<tr><td><b>輸入單元</b></td><td>把外界的資訊變成 0 和 1 送進電腦</td><td>鍵盤、滑鼠、觸控螢幕、麥克風、相機</td></tr>
+<tr><td><b>輸出單元</b></td><td>把 0 和 1 變成人看得懂、聽得到的東西</td><td>螢幕、喇叭、印表機</td></tr>
+<tr><td><b>記憶單元</b></td><td>暫時或長期保存資料和程式</td><td>記憶體（RAM）、SSD、硬碟</td></tr>
+<tr><td><b>算術邏輯單元</b>（ALU）</td><td>真正做加減乘除和 AND／OR／比較的地方</td><td rowspan="2">兩者合起來就是 <b>CPU</b>（中央處理器）</td></tr>
+<tr><td><b>控制單元</b>（CU）</td><td>指揮其他單元：下一步做什麼、資料往哪裡送</td></tr>
+</table></div>
+<p>記法：資料從<strong>輸入</strong>進來，放進<strong>記憶</strong>，由<strong>控制</strong>指揮<strong>算術邏輯</strong>去算，算完再放回記憶，最後送到<strong>輸出</strong>。第 7 章會看到，這個分法來自 1945 年的馮紐曼模型。</p>
+
+<h3 id="ch6-2">6.2 從邏輯閘到加法器</h3>
+<p>第 3 章學的 AND、OR、XOR、NOT 不只是數學運算，它們是用電晶體做出來的實體零件，叫做<b class="k">邏輯閘</b>（logic gate）。一顆現代 CPU 裡有幾十億個電晶體，組成幾億個邏輯閘。</p>
+<div class="term"><span class="t">邏輯閘（logic gate）</span>一個小電路：輸入一或兩條線，每條線是高電壓（1）或低電壓（0），輸出一條線。AND 閘兩條輸入都是 1 才輸出 1；OR 閘有一條是 1 就輸出 1；XOR 閘兩條不一樣才輸出 1；NOT 閘把輸入反過來。</div>
+<p>把邏輯閘接起來，就能做出會「算」的電路。最小的例子是把兩個 1 位元的數相加：</p>
+<ul>
+<li>0 ＋ 0 ＝ 0、0 ＋ 1 ＝ 1、1 ＋ 0 ＝ 1、1 ＋ 1 ＝ 10（二進位，也就是「寫 0 進位 1」）</li>
+<li>仔細看<strong>個位數</strong>：只有兩個輸入不一樣時是 1，這正是 <b>XOR</b>。</li>
+<li>再看<strong>進位</strong>：只有兩個都是 1 時是 1，這正是 <b>AND</b>。</li>
+</ul>
+<div class="term"><span class="t">半加器（half adder）</span>一個 XOR 閘加一個 AND 閘：XOR 的輸出當作「和」，AND 的輸出當作「進位」。再多接幾個閘讓它也能吃前一位送來的進位，就叫<strong>全加器</strong>（full adder）。把 8 個全加器串起來，就是第 2 章一直在用的 8 位元加法器。</div>
+<div class="widget" id="gates">
+  <div class="wtitle">互動：邏輯閘與半加器</div>
+  <p class="whint">點 A、B 兩個開關，看四種邏輯閘的輸出，以及半加器怎麼用 XOR 和 AND 算出「和」與「進位」。</p>
+  <div id="gates-out"></div>
+</div>
+
+<h3 id="ch6-3">6.3 CPU 裡面有什麼</h3>
+<p><b class="k">CPU</b>（中央處理器）是電腦真正「算」的地方。打開來看有三種東西：</p>
+<div class="term"><span class="t">算術邏輯單元（ALU）</span>用邏輯閘拼出來的計算電路：加、減、AND、OR、比較大小。乘除法通常也是靠加法和移位（第 3.4 節）做出來的。</div>
+<div class="term"><span class="t">控制單元（Control Unit）</span>讀懂每一條指令，然後發出訊號告訴 ALU 要做哪種運算、資料從哪個暫存器來、結果要放回哪裡。</div>
+<div class="term"><span class="t">暫存器（register）</span>CPU 裡面一小撮速度最快的儲存格，每個通常 32 或 64 位元。幾個有名字的：<strong>程式計數器</strong>（PC）記著下一條指令在記憶體的哪個位址；<strong>指令暫存器</strong>（IR）放剛抓進來的那條指令；<strong>累加器</strong>（ACC）放運算的結果。</div>
+<p>CPU 的動作是由<b class="k">時脈</b>（clock）在打拍子。時脈每「滴答」一次，CPU 就往前做一小步。時脈頻率用 Hz（每秒幾次）表示：</p>
+<ul>
+<li>3 GHz ＝ 每秒 3 × 10<sup>9</sup>（30 億）次。</li>
+<li>每一次滴答的時間叫<strong>週期時間</strong>，等於頻率的倒數：1 ÷ (3 × 10<sup>9</sup>) 秒 ≈ 0.33 奈秒（ns）。</li>
+<li>1 GHz 的週期剛好是 1 ns；2 GHz 是 0.5 ns。頻率愈高、週期愈短。</li>
+</ul>
+<div class="note">現在的 CPU 都有好幾個<strong>核心</strong>（core），每個核心就是一套完整的 ALU ＋ 控制單元 ＋ 暫存器，可以同時各做各的事。「8 核心 3 GHz」就是 8 套這樣的東西，各自每秒打 30 億拍。</div>
+
+<h3 id="ch6-4">6.4 指令週期：擷取、解碼、執行</h3>
+<p>程式在電腦裡就是一串<b class="k">機器語言</b>指令，每一條都是一組 0 和 1，存在記憶體裡。CPU 做的事其實很單調，就是一直重複三個動作：</p>
+<ol>
+<li><strong>擷取</strong>（fetch）：看程式計數器 PC 指到哪個位址，把那個位址的內容抓進指令暫存器 IR，然後 PC 加 1。</li>
+<li><strong>解碼</strong>（decode）：控制單元看 IR 裡的位元，弄清楚這是哪一種指令（加？存？跳？）、要用哪個位址。</li>
+<li><strong>執行</strong>（execute）：真的去做：叫 ALU 算、把結果寫進記憶體，或是改變 PC 讓程式跳到別處。</li>
+</ol>
+<p>一條指令通常分成兩部分：前面幾個位元是<strong>操作碼</strong>（opcode，做什麼），後面是<strong>操作數</strong>（operand，對誰做）。下面的迷你電腦用 8 位元一條指令：前 4 位是操作碼、後 4 位是記憶體位址（所以只有 16 格記憶體）。</p>
+<div class="tablewrap"><table class="plain mono-first">
+<tr><th>操作碼</th><th>助憶碼</th><th>意思</th></tr>
+<tr><td><code>0000</code></td><td>HLT</td><td>停機</td></tr>
+<tr><td><code>0001</code></td><td>LOAD a</td><td>把位址 a 的內容放進累加器 ACC</td></tr>
+<tr><td><code>0010</code></td><td>ADD a</td><td>ACC ＝ ACC ＋ 位址 a 的內容</td></tr>
+<tr><td><code>0011</code></td><td>SUB a</td><td>ACC ＝ ACC − 位址 a 的內容</td></tr>
+<tr><td><code>0100</code></td><td>STORE a</td><td>把 ACC 寫到位址 a</td></tr>
+<tr><td><code>0101</code></td><td>JMP a</td><td>跳到位址 a 繼續執行（PC ＝ a）</td></tr>
+<tr><td><code>0110</code></td><td>JZ a</td><td>如果 ACC 是 0 才跳到 a，否則往下</td></tr>
+<tr><td><code>0111</code></td><td>OUT</td><td>把 ACC 的值輸出到螢幕</td></tr>
+</table></div>
+<p>所以 <code>0010 1001</code> 這條指令，前半 <code>0010</code> 是 ADD，後半 <code>1001</code> 是位址 9：「把位址 9 的內容加到 ACC」。</p>
+<div class="widget" id="cpu">
+  <div class="wtitle">互動：迷你電腦</div>
+  <p class="whint">一台只有 16 格記憶體的電腦。按「下一步」看 CPU 怎麼一拍一拍地擷取、解碼、執行。注意程式和資料放在同一塊記憶體裡（第 7 章會解釋為什麼）。</p>
+  <div class="controls">
+    <label>程式<select id="cpu-prog"><option value="add">把兩個數相加</option><option value="count">從 3 倒數到 0</option><option value="mul">用重複加法算 3 × 4</option></select></label>
+    <button id="cpu-reset">重設</button>
+    <button id="cpu-step" class="primary">下一步</button>
+    <button id="cpu-run" class="ghost">跑到結束</button>
+  </div>
+  <div id="cpu-out"></div>
+</div>
+
+<h3 id="ch6-5">6.5 記憶體階層</h3>
+<p>記憶體有一個殘酷的規律：<strong>愈快的愈貴、愈小</strong>。所以電腦不是只用一種記憶體，而是疊成好幾層，常用的放在快的那層，不常用的放在大而慢的那層。</p>
+<div class="tablewrap"><table class="plain">
+<tr><th>層</th><th>大概多大</th><th>大概多快</th><th>關機後</th></tr>
+<tr><td><b>暫存器</b></td><td>幾十個 × 64 位元</td><td>1 個時脈週期</td><td>消失</td></tr>
+<tr><td><b>快取</b>（cache）</td><td>幾 MB 到幾十 MB</td><td>幾個週期</td><td>消失</td></tr>
+<tr><td><b>主記憶體</b>（RAM）</td><td>8～64 GB</td><td>約 100 個週期</td><td>消失</td></tr>
+<tr><td><b>固態硬碟</b>（SSD）</td><td>幾百 GB～幾 TB</td><td>約 10 萬個週期</td><td>保留</td></tr>
+<tr><td><b>傳統硬碟</b>（HDD）</td><td>幾 TB</td><td>約 1000 萬個週期</td><td>保留</td></tr>
+</table></div>
+<div class="term"><span class="t">揮發性（volatile）</span>斷電就消失。暫存器、快取、RAM 都是。所以沒存檔就斷電，打好的報告會不見。</div>
+<div class="term"><span class="t">非揮發性（non-volatile）</span>斷電仍保留。SSD、硬碟、隨身碟，以及存開機程式的 <strong>ROM</strong>。</div>
+<p>記憶體裡每一個位元組都有一個編號，叫<b class="k">位址</b>（address）。位址也是二進位數，所以位址有幾個位元，就決定了最多能用多少記憶體。<strong>回想一下</strong>第 0 章：<em>n</em> 個位元能表示 2<sup>n</sup> 個不同的值。</p>
+<ul>
+<li>32 位元位址：2<sup>32</sup> ＝ 4,294,967,296 個位址 ＝ 4 GiB。這就是為什麼舊的 32 位元 Windows 最多只認得 4 GB 記憶體。</li>
+<li>64 位元位址：2<sup>64</sup> ≈ 1.8 × 10<sup>19</sup>，實際上用不完。</li>
+<li>上面迷你電腦的位址只有 4 位元，所以只有 2<sup>4</sup> ＝ 16 格。</li>
+</ul>
+<div class="note">「記憶體 16 GB、硬碟 512 GB」這種規格，講的就是主記憶體（RAM）和輔助儲存（SSD）。RAM 是工作桌面，SSD 是檔案櫃：東西要拿到桌面上才能做事，桌面愈大能同時攤開的東西愈多。</div>
+
+<h3 id="ch6-6">6.6 匯流排與周邊</h3>
+<p>CPU、記憶體和輸入輸出裝置之間靠<b class="k">匯流排</b>（bus）連接：一組共用的電線，所有東西都掛在上面輪流使用。一般分成三組：<strong>位址匯流排</strong>（我要哪一格）、<strong>資料匯流排</strong>（內容是什麼）、<strong>控制匯流排</strong>（要讀還是寫）。資料匯流排一次能傳幾個位元，常被叫做電腦的「位元數」，例如 64 位元電腦。</p>
+<p>鍵盤、螢幕、硬碟這類<strong>周邊裝置</strong>則透過各種<strong>介面</strong>（USB、HDMI、藍牙、PCIe）接上來，各有自己的速度和用途。</p>
+
+<div class="summary"><h4>第 6 章重點</h4>
+<ul>
+<li>五大單元：輸入、輸出、記憶、算術邏輯（ALU）、控制（CU）。ALU ＋ CU ＝ CPU。</li>
+<li>邏輯閘是實體零件；半加器 ＝ XOR（和）＋ AND（進位）。</li>
+<li>CPU 裡有 ALU、控制單元、暫存器（PC、IR、ACC）。時脈 3 GHz ＝ 每秒 30 億拍；週期時間 ＝ 1 ÷ 頻率。</li>
+<li>指令週期：擷取 → 解碼 → 執行。指令 ＝ 操作碼 ＋ 操作數。</li>
+<li>記憶體階層：暫存器 → 快取 → RAM（揮發）→ SSD／HDD（非揮發）。愈快愈小愈貴。</li>
+<li><em>n</em> 位元位址可以定址 2<sup>n</sup> 個位元組；32 位元 ＝ 4 GiB。</li>
+</ul></div>
+
+<h3 id="ch6-ex">第 6 章例題</h3>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">1.</b>一顆 2.5 GHz 的 CPU，一個時脈週期是多少秒？</p>
+<p>週期時間 ＝ 1 ÷ 頻率 ＝ 1 ÷ (2.5 × 10<sup>9</sup>) ＝ 0.4 × 10<sup>−9</sup> 秒 ＝ <strong>0.4 ns</strong>。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">2.</b>迷你電腦收到指令 <code>0100 1010</code>，它會做什麼？</p>
+<p>前 4 位 <code>0100</code> 查表是 STORE；後 4 位 <code>1010</code> ＝ 10。所以是 <strong>STORE 10：把 ACC 的值寫到位址 10</strong>。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">3.</b>一台電腦的位址匯流排有 20 條線，最多能定址多少位元組的記憶體？</p>
+<p>2<sup>20</sup> ＝ 1,048,576 位元組 ＝ <strong>1 MiB</strong>。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">4.</b>半加器的兩個輸入都是 1，「和」與「進位」各是多少？</p>
+<p>和 ＝ 1 XOR 1 ＝ <strong>0</strong>；進位 ＝ 1 AND 1 ＝ <strong>1</strong>。合起來就是二進位的 10，也就是十進位的 2。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">5.</b>打報告打到一半停電，沒存檔的內容為什麼會不見？存了檔的為什麼不會？</p>
+<p>還沒存檔的內容只在 RAM 裡，RAM 是<strong>揮發性</strong>記憶體，斷電就消失。存檔是把內容寫到 SSD 或硬碟，那是<strong>非揮發性</strong>，斷電後還在。</p>
+</details>
+<div class="gopractice"><b>讀完了？去練習：</b><a href="practice.html#skill=clock">時脈與週期</a><a href="practice.html#skill=decode">指令解碼</a><a href="practice.html#skill=addrSpace">位址空間</a><a href="practice.html#skill=concepts6">第 6 章觀念題</a><a href="audio.html#13"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>聽第 13 集複習</a></div>
+</section>
+
+<!-- ============ 第 7 章 ============ -->
+<section id="ch7">
+<h2 class="chapter"><span class="no">第 7 章</span>圖靈機與馮紐曼模型</h2>
+<p class="lead">第 6 章看的是實物。這一章退一步問兩個更根本的問題：「計算」到底是什麼？一台能算任何東西的機器最少需要哪些部分？兩個人的答案，分別叫做圖靈機和馮紐曼模型。</p>
+
+<h3 id="ch7-1">7.1 什麼是「計算」</h3>
+<p>在電腦出現之前，「計算」是人做的事：照著一套明確的步驟，一步一步算出答案。這套步驟就是<b class="k">演算法</b>（algorithm）：</p>
+<div class="term"><span class="t">演算法（algorithm）</span>解決某類問題的一組<strong>有限、明確、可以照做</strong>的步驟。例如第 1 章的「除 2 取餘」就是一個把十進位轉成二進位的演算法：步驟清楚，任何人（或機器）照做都會得到同樣的答案。</div>
+<p>1930 年代數學家想弄清楚：哪些問題有演算法可以解？要回答這個問題，得先精確定義「照步驟做」是什麼意思。1936 年，英國數學家<strong>圖靈</strong>（Alan Turing）提出了一台想像中的機器。</p>
+
+<h3 id="ch7-2">7.2 圖靈機</h3>
+<div class="term"><span class="t">圖靈機（Turing machine）</span>一台只有四個零件的想像機器：（1）一條<strong>無限長的磁帶</strong>，分成一格一格，每格寫一個符號或空白；（2）一個<strong>讀寫頭</strong>，一次看一格，可以讀、可以改寫、可以左右移一格；（3）一個<strong>目前狀態</strong>；（4）一張<strong>規則表</strong>：「在某個狀態、看到某個符號時，要寫什麼、往哪移、換到哪個狀態」。</div>
+<p>就這樣。沒有加法電路、沒有記憶體階層。但圖靈證明了：<strong>任何可以用演算法算出來的東西，這台機器都算得出來</strong>。下面的機器只用兩個狀態、六條規則，就能把磁帶上的二進位數加 1：</p>
+<div class="widget" id="turing">
+  <div class="wtitle">互動：圖靈機「二進位加 1」</div>
+  <p class="whint">輸入一個二進位數，按「下一步」看讀寫頭怎麼照規則表移動。右邊的規則表會標出目前用到哪一條。</p>
+  <div class="controls">
+    <label>磁帶上的數（二進位）<input type="text" id="tm-in" value="1011" inputmode="numeric" maxlength="10"></label>
+    <button id="tm-reset">重設</button>
+    <button id="tm-step" class="primary">下一步</button>
+    <button id="tm-run" class="ghost">跑到停機</button>
+  </div>
+  <div id="tm-out"></div>
+</div>
+<p>看懂這台機器的策略了嗎？狀態「找右端」先一路往右走到數字的最右邊；狀態「加一」從右邊往左處理進位：看到 1 就改成 0 繼續往左（因為 1 ＋ 1 要進位），看到 0 或空白就改成 1 然後停機。這和第 1 章手算二進位加法的進位邏輯一模一樣。</p>
+<p>圖靈還證明了另一件事：可以設計一台<b class="k">通用圖靈機</b>，把<strong>別台圖靈機的規則表</strong>當作資料寫在磁帶上，然後模仿它。換句話說，<strong>程式也可以是資料</strong>。這個想法正是 7.3 節「儲存程式」的理論基礎，也是為什麼你的電腦不用換零件就能跑任何軟體。</p>
+<div class="note">圖靈也證明了有些問題<strong>沒有任何演算法</strong>能解。最有名的是<strong>停機問題</strong>：寫不出一個程式，能判斷任意另一個程式會不會跑到結束。這不是電腦不夠快，是邏輯上辦不到。所以「電腦什麼都能算」是錯的；正確的說法是「電腦能算所有可計算的東西」。</div>
+
+<h3 id="ch7-3">7.3 馮紐曼模型</h3>
+<p>圖靈機是理論。1945 年，數學家<strong>馮紐曼</strong>（John von Neumann）在一份關於 EDVAC 電腦的報告裡，描述了一台實際可以蓋出來的電腦該長什麼樣。這份藍圖沿用至今，叫做<b class="k">馮紐曼架構</b>。它有四個子系統：</p>
+<ol>
+<li><strong>記憶體</strong>：存資料，<em>也存程式</em>。</li>
+<li><strong>算術邏輯單元</strong>：做運算。</li>
+<li><strong>控制單元</strong>：從記憶體一條一條抓指令來執行。</li>
+<li><strong>輸入／輸出</strong>：和外界溝通。</li>
+</ol>
+<p>你應該發現了，這就是第 6 章的五大單元（只是把輸入和輸出合在一起講）。而其中最重要、最革命性的一句話是：</p>
+<div class="term"><span class="t">儲存程式概念（stored-program concept）</span>程式和資料<strong>用同樣的形式（0 和 1）存在同一塊記憶體裡</strong>。要換工作，不用重新接線，只要把另一個程式載入記憶體就好。6.4 節的迷你電腦就是這樣：位址 0～7 放指令、位址 8 以後放資料，CPU 分不出來，全看你叫它從哪裡開始執行。</div>
+<p>在這之前的電腦（例如 1945 年的 ENIAC）要換一個計算任務，得由技術人員花幾天時間重新插線。儲存程式讓「寫程式」變成一件用鍵盤就能做的事，軟體產業才可能出現。</p>
+<p>馮紐曼模型還規定指令要<strong>一條接一條依序執行</strong>（除非遇到跳躍指令），這就是 6.4 節程式計數器每次加 1 的原因。</p>
+<div class="warnbox">馮紐曼架構有一個天生的限制：CPU 和記憶體之間只有一條通道（匯流排），指令和資料都要走它。CPU 再快，等記憶體送東西來的時間省不掉，這叫<strong>馮紐曼瓶頸</strong>。6.5 節的快取就是為了緩和這個瓶頸而加上去的。</div>
+
+<h3 id="ch7-4">7.4 從模型到實物：電腦的世代</h3>
+<p>模型七十多年沒變，但做出來的零件換了好幾代。課本常用「世代」來分：</p>
+<div class="tablewrap"><table class="plain">
+<tr><th>世代</th><th>年代</th><th>核心零件</th><th>代表</th></tr>
+<tr><td>第一代</td><td>1940s～50s</td><td>真空管</td><td>ENIAC、EDVAC。一台占一整個房間，常燒壞。</td></tr>
+<tr><td>第二代</td><td>1950s～60s</td><td>電晶體</td><td>體積縮小、耗電降低，開始有組合語言和 FORTRAN。</td></tr>
+<tr><td>第三代</td><td>1960s～70s</td><td>積體電路（IC）</td><td>幾千個電晶體做在一片晶片上。IBM System/360。</td></tr>
+<tr><td>第四代</td><td>1970s～今</td><td>微處理器</td><td>整顆 CPU 做在一片晶片上（Intel 4004，1971）。個人電腦、手機。</td></tr>
+</table></div>
+<p><strong>摩爾定律</strong>（1965）觀察到晶片上的電晶體數量大約每兩年翻一倍。這個趨勢維持了五十年，是電腦愈來愈快、愈來愈便宜的主因，不過近年已經明顯放慢。</p>
+
+<div class="summary"><h4>第 7 章重點</h4>
+<ul>
+<li>演算法：有限、明確、可照做的步驟。</li>
+<li>圖靈機（1936）：磁帶、讀寫頭、狀態、規則表。能算所有「可計算」的東西；有些問題（停機問題）沒有演算法。</li>
+<li>通用圖靈機：程式可以當資料。</li>
+<li>馮紐曼模型（1945）：記憶體、ALU、控制單元、輸入輸出。核心是<strong>儲存程式概念</strong>：程式和資料放同一塊記憶體。</li>
+<li>馮紐曼瓶頸：CPU 和記憶體之間的通道是速度上限。</li>
+<li>四個世代：真空管 → 電晶體 → 積體電路 → 微處理器。</li>
+</ul></div>
+
+<h3 id="ch7-ex">第 7 章例題</h3>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">1.</b>把上面的圖靈機套在磁帶 <code>111</code> 上，停機時磁帶會變成什麼？</p>
+<p>111 是十進位的 7，加 1 是 8，二進位 <strong>1000</strong>。過程：讀寫頭走到最右邊的 1，改成 0 往左；又是 1，改成 0 往左；又是 1，改成 0 往左；遇到空白，寫 1 停機。</p>
+<button class="loadbtn" data-load='[["tm-in","111"]]' data-goto="turing">丟進圖靈機跑一次</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">2.</b>「儲存程式概念」為什麼讓電腦變成通用機器？</p>
+<p>因為程式和資料用同一種形式存在記憶體裡，<strong>換程式只要載入不同的 0 和 1</strong>，不用改硬體。同一台機器可以是計算機、打字機、遊戲機，差別只在記憶體裡放了什麼。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">3.</b>圖靈機沒有 ALU，它怎麼做加法？</p>
+<p>靠<strong>規則表</strong>：把加法拆成「看到什麼就寫什麼、往哪移」的小步驟。上面的機器用兩個狀態、六條規則就完成了加 1。這說明計算不需要特別的算術零件，只需要能讀、寫、移動和記住狀態。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">4.</b>第 6 章的迷你電腦，哪些部分對應馮紐曼的四個子系統？</p>
+<p>16 格記憶體 ＝ 記憶體（程式在 0～7、資料在 8 以後，<strong>同一塊</strong>）；ADD／SUB 的運算 ＝ ALU；擷取解碼執行的流程 ＝ 控制單元；OUT 指令 ＝ 輸出。</p>
+</details>
+<div class="gopractice"><b>讀完了？去練習：</b><a href="practice.html#skill=concepts7">第 7 章觀念題</a><a href="audio.html#14"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>聽第 14 集複習</a></div>
+</section>
+
+<!-- ============ 第 8 章 ============ -->
+<section id="ch8">
+<h2 class="chapter"><span class="no">第 8 章</span>電腦網路</h2>
+<p class="lead">一台電腦很有用，一群接在一起的電腦更有用。這一章學資料怎麼在電腦之間旅行：切成封包、一層一層包裝、靠位址找到對方。IP 位址的部分會大量用到第 1 章和第 3 章。</p>
+
+<h3 id="ch8-1">8.1 網路是什麼</h3>
+<div class="term"><span class="t">網路（network）</span>兩台以上的電腦（節點）用有線或無線的方式連接，可以互相傳資料。依範圍分：<strong>區域網路</strong>（LAN，一間房子、一間辦公室，例如家裡的 Wi-Fi）、<strong>廣域網路</strong>（WAN，跨城市、跨國家）。</div>
+<div class="term"><span class="t">網際網路（Internet）</span>全世界無數個網路用共同的規則（TCP/IP）接在一起形成的「網路的網路」。注意 Internet 是基礎建設，<strong>全球資訊網</strong>（WWW，網頁）只是跑在它上面的其中一種服務，另外還有電子郵件、線上遊戲、視訊通話等。</div>
+<p>兩台電腦溝通時常有角色分工：提供服務的叫<strong>伺服器</strong>（server），發出請求的叫<strong>客戶端</strong>（client）。你用瀏覽器看網頁，手機是客戶端，網站那端的機器是伺服器。這叫<strong>主從式架構</strong>。沒有固定角色、大家互相傳的叫<strong>點對點</strong>（P2P），例如 BitTorrent。</p>
+
+<h3 id="ch8-2">8.2 封包與分層</h3>
+<p>傳一張 3 MB 的照片，不是整個一次送過去，而是切成很多小塊，每塊幾百到一千多個位元組，各自寫上收件地址和編號，分頭上路，到了再按編號組回來。每一塊叫做一個<b class="k">封包</b>（packet）。</p>
+<div class="term"><span class="t">封包交換（packet switching）</span>資料切成封包，每個封包各走各的路，中途由<strong>路由器</strong>（router）看地址決定往哪轉。線路不會被某一對通話獨占，壞掉一條路可以繞別條。相對的是傳統電話的<strong>電路交換</strong>：通話期間獨占一條線。</div>
+<p>要讓全世界不同廠牌的機器互通，規則（<strong>通訊協定</strong>，protocol）要分層訂，每一層只管自己的事。最常用的分法是 TCP/IP 四層：</p>
+<div class="tablewrap"><table class="plain">
+<tr><th>層</th><th>管什麼</th><th>代表協定</th><th>用什麼認人</th></tr>
+<tr><td><b>應用層</b></td><td>程式之間說的話</td><td>HTTP／HTTPS（網頁）、DNS、SMTP（寄信）</td><td>網址</td></tr>
+<tr><td><b>傳輸層</b></td><td>封包有沒有到齊、順序對不對；送到哪個程式</td><td>TCP（可靠）、UDP（快但不保證）</td><td>埠號（port）</td></tr>
+<tr><td><b>網路層</b></td><td>跨網路找路，從這台到那台</td><td>IP</td><td>IP 位址</td></tr>
+<tr><td><b>連結層</b></td><td>同一條線、同一個 Wi-Fi 裡的傳輸</td><td>乙太網路、Wi-Fi</td><td>MAC 位址</td></tr>
+</table></div>
+<p>一個好用的比喻是寄包裹：你寫的信是應用層；裝進有編號的信封確保不漏不亂是傳輸層；信封上的收件地址是網路層；送到下一個轉運站的卡車是連結層。寄件人只管寫信，不用知道卡車怎麼開。</p>
+<div class="note">埠號是 0～65535 的數字（16 位元），用來區分同一台電腦上的不同服務。常見的有 HTTP 80、HTTPS 443、DNS 53。網址後面沒寫埠號時，瀏覽器就用這些預設值。</div>
+
+<h3 id="ch8-3">8.3 IP 位址</h3>
+<div class="term"><span class="t">IPv4 位址</span>一個 <strong>32 位元</strong>的數字，每台連上網路的裝置都要有一個。為了讓人看得懂，習慣切成 4 個位元組（每個 0～255），用點隔開，叫<strong>點分十進位</strong>：例如 <code>192.168.1.37</code>。</div>
+<p><strong>回想一下</strong>第 1 章：每一段都是一個 8 位元的無號數。<code>192</code> ＝ <code>11000000</code>、<code>168</code> ＝ <code>10101000</code>。所以 IP 位址其實就是你早就會算的東西，只是穿了衣服。</p>
+<p>一個 IP 位址分成兩部分：前面是<strong>網路部分</strong>（哪一個網路），後面是<strong>主機部分</strong>（那個網路裡的哪一台）。分界線在哪，由<b class="k">子網路遮罩</b>決定：</p>
+<div class="term"><span class="t">子網路遮罩（subnet mask）</span>也是 32 位元，左邊一串 1、右邊一串 0。1 的位置是網路部分，0 的位置是主機部分。<code>255.255.255.0</code> 就是 24 個 1 加 8 個 0，簡寫成 <code>/24</code>。</div>
+<p>要知道一台電腦在哪個網路，把 IP 位址和遮罩做 <strong>AND</strong>（<strong>回想一下</strong>第 3.3 節的遮罩：AND 1 保留、AND 0 清零）：</p>
+<ul>
+<li><code>192.168.1.37</code> AND <code>255.255.255.0</code> ＝ <code>192.168.1.0</code>，這叫<strong>網路位址</strong>。</li>
+<li>主機部分有 8 個位元，2<sup>8</sup> ＝ 256 個組合，扣掉全 0（網路位址本身）和全 1（<strong>廣播位址</strong> 192.168.1.255），可以給 <strong>254</strong> 台裝置用。</li>
+<li>一般公式：主機部分 <em>h</em> 個位元，可用主機數 ＝ 2<sup><em>h</em></sup> − 2。</li>
+</ul>
+<div class="widget" id="ip">
+  <div class="wtitle">互動：IP 位址與子網路</div>
+  <p class="whint">輸入一個 IPv4 位址，選遮罩長度，看它的二進位長相、網路位址和可用主機數。</p>
+  <div class="controls">
+    <label>IP 位址<input type="text" id="ip-in" class="wide" value="192.168.1.37" inputmode="decimal"></label>
+    <label>遮罩<select id="ip-mask"><option value="8">/8（255.0.0.0）</option><option value="16">/16（255.255.0.0）</option><option value="24" selected>/24（255.255.255.0）</option><option value="26">/26（255.255.255.192）</option><option value="28">/28（255.255.255.240）</option><option value="30">/30（255.255.255.252）</option></select></label>
+  </div>
+  <div id="ip-out"></div>
+</div>
+<p>幾個該認得的位址：<code>192.168.x.x</code>、<code>10.x.x.x</code>、<code>172.16～31.x.x</code> 是<strong>私有位址</strong>，只在家裡或公司內部用，透過路由器的<strong>NAT</strong> 共用一個對外的<strong>公有位址</strong>；<code>127.0.0.1</code> 是「本機」，指自己這台電腦。</p>
+<div class="note">32 位元只有約 43 億個位址，早就不夠全世界的手機和物聯網裝置用。新版 <strong>IPv6</strong> 用 <strong>128 位元</strong>，寫成 8 組、每組 4 個十六進位數字（<strong>回想一下</strong>第 1.5 節：4 個十六進位數字 ＝ 16 位元），例如 <code>2001:db8::8a2e:370:7334</code>（連續的 0 可以縮寫成 <code>::</code>）。2<sup>128</sup> 大到地球上每一粒沙子都可以分到好幾個。</div>
+
+<h3 id="ch8-4">8.4 名字與網址</h3>
+<p>人記不住 IP 位址，所以有<b class="k">DNS</b>（網域名稱系統）：一套分散在全球的「電話簿」，把 <code>www.example.com</code> 這種<strong>網域名稱</strong>翻譯成 IP 位址。網域名稱從右往左讀，愈右邊愈大：<code>com</code> 是頂級網域，<code>example</code> 是向它登記的名字，<code>www</code> 是那家機構裡的某台主機。</p>
+<p>一個完整的網址（<strong>URL</strong>）有幾個部分：</p>
+<div class="formula"><span class="s">https</span>://<span class="e">www.example.com</span><span class="m">:443</span>/courses/intro<span class="muted">?page=2</span></div>
+<ul>
+<li><span class="mono" style="color:var(--sign)">https</span>：協定（怎麼拿）。HTTP 是傳網頁的協定；HTTPS 多了加密（TLS），中間的人看不到內容。看到鎖頭就是它。</li>
+<li><span class="mono" style="color:var(--exp)">www.example.com</span>：主機（跟誰拿），由 DNS 翻成 IP。</li>
+<li><span class="mono" style="color:var(--accent)">:443</span>：埠號（找那台機器上的哪個服務）。HTTPS 的預設是 443，通常省略。</li>
+<li><span class="mono">/courses/intro</span>：路徑（拿哪個檔案或頁面）；<span class="mono">?page=2</span>：查詢字串（附帶的參數）。</li>
+</ul>
+<p>你在瀏覽器按下 Enter 之後發生的事：（1）DNS 查出 IP；（2）和伺服器建立 TCP 連線、協商加密；（3）送出 HTTP 請求「GET /courses/intro」；（4）伺服器回傳狀態碼（200 成功、404 找不到）和網頁內容；（5）瀏覽器把 HTML 畫出來。</p>
+
+<h3 id="ch8-5">8.5 速度與時間</h3>
+<p>網路速度的單位是 <b class="k">bps</b>（bits per second，每秒幾個位元）；檔案大小的單位是位元組（B）。<strong>回想一下</strong>第 5.1 節：大 B 位元組、小 b 位元，差 8 倍。這是計算題最常見的陷阱：</p>
+<ul>
+<li>100 Mbps 的網路，每秒傳 100 × 10<sup>6</sup> 個位元 ＝ 12.5 × 10<sup>6</sup> 個位元組 ＝ <strong>12.5 MB/s</strong>，不是 100 MB/s。</li>
+<li>下載時間 ＝ 檔案大小（換成位元）÷ 速度（bps）。例：一部 1.5 GB 的影片用 100 Mbps 下載：1.5 × 10<sup>9</sup> × 8 ＝ 1.2 × 10<sup>10</sup> 位元，÷ 10<sup>8</sup> ＝ 120 秒 ＝ 2 分鐘。</li>
+</ul>
+<div class="widget" id="xfer">
+  <div class="wtitle">互動：下載要多久</div>
+  <p class="whint">改檔案大小和網路速度，看位元和位元組怎麼換算，以及時間怎麼算出來。</p>
+  <div class="controls">
+    <label>檔案大小<input type="text" class="narrow" id="xfer-size" value="1.5" inputmode="decimal"></label>
+    <label>單位<select id="xfer-unit"><option value="6">MB</option><option value="9" selected>GB</option></select></label>
+    <label>網路速度<input type="text" class="narrow" id="xfer-speed" value="100" inputmode="decimal"></label>
+    <label>單位<select id="xfer-su"><option value="3">Kbps</option><option value="6" selected>Mbps</option><option value="9">Gbps</option></select></label>
+  </div>
+  <div class="calcout" id="xfer-out"></div>
+</div>
+<div class="term"><span class="t">頻寬與延遲</span><strong>頻寬</strong>（bandwidth）是每秒能傳多少，像水管的粗細；<strong>延遲</strong>（latency）是一個封包從這端到那端要多久，像水管的長度。下載大檔案看頻寬，打線上遊戲、視訊通話看延遲。兩者是獨立的：衛星網路頻寬可以很大，但延遲很高。</div>
+
+<div class="summary"><h4>第 8 章重點</h4>
+<ul>
+<li>LAN／WAN；Internet 是網路的網路，WWW 只是它上面的一種服務。主從式 vs 點對點。</li>
+<li>封包交換：資料切成封包各自找路，由路由器轉送。</li>
+<li>TCP/IP 四層：應用（HTTP、DNS）→ 傳輸（TCP／UDP，埠號）→ 網路（IP，IP 位址）→ 連結（Wi-Fi，MAC）。</li>
+<li>IPv4 ＝ 32 位元 ＝ 4 個位元組點分十進位；IPv6 ＝ 128 位元十六進位。</li>
+<li>網路位址 ＝ IP AND 遮罩；/n 的可用主機數 ＝ 2<sup>32−n</sup> − 2。</li>
+<li>DNS 把名字翻成 IP；URL ＝ 協定://主機:埠號/路徑?查詢。HTTPS ＝ HTTP ＋ 加密。</li>
+<li>速度單位是 b（位元），大小單位是 B（位元組）。時間 ＝ 大小 × 8 ÷ 速度。</li>
+</ul></div>
+
+<h3 id="ch8-ex">第 8 章例題</h3>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">1.</b>把 IP 位址 <code>10.0.5.200</code> 的最後一段寫成二進位。</p>
+<p>200 ＝ 128 ＋ 64 ＋ 8 ＝ <strong>11001000</strong>。（除 2 取餘也可以，第 1.3 節。）</p>
+<button class="loadbtn" data-load='[["ip-in","10.0.5.200"],["ip-mask","8"]]' data-goto="ip">丟進元件看全部四段</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">2.</b><code>172.16.40.77</code>，遮罩 <code>/16</code>，網路位址是什麼？可以給幾台裝置用？</p>
+<p>/16 是前 16 位元為網路部分，所以前兩段保留、後兩段清零：網路位址 <strong>172.16.0.0</strong>。主機部分 32 − 16 ＝ 16 位元，2<sup>16</sup> − 2 ＝ <strong>65,534</strong> 台。</p>
+<button class="loadbtn" data-load='[["ip-in","172.16.40.77"],["ip-mask","16"]]' data-goto="ip">丟進元件驗算</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">3.</b><code>192.168.1.37</code> 配 <code>/26</code>，網路位址是什麼？</p>
+<p>/26 表示最後一段的前 2 位也屬於網路部分。37 ＝ <code>00100101</code>，前 2 位是 <code>00</code>，後 6 位清零得 <code>00000000</code> ＝ 0。網路位址 <strong>192.168.1.0</strong>。主機 6 位元，2<sup>6</sup> − 2 ＝ 62 台。（如果最後一段是 100 ＝ <code>01100100</code>，前 2 位 <code>01</code>，網路位址就會是 192.168.1.64。）</p>
+<button class="loadbtn" data-load='[["ip-in","192.168.1.100"],["ip-mask","26"]]' data-goto="ip">試試 192.168.1.100 /26</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">4.</b>一個 250 MB 的檔案，用 20 Mbps 的網路下載要多久？</p>
+<p>250 MB ＝ 250 × 10<sup>6</sup> × 8 ＝ 2 × 10<sup>9</sup> 位元。÷ (20 × 10<sup>6</sup>) ＝ <strong>100 秒</strong>。忘記乘 8 會算成 12.5 秒。</p>
+<button class="loadbtn" data-load='[["xfer-size","250"],["xfer-unit","6"],["xfer-speed","20"],["xfer-su","6"]]' data-goto="xfer">丟進計算機</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">5.</b>網址 <code>https://shop.example.tw:8443/cart?item=5</code> 的協定、主機、埠號、路徑各是什麼？</p>
+<p>協定 <strong>https</strong>；主機 <strong>shop.example.tw</strong>；埠號 <strong>8443</strong>（不是預設的 443，所以要寫出來）；路徑 <strong>/cart</strong>；查詢字串 item=5。</p>
+</details>
+<div class="gopractice"><b>讀完了？去練習：</b><a href="practice.html#skill=ipBin">IP 位址與二進位</a><a href="practice.html#skill=subnet">子網路</a><a href="practice.html#skill=xferTime">下載時間</a><a href="practice.html#skill=concepts8">第 8 章觀念題</a><a href="audio.html#15"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>聽第 15 集複習</a></div>
+</section>
+
+<!-- ============ 第 9 章 ============ -->
+<section id="ch9">
+<h2 class="chapter"><span class="no">第 9 章</span>程式語言</h2>
+<p class="lead">第 6 章看到 CPU 只聽得懂 0 和 1。沒有人想用 0 和 1 寫程式，所以有了程式語言。這一章不教你寫某一種語言，而是講所有語言共同的骨架：變數、型別、三種流程、函式，以及程式怎麼被翻譯給 CPU。</p>
+
+<h3 id="ch9-1">9.1 從機器語言到高階語言</h3>
+<div class="term"><span class="t">機器語言（machine language）</span>CPU 直接執行的 0 和 1，像 6.4 節的 <code>0010 1001</code>。每一種 CPU 的機器語言都不一樣。</div>
+<div class="term"><span class="t">組合語言（assembly language）</span>把每條機器指令換成一個英文縮寫（助憶碼），<code>0010 1001</code> 寫成 <code>ADD 9</code>。一對一翻譯，程式叫<strong>組譯器</strong>（assembler）。好讀一點，但還是在跟硬體打交道。</div>
+<div class="term"><span class="t">高階語言（high-level language）</span>接近人的思考方式：<code>total = price * qty</code> 一行，可能對應好幾十條機器指令。Python、JavaScript、Java、C 都是。同一份程式可以在不同 CPU 上跑，只要有對應的翻譯器。</div>
+<p>高階語言寫的<strong>原始碼</strong>（source code）CPU 看不懂，要翻譯。兩種翻法：</p>
+<div class="tablewrap"><table class="plain">
+<tr><th></th><th>編譯（compile）</th><th>直譯（interpret）</th></tr>
+<tr><td>做法</td><td>先把整份原始碼一次翻成機器語言，產生<strong>執行檔</strong>，之後直接跑執行檔</td><td>一邊讀原始碼一邊執行，每次跑都要重新翻</td></tr>
+<tr><td>比喻</td><td>把整本書翻譯好出版</td><td>現場口譯</td></tr>
+<tr><td>優點</td><td>執行快；錯誤在翻譯時就會被抓到</td><td>改完馬上能跑，方便測試；跨平台</td></tr>
+<tr><td>缺點</td><td>改一行就要重編；執行檔綁死某種 CPU</td><td>執行較慢</td></tr>
+<tr><td>代表</td><td>C、C++、Go、Rust</td><td>Python、JavaScript、Ruby</td></tr>
+</table></div>
+<div class="note">Java 和 C# 是混合型：先編譯成一種中間的「位元組碼」，再由虛擬機器在各平台上直譯或即時編譯。現代的 Python 和 JavaScript 引擎其實也會偷偷做即時編譯（JIT），所以「直譯一定慢」已經不完全正確，但考試上還是照上表分類。</div>
+
+<h3 id="ch9-2">9.2 程式的基本材料：變數與型別</h3>
+<div class="term"><span class="t">變數（variable）</span>一個有名字的記憶體格子，用來放一個值。<code>score = 85</code> 的意思是「在叫做 score 的格子裡放 85」。注意這裡的 <code>=</code> 是<strong>指派</strong>（把右邊放進左邊），不是數學的「等於」，所以 <code>n = n + 1</code> 是合理的：把 n 原本的值加 1 再放回去。</div>
+<div class="term"><span class="t">型別（type）</span>這個格子裡放的是哪一種資料，決定了它占幾個位元、怎麼解讀（<strong>回想一下</strong>第 3.1 節：同一串位元有不同讀法）。常見的型別和前面學過的表示法一一對應：</div>
+<div class="tablewrap"><table class="plain">
+<tr><th>型別</th><th>放什麼</th><th>常見大小</th><th>用的表示法</th></tr>
+<tr><td>整數 <code>int</code></td><td>−5、0、42</td><td>32 位元</td><td>2 補數（第 2 章）：範圍 −2<sup>31</sup> ～ 2<sup>31</sup> − 1，超過就溢位</td></tr>
+<tr><td>浮點數 <code>float</code>／<code>double</code></td><td>3.14、−0.001</td><td>32／64 位元</td><td>IEEE 754（第 4 章）：所以 0.1 + 0.2 ≠ 0.3</td></tr>
+<tr><td>字元 <code>char</code>、字串 <code>string</code></td><td>'A'、"你好"</td><td>1～4 位元組／字</td><td>ASCII、UTF-8（第 5 章）</td></tr>
+<tr><td>布林 <code>bool</code></td><td>true／false</td><td>1 位元組</td><td>1 和 0；AND／OR／NOT 就是第 3 章的邏輯運算</td></tr>
+</table></div>
+<p>型別會影響運算結果。最常被考的是<strong>整數除法</strong>：在大部分語言裡兩個整數相除，結果也是整數，小數部分<strong>直接捨去</strong>；餘數要用另一個運算子 <code>%</code> 拿：</p>
+<ul>
+<li><code>17 / 5</code> ＝ 3（不是 3.4），<code>17 % 5</code> ＝ 2。</li>
+<li><code>7 / 2</code> ＝ 3，<code>7 % 2</code> ＝ 1。<code>%</code> 常用來判斷奇偶：<code>n % 2 == 0</code> 就是偶數。</li>
+<li>要得到 3.4，至少一邊要是浮點數：<code>17.0 / 5</code>。（Python 3 例外：<code>/</code> 永遠給小數，整數除法要寫 <code>//</code>。）</li>
+</ul>
+<p>運算子有<strong>優先順序</strong>：先乘除取餘、後加減，比較運算再更後面，有括號先算括號。<code>2 + 3 * 4</code> ＝ 14，<code>(2 + 3) * 4</code> ＝ 20。</p>
+
+<h3 id="ch9-3">9.3 三種流程：順序、選擇、重複</h3>
+<p>1966 年有人證明：<strong>任何程式都只需要三種流程結構</strong>就寫得出來。學會這三種，你就看得懂任何語言的程式骨架。</p>
+<div class="term"><span class="t">順序（sequence）</span>一行做完做下一行。就是 7.3 節馮紐曼模型裡「PC 加 1」的那件事。</div>
+<div class="term"><span class="t">選擇（selection）</span><code>if 條件: 做 A，else: 做 B</code>。條件是一個布林值。對應到機器語言就是 6.4 節的 JZ（條件跳躍）。</div>
+<div class="term"><span class="t">重複（iteration／loop）</span><code>while 條件: 重複做</code>，或 <code>for i in 1..n: 重複做</code>。對應到機器語言就是往回跳的 JMP。迴圈要小心有沒有<strong>終止條件</strong>，不然就是無窮迴圈（這正是 7.2 節停機問題在講的事）。</div>
+<p>寫程式之前常先用<b class="k">虛擬碼</b>（pseudocode）或<strong>流程圖</strong>把邏輯寫出來，不管語法，只管步驟。下面的元件用虛擬碼示範三個經典小程式，一行一行跑，旁邊的表格顯示每個變數目前的值。<strong>追蹤變數的值</strong>是讀程式最重要的技巧，也是考試最愛出的題型。</p>
+<div class="widget" id="trace">
+  <div class="wtitle">互動：逐行追蹤程式</div>
+  <p class="whint">選一個程式，按「下一步」看目前執行到哪一行、每個變數變成什麼。試著在按之前先猜。</p>
+  <div class="controls">
+    <label>程式<select id="trace-prog"><option value="sum">把 1 加到 n</option><option value="max">找出最大值</option><option value="even">數有幾個偶數</option><option value="bin">十進位轉二進位</option></select></label>
+    <label>n<input type="text" class="narrow" id="trace-n" value="4" inputmode="numeric"></label>
+    <button id="trace-reset">重設</button>
+    <button id="trace-step" class="primary">下一步</button>
+    <button id="trace-run" class="ghost">跑到結束</button>
+  </div>
+  <div id="trace-out"></div>
+</div>
+
+<h3 id="ch9-4">9.4 函式與程式庫</h3>
+<div class="term"><span class="t">函式（function）</span>一段有名字、可以重複呼叫的程式。可以接收<strong>參數</strong>（輸入），可以<strong>回傳</strong>（輸出）一個值。<code>area = circle_area(5)</code>：呼叫叫做 circle_area 的函式、把 5 當參數傳進去、把回傳值放進 area。</div>
+<p>函式的意義是<strong>把複雜的事情藏起來</strong>：用的人只要知道「給它半徑、它會給面積」，不用知道裡面怎麼算。別人寫好的一堆函式打包起來就是<strong>程式庫</strong>（library），例如畫圖的、連網路的、算統計的。現代寫程式大部分時間是在組合現成的程式庫，而不是從零開始。</p>
+<p>再往上一層，用同樣的想法把資料和操作資料的函式綁在一起，就是<strong>物件</strong>（object）；以物件為中心來組織程式，叫<strong>物件導向程式設計</strong>（OOP），Java、Python、C++ 都支援。</p>
+
+<h3 id="ch9-5">9.5 演算法的好壞</h3>
+<p>同一個問題常有好幾種演算法，差別在要做幾步。經典例子：在 <em>n</em> 筆已經排好順序的資料裡找一筆。</p>
+<ul>
+<li><strong>線性搜尋</strong>：從頭一筆一筆看。最差要看 <em>n</em> 次。1,000 筆就是 1,000 次。</li>
+<li><strong>二分搜尋</strong>：先看正中間那筆，太大就往左半邊找、太小就往右半邊找，每看一次範圍砍一半。最差只要 log<sub>2</sub> <em>n</em> 次（<strong>回想一下</strong>第 0 章的 2 的次方：2<sup>10</sup> ＝ 1024，所以 1,000 筆最多看 <strong>10</strong> 次；100 萬筆也只要 20 次）。</li>
+</ul>
+<p>電腦科學用<b class="k">大 O 符號</b>粗略地描述步數跟資料量 <em>n</em> 的關係：線性搜尋是 O(<em>n</em>)，二分搜尋是 O(log <em>n</em>)，常見的簡單排序法是 O(<em>n</em><sup>2</sup>)。資料量變 1000 倍時，O(<em>n</em>) 的演算法慢 1000 倍，O(log <em>n</em>) 只慢 10 倍。好的演算法比快的電腦更重要。</p>
+
+<h3 id="ch9-6">9.6 語言地圖</h3>
+<div class="tablewrap"><table class="plain">
+<tr><th>語言</th><th>主要用途</th><th>翻譯方式</th><th>特色</th></tr>
+<tr><td>Python</td><td>資料分析、AI、教學、自動化</td><td>直譯</td><td>語法最接近英文，初學首選</td></tr>
+<tr><td>JavaScript</td><td>網頁互動（這個網站的元件就是）、網站後端</td><td>直譯（JIT）</td><td>瀏覽器唯一聽得懂的語言</td></tr>
+<tr><td>Java</td><td>企業系統、Android</td><td>編譯成位元組碼</td><td>「寫一次到處跑」</td></tr>
+<tr><td>C／C++</td><td>作業系統、遊戲引擎、嵌入式</td><td>編譯</td><td>最接近硬體、最快</td></tr>
+<tr><td>SQL</td><td>查詢資料庫（第 10 章）</td><td>由資料庫系統執行</td><td>說「要什麼」而不是「怎麼做」</td></tr>
+<tr><td>HTML／CSS</td><td>網頁的內容與外觀</td><td>由瀏覽器解讀</td><td>嚴格說是標記語言，不是程式語言（沒有流程控制）</td></tr>
+</table></div>
+
+<div class="summary"><h4>第 9 章重點</h4>
+<ul>
+<li>機器語言（0／1）→ 組合語言（助憶碼，一對一）→ 高階語言（一行對多條指令）。</li>
+<li>編譯：整份先翻成執行檔，快。直譯：邊讀邊跑，方便。Java 是混合型。</li>
+<li>變數是有名字的格子；<code>=</code> 是指派。型別決定位元數和解讀方式：int ＝ 2 補數、float ＝ IEEE 754、string ＝ UTF-8。</li>
+<li>整數除法捨去小數：17 / 5 ＝ 3、17 % 5 ＝ 2。先乘除後加減。</li>
+<li>三種流程：順序、選擇（if）、重複（while／for）。讀程式要追蹤變數。</li>
+<li>函式：有名字、可重複呼叫、有參數和回傳值。程式庫 ＝ 現成的函式集合。</li>
+<li>線性搜尋 O(<em>n</em>)，二分搜尋 O(log <em>n</em>)：1,000 筆最多 10 次。</li>
+</ul></div>
+
+<h3 id="ch9-ex">第 9 章例題</h3>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">1.</b>整數運算：<code>23 / 4</code> 和 <code>23 % 4</code> 各是多少？</p>
+<p>23 ÷ 4 ＝ 5 餘 3。整數除法捨去小數：<code>23 / 4</code> ＝ <strong>5</strong>；<code>23 % 4</code> ＝ <strong>3</strong>。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">2.</b>下面的虛擬碼執行完，<code>s</code> 是多少？<br><code>s = 0</code><br><code>i = 1</code><br><code>while i &lt;= 5:</code><br><code>　　s = s + i</code><br><code>　　i = i + 1</code></p>
+<p>一圈一圈追：i＝1 時 s＝1；i＝2，s＝3；i＝3，s＝6；i＝4，s＝10；i＝5，s＝15；i 變成 6，條件不成立，結束。<strong>s ＝ 15</strong>。</p>
+<button class="loadbtn" data-load='[["trace-prog","sum"],["trace-n","5"]]' data-goto="trace">丟進追蹤器跑一次</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">3.</b>有 4,096 筆排好的資料，用二分搜尋最多要比較幾次？</p>
+<p>2<sup>12</sup> ＝ 4096，所以 log<sub>2</sub> 4096 ＝ <strong>12 次</strong>。線性搜尋最差要 4,096 次。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">4.</b>為什麼用 Python 寫的程式改一行可以馬上重跑，用 C 寫的要先「建置」？</p>
+<p>Python 是<strong>直譯</strong>：直譯器直接讀原始碼執行。C 是<strong>編譯</strong>：原始碼要先整份翻成機器語言的執行檔，CPU 跑的是執行檔，所以改了原始碼就要重編。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">5.</b>一個 32 位元的 <code>int</code> 變數存 2,147,483,647 之後再加 1，會變成多少？為什麼？</p>
+<p>2,147,483,647 ＝ 2<sup>31</sup> − 1 是 32 位元 2 補數的最大值。再加 1 就<strong>溢位</strong>（第 2.4 節），變成 <code>1000…0</code> ＝ <strong>−2,147,483,648</strong>。這就是為什麼有些老遊戲的分數衝到最高後會變成負數。</p>
+</details>
+<div class="gopractice"><b>讀完了？去練習：</b><a href="practice.html#skill=intOps">整數除法與餘數</a><a href="practice.html#skill=trace">追蹤程式</a><a href="practice.html#skill=binSearch">二分搜尋次數</a><a href="practice.html#skill=concepts9">第 9 章觀念題</a><a href="audio.html#16"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>聽第 16 集複習</a></div>
+</section>
+
+<!-- ============ 第 10 章 ============ -->
+<section id="ch10">
+<h2 class="chapter"><span class="no">第 10 章</span>資料庫</h2>
+<p class="lead">程式處理資料，但資料要有地方放、要放得有條理、要很多人同時用也不會亂。這就是資料庫在做的事。這一章學關聯式資料庫的核心觀念，並且親手下 SQL 查詢。</p>
+
+<h3 id="ch10-1">10.1 為什麼需要資料庫</h3>
+<p>一間學校幾千個學生的資料，用 Excel 存會遇到什麼問題？同一個系所名稱在幾千列裡重複打，有人打「資管系」有人打「資訊管理系」；兩個人同時改同一個檔案會互相覆蓋；想找「資管系二年級、成績 80 以上」要自己寫篩選。</p>
+<div class="term"><span class="t">資料庫（database）</span>一組有組織、互相關聯的資料集合，由<strong>資料庫管理系統</strong>（DBMS）統一管理：負責存取、查詢、確保一致、控制權限、同時服務很多使用者。常見的 DBMS：MySQL、PostgreSQL、SQLite（手機 App 裡幾乎都有）、Oracle、Microsoft SQL Server。</div>
+<p>順便分清楚兩個常混用的詞：<strong>資料</strong>（data）是原始的事實，例如「85」；<strong>資訊</strong>（information）是經過處理、有意義的結果，例如「小明這次段考數學 85 分，比班平均高 7 分」。資料庫存資料，程式從裡面算出資訊。</p>
+
+<h3 id="ch10-2">10.2 關聯式模型</h3>
+<p>1970 年 IBM 的 Codd 提出<b class="k">關聯式模型</b>，到今天還是主流。核心想法：所有資料都放在<strong>二維表格</strong>裡，表格之間用共同的欄位互相參照。</p>
+<div class="term"><span class="t">資料表（table）</span>一張二維表。每一<strong>列</strong>（row，也叫紀錄 record 或 tuple）是一筆資料，例如一個學生；每一<strong>欄</strong>（column，也叫欄位 field 或屬性 attribute）是一種性質，例如姓名、成績。每一欄有固定的<strong>資料型態</strong>（整數、文字、日期），這和 9.2 節的型別是同一件事。</div>
+<div class="term"><span class="t">主鍵（primary key）</span>能<strong>唯一</strong>辨識每一列的欄位，不能重複、不能空白（NULL）。學生表用學號當主鍵，不用姓名，因為姓名可能同名。</div>
+<div class="term"><span class="t">外來鍵（foreign key）</span>一張表裡的某個欄位，存的是<strong>另一張表的主鍵</strong>，用來建立表與表之間的關聯。學生表的「系所代碼」欄就是外來鍵，指向系所表的主鍵。</div>
+<p>下面是這一章一直會用的兩張表：</p>
+<div id="sql-tables"></div>
+<p>系所表和學生表是<strong>一對多</strong>關係：一個系有很多學生，每個學生只屬於一個系。系所名稱只在系所表存一次，學生表只存代碼，所以「資管系」永遠只有一種寫法，改名也只要改一個地方。這種「不重複存同一件事」的設計原則叫<strong>正規化</strong>（normalization）。</p>
+<p>資料庫的設計圖叫 <strong>ER 圖</strong>（實體關係圖）：方框是實體（學生、系所），線條是關係（屬於），線上標示一對一、一對多或多對多。多對多（例如學生選課，一個學生選多門、一門課多個學生）要靠中間多一張表（選課表）來拆成兩個一對多。</p>
+
+<h3 id="ch10-3">10.3 SQL：跟資料庫說話</h3>
+<p><b class="k">SQL</b>（結構化查詢語言）是對關聯式資料庫下命令的標準語言。它和第 9 章的語言很不一樣：你說<strong>要什麼</strong>，不說怎麼一步步找。最常用的是查詢：</p>
+<div class="formula"><span class="s">SELECT</span> 欄位 <span class="e">FROM</span> 資料表 <span class="m">WHERE</span> 條件 <span class="muted">ORDER BY 欄位</span></div>
+<ul>
+<li><span class="mono" style="color:var(--sign)">SELECT</span>：要哪幾欄。<code>*</code> 是全部。</li>
+<li><span class="mono" style="color:var(--exp)">FROM</span>：從哪張表。</li>
+<li><span class="mono" style="color:var(--accent)">WHERE</span>：留下符合條件的列。條件可以用 <code>=</code>、<code>&lt;&gt;</code>（不等於）、<code>&gt;</code>、<code>&gt;=</code>，並用 AND、OR 組合（第 3 章的邏輯運算又出現了）。</li>
+<li><span class="mono">ORDER BY</span>：結果照哪一欄排序，加 <code>DESC</code> 是由大到小。</li>
+<li>也可以算統計：<code>COUNT(*)</code> 幾列、<code>AVG(成績)</code> 平均、<code>MAX</code>、<code>MIN</code>、<code>SUM</code>。</li>
+</ul>
+<div class="widget" id="sql">
+  <div class="wtitle">互動：SQL 查詢器</div>
+  <p class="whint">對上面的學生表下查詢。先按幾個範例看結果，再自己改條件。文字要用單引號，例如 <code>系所 = 'IM'</code>。</p>
+  <div class="row" id="sql-presets" style="margin-bottom:10px"></div>
+  <textarea id="sql-in" rows="3" spellcheck="false" aria-label="SQL 查詢">SELECT 姓名, 成績 FROM 學生 WHERE 成績 &gt;= 80 ORDER BY 成績 DESC</textarea>
+  <div class="row" style="margin:10px 0"><button id="sql-run" class="primary">執行查詢</button><span class="small muted">支援 SELECT、FROM 學生、WHERE（AND／OR）、ORDER BY、COUNT／AVG／MAX／MIN／SUM</span></div>
+  <div id="sql-out"></div>
+</div>
+<p>跨表查詢用 <strong>JOIN</strong>，把外來鍵和主鍵對起來：</p>
+<div class="formula">SELECT 學生.姓名, 系所.系名 FROM 學生 <span class="m">JOIN</span> 系所 <span class="m">ON</span> 學生.系所 = 系所.代碼</div>
+<p>結果會是每個學生配上他所屬系所的全名。這就是外來鍵的用途：平常分開存，要看的時候再接起來。</p>
+<p>除了查詢，SQL 還有另外三種基本操作，合稱 <strong>CRUD</strong>（建立、讀取、更新、刪除）：</p>
+<div class="tablewrap"><table class="plain">
+<tr><th>操作</th><th>SQL</th><th>例子</th></tr>
+<tr><td>新增（Create）</td><td>INSERT</td><td><code>INSERT INTO 學生 VALUES ('S106', '林小七', 'CS', 1, 77)</code></td></tr>
+<tr><td>讀取（Read）</td><td>SELECT</td><td><code>SELECT * FROM 學生 WHERE 學號 = 'S106'</code></td></tr>
+<tr><td>更新（Update）</td><td>UPDATE</td><td><code>UPDATE 學生 SET 成績 = 80 WHERE 學號 = 'S106'</code></td></tr>
+<tr><td>刪除（Delete）</td><td>DELETE</td><td><code>DELETE FROM 學生 WHERE 學號 = 'S106'</code></td></tr>
+</table></div>
+<div class="warnbox">UPDATE 和 DELETE 忘了寫 WHERE，會改到或刪掉<strong>整張表</strong>。這是真實世界裡最常見的資料庫災難之一。</div>
+
+<h3 id="ch10-4">10.4 交易與 ACID</h3>
+<p>轉帳 1000 元：從 A 帳戶扣 1000，再給 B 帳戶加 1000。如果扣完 A、還沒加 B 的瞬間停電了呢？錢就憑空消失。所以資料庫把這兩步包成一個<b class="k">交易</b>（transaction）：<strong>要嘛全做完，要嘛全部沒發生</strong>。</p>
+<p>可靠的交易要有四個性質，簡稱 <strong>ACID</strong>：</p>
+<ul>
+<li><strong>原子性</strong>（Atomicity）：全做或全不做，沒有一半。</li>
+<li><strong>一致性</strong>（Consistency）：做完之後資料仍符合所有規則（總金額不變、外來鍵指得到東西）。</li>
+<li><strong>隔離性</strong>（Isolation）：很多交易同時進行，彼此不會看到對方做一半的狀態。</li>
+<li><strong>持久性</strong>（Durability）：一旦說「完成」，就算馬上停電也不會丟（寫進了非揮發性儲存，第 6.5 節）。</li>
+</ul>
+
+<h3 id="ch10-5">10.5 索引、備份與 NoSQL</h3>
+<div class="term"><span class="t">索引（index）</span>為某一欄另外建的一份排好順序的對照表，像書後面的索引。有索引，查「成績 ≥ 80」就能用 9.5 節的二分搜尋，而不用整張表從頭掃到尾。代價是占空間、新增資料時要順便更新。主鍵一定有索引。</div>
+<p><strong>備份</strong>（backup）是資料庫管理最不能省的事：硬碟會壞、人會下錯 DELETE。定期把資料庫複製到另一個地方，才有後悔的機會。</p>
+<p>關聯式資料庫不是唯一選擇。社群網站、物聯網這類資料量極大、結構常變的場景，常用 <strong>NoSQL</strong> 資料庫：例如把一筆資料存成一包 JSON 文件（MongoDB），或單純的鍵值對（Redis）。它們犧牲一部分 ACID 和跨表查詢的能力，換取水平擴充的彈性。兩種各有適合的場合，不是誰取代誰。</p>
+
+<div class="summary"><h4>第 10 章重點</h4>
+<ul>
+<li>資料庫由 DBMS 管理，解決重複、不一致、同時存取的問題。資料是事實，資訊是處理後的結果。</li>
+<li>關聯式模型：資料表、列（紀錄）、欄（欄位）。主鍵唯一且不可空；外來鍵指向另一張表的主鍵。</li>
+<li>一對多關係用外來鍵；多對多要多一張中間表。不重複存同一件事叫正規化。</li>
+<li>SQL：SELECT 欄位 FROM 表 WHERE 條件 ORDER BY 欄位；JOIN 接表；CRUD ＝ INSERT／SELECT／UPDATE／DELETE。</li>
+<li>交易：全做或全不做。ACID ＝ 原子、一致、隔離、持久。</li>
+<li>索引加快查詢；備份不能省；NoSQL 用在大量、結構鬆散的資料。</li>
+</ul></div>
+
+<h3 id="ch10-ex">第 10 章例題</h3>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">1.</b>在上面的學生表裡，<code>SELECT COUNT(*) FROM 學生 WHERE 系所 = 'IM' AND 年級 = 2</code> 會得到多少？</p>
+<p>找系所是 IM 而且年級是 2 的列。對照表格：陳大明（IM，2）、黃小玲（IM，2），共 <strong>2</strong>。</p>
+<button class="loadbtn" data-load='[["sql-in","SELECT COUNT(*) FROM 學生 WHERE 系所 = 'IM' AND 年級 = 2"]]' data-goto="sql" data-run="sql-run">丟進查詢器</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">2.</b>為什麼學生表不用「姓名」當主鍵？</p>
+<p>主鍵必須<strong>唯一</strong>。姓名可能重複（兩個王小美），也可能改名。學號由學校保證不重複、不會變，才適合當主鍵。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">3.</b>學生表裡的「系所」欄是主鍵還是外來鍵？為什麼不直接存系所全名？</p>
+<p>是<strong>外來鍵</strong>，指向系所表的主鍵「代碼」。不直接存全名是為了<strong>正規化</strong>：系名只存一次，不會出現「資管系」「資訊管理系」兩種寫法，改名也只要改系所表一列。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">4.</b><code>SELECT 姓名 FROM 學生 WHERE 成績 &gt; 90 OR 年級 = 1 ORDER BY 成績</code> 會列出誰？順序？</p>
+<p>成績大於 90 的有張雅婷（92）；年級 1 的有李志豪（68）、吳佩珊（88）。三人照成績由小到大：<strong>李志豪、吳佩珊、張雅婷</strong>。</p>
+<button class="loadbtn" data-load='[["sql-in","SELECT 姓名, 成績 FROM 學生 WHERE 成績 > 90 OR 年級 = 1 ORDER BY 成績"]]' data-goto="sql" data-run="sql-run">丟進查詢器</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">5.</b>轉帳扣了 A 還沒加 B 時系統當機，重開後資料庫會是什麼狀態？靠的是 ACID 的哪一個？</p>
+<p>交易沒完成，整個被<strong>撤銷</strong>，A 的錢回來，像什麼都沒發生。靠的是<strong>原子性</strong>（全做或全不做）。</p>
+</details>
+<div class="gopractice"><b>讀完了？去練習：</b><a href="practice.html#skill=sqlRead">讀 SQL 查詢結果</a><a href="practice.html#skill=concepts10">第 10 章觀念題</a><a href="audio.html#17"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>聽第 17 集複習</a></div>
+</section>
+
+<nav class="pager" aria-label="其他講義"><a href="lesson-2.html"><small>上一份講義</small><b>← 講義 ②　更多資料表示</b><span class="small muted">位元運算、浮點數、文字圖片聲音</span></a><a class="next" href="practice.html"><small>全部讀完了</small><b>去練習頁 →</b><span class="small muted">用混合挑戰檢查自己</span></a></nav>
+</main>
+</div>
+<script src="assets/lesson-core.js"></script>
+<script src="assets/lesson-3.js"></script>
+</body>
+</html>
