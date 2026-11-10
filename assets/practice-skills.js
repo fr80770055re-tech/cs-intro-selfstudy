@@ -881,6 +881,44 @@
     { ch: 10, q: "交易（transaction）的「原子性」是指？", a: "一組操作要嘛全部完成，要嘛全部沒發生", o: ["每次只能改一個位元", "資料存在很小的空間", "交易要在一秒內完成"], why: "轉帳扣了 A 還沒加 B 時當機，整個交易會被撤銷，錢不會憑空消失。" },
     { ch: 10, q: "ACID 四個字母分別代表？", a: "原子性、一致性、隔離性、持久性", o: ["存取、建立、索引、刪除", "原子性、快取、索引、資料", "可用性、一致性、隔離性、分散性"], why: "Atomicity、Consistency、Isolation、Durability。" },
     { ch: 10, q: "資料庫的「索引」（index）像什麼？", a: "書後面的索引：另外建一份排好順序的對照表，加快查詢", o: ["書的封面", "書的頁數", "書的作者"], why: "有索引就能用二分搜尋，不用整張表從頭掃到尾；代價是占空間、寫入變慢。" },
+    /* 第 11 章 */
+    { ch: 11, q: "作業系統最主要的兩個角色是？", a: "管理硬體資源，並提供好用的抽象介面給程式", o: ["編譯程式和執行網頁", "保護電腦不中毒和備份檔案", "提供文書處理和試算表"], why: "OS 是資源管理者，也把硬體包裝成檔案、行程這類好用的抽象。" },
+    { ch: 11, q: "應用程式要讀檔案時，透過什麼請作業系統幫忙？", a: "系統呼叫", o: ["中斷向量", "編譯器", "DMA"], why: "系統呼叫是程式請 OS 辦事的正式管道，CPU 會切到核心模式。" },
+    { ch: 11, q: "為什麼 CPU 要分成核心模式和使用者模式？", a: "讓一般程式不能直接碰硬體，一個程式當掉不會拖垮整個系統", o: ["讓 CPU 跑得更快", "讓程式可以用更多記憶體", "為了省電"], why: "權限分開是安全機制：危險的指令只有核心能執行。" },
+    { ch: 11, q: "「中斷」比「輪詢」好在哪裡？", a: "CPU 不用一直去問裝置好了沒，裝置好了會主動通知", o: ["中斷不需要硬體支援", "中斷可以讓裝置變快", "中斷不會打斷 CPU 正在做的事"], why: "輪詢大部分時間都在白問；中斷讓 CPU 先做別的事。" },
+    { ch: 11, q: "DMA 的作用是？", a: "讓裝置直接把大量資料搬進記憶體，不必經過 CPU", o: ["把程式翻成機器語言", "加密硬碟資料", "管理網路封包"], why: "DMA 搬完才發一個中斷，省下 CPU 一個位元組一個位元組地搬。" },
+    { ch: 11, q: "「程式」和「行程」的差別是？", a: "程式是硬碟上的靜態檔案，行程是執行中的程式", o: ["兩者是同一件事", "行程是程式的原始碼", "程式在記憶體裡，行程在硬碟上"], why: "同一個程式可以同時有好幾個行程。" },
+    { ch: 11, q: "行程控制區塊（PCB）裡記錄什麼？", a: "行程的狀態、程式計數器、暫存器、記憶體與開啟的檔案等", o: ["程式的原始碼", "使用者的密碼", "硬碟的分割表"], why: "內容切換時，就是靠 PCB 把行程的現場存起來、再還原。" },
+    { ch: 11, q: "同一個行程裡的多個執行緒，共用什麼？", a: "記憶體和開啟的檔案", o: ["程式計數器", "暫存器", "什麼都不共用"], why: "執行緒共用行程的記憶體，但各有自己的 PC、暫存器和堆疊。" },
+    { ch: 11, q: "內容切換（context switch）為什麼是一種負擔？", a: "存取暫存器和 PCB 的這段時間，CPU 沒做任何有用的工作", o: ["會讓資料遺失", "會讓行程重新從頭執行", "會清空硬碟快取"], why: "切換太頻繁（例如 RR 配額太小），時間都花在切換上。" },
+    { ch: 11, q: "等待時間的公式是？", a: "週轉時間 − 執行時間", o: ["完成時間 − 抵達時間", "第一次開始時間 − 抵達時間", "完成時間 − 執行時間"], why: "週轉 ＝ 完成 − 抵達；等待 ＝ 週轉 − 執行；回應 ＝ 第一次開始 − 抵達。" },
+    { ch: 11, q: "哪一種排程方法的平均等待時間最小？", a: "SRTF（最短剩餘時間優先）", o: ["FCFS", "RR", "優先權排程"], why: "總是先做最短的，所有人加起來等最少。SJF 是不可搶先版本中最小的。" },
+    { ch: 11, q: "「護航效應」（convoy effect）在哪一種排程最明顯？", a: "FCFS", o: ["SJF", "RR", "SRTF"], why: "一個長工作排在前面，後面的短工作全部要等它。" },
+    { ch: 11, q: "優先權排程可能讓低優先權的行程永遠輪不到，這叫什麼？解法是？", a: "飢餓；用老化讓等愈久的優先權愈高", o: ["死結；砍掉行程", "輾轉；增加記憶體", "護航；改用 FCFS"], why: "老化（aging）讓等待太久的行程慢慢升級，最後一定輪得到。" },
+    { ch: 11, q: "RR 的時間配額設得非常大，會變得像哪一種排程？", a: "FCFS", o: ["SJF", "SRTF", "優先權"], why: "配額大到每個行程都一次跑完，就是照順序先到先服務。" },
+    { ch: 11, q: "RR 排程最大的優點是？", a: "每個行程很快就能第一次拿到 CPU，回應時間短", o: ["平均等待時間最小", "完全沒有內容切換", "不需要時間配額"], why: "RR 的平均等待時間通常不是最好的，但對互動式系統最公平、反應最快。" },
+    { ch: 11, q: "兩個執行緒同時修改同一個變數，結果取決於誰先誰後，這叫什麼？", a: "競爭條件", o: ["死結", "飢餓", "分頁錯誤"], why: "解法是把那段程式設為臨界區，用互斥鎖保護。" },
+    { ch: 11, q: "下面哪一個<b>不是</b>死結的必要條件？", a: "可搶先（資源可以被強制拿走）", o: ["互斥", "持有並等待", "循環等待"], why: "四個條件是互斥、持有並等待、<b>不可</b>搶奪、循環等待。" },
+    { ch: 11, q: "規定所有行程都必須照固定順序申請資源，破壞了死結的哪個條件？", a: "循環等待", o: ["互斥", "持有並等待", "不可搶奪"], why: "大家都照同一個順序要，就不可能繞成一圈互等。" },
+    { ch: 11, q: "銀行家演算法屬於哪一種死結處理策略？", a: "避免：分配前先檢查是否安全", o: ["預防：破壞必要條件", "偵測與恢復：發生了再處理", "忽略"], why: "銀行家演算法在每次分配資源前，確認系統還在安全狀態。" },
+    /* 第 12 章 */
+    { ch: 12, q: "負責把邏輯位址轉成實體位址的硬體叫什麼？", a: "MMU（記憶體管理單元）", o: ["ALU", "DMA 控制器", "TLB"], why: "每次存取記憶體都經過 MMU 轉換。TLB 是 MMU 裡快取分頁表的部分。" },
+    { ch: 12, q: "連續配置記憶體用久了，空閒空間加起來夠大卻沒有一塊連續的放得下，這叫？", a: "外部碎片", o: ["內部碎片", "分頁錯誤", "輾轉現象"], why: "分頁讓行程不必放在連續空間，解決外部碎片。" },
+    { ch: 12, q: "分頁會產生哪一種碎片？", a: "內部碎片：最後一頁通常用不滿", o: ["外部碎片", "兩種都會", "都不會"], why: "頁大小固定，最後一頁用不完的部分就浪費了。" },
+    { ch: 12, q: "分頁系統中，頁（page）和頁框（frame）的大小關係是？", a: "一樣大", o: ["頁框比較大", "頁比較大", "沒有固定關係"], why: "一樣大，任何一頁才能放進任何一個頁框。" },
+    { ch: 12, q: "頁大小 1 KB，邏輯位址 2500 的頁碼是多少？", a: "2", o: ["2500", "452", "3"], why: "2500 ÷ 1024 ＝ 2 餘 452：頁碼 2，位移 452。" },
+    { ch: 12, q: "位址轉換時，頁內位移（offset）會怎樣？", a: "不變，直接照抄", o: ["乘上頁框號碼", "加上頁碼", "查分頁表換掉"], why: "只有頁碼被換成頁框號碼，位移原封不動。" },
+    { ch: 12, q: "頁大小 4 KB（2¹² 位元組），位址中位移占幾個位元？", a: "12", o: ["4", "10", "32"], why: "頁大小 2ᵈ，右邊 d 個位元就是位移。" },
+    { ch: 12, q: "TLB 是什麼？", a: "快取分頁表的小型高速硬體", o: ["硬碟上的分頁檔", "一種頁面置換演算法", "行程控制區塊"], why: "查分頁表要多跑一趟記憶體，TLB 把常用的對照放在 CPU 旁邊。" },
+    { ch: 12, q: "虛擬記憶體讓程式可以做到什麼？", a: "使用比實體 RAM 還大的位址空間", o: ["讓 RAM 變快", "不需要硬碟", "完全不會發生分頁錯誤"], why: "不常用的頁放在硬碟，需要時才載入。" },
+    { ch: 12, q: "分頁錯誤（page fault）是什麼意思？", a: "存取的頁不在 RAM 裡，要從硬碟載入", o: ["程式有 bug", "記憶體壞掉", "分頁表格式錯誤"], why: "名字叫錯誤，但這是虛擬記憶體的正常機制。" },
+    { ch: 12, q: "電腦開太多程式後變得非常卡、硬碟燈一直閃，最可能是？", a: "輾轉現象（thrashing）", o: ["死結", "護航效應", "Belady 異常"], why: "RAM 不夠，系統大部分時間都在把頁搬進搬出。" },
+    { ch: 12, q: "LRU 頁面置換會踢掉哪一頁？", a: "最久沒有被用到的那頁", o: ["最早被載入的那頁", "未來最久才會用到的那頁", "被用最多次的那頁"], why: "最早載入是 FIFO；未來最久才用是 OPT。" },
+    { ch: 12, q: "為什麼 OPT（最佳置換）實際上做不到？", a: "它需要知道未來會存取哪些頁", o: ["它太佔記憶體", "它會造成死結", "它只能用在 SSD"], why: "OPT 只用來當比較基準：其他方法的錯誤次數不可能比它少。" },
+    { ch: 12, q: "Belady 異常是指什麼？", a: "FIFO 增加頁框數，分頁錯誤反而變多", o: ["LRU 永遠比 FIFO 差", "頁框太多會造成死結", "OPT 有時比 LRU 差"], why: "經典例子 1 2 3 4 1 2 5 1 2 3 4 5：3 個頁框 9 次，4 個頁框 10 次。" },
+    { ch: 12, q: "目前在 /home/amy，相對路徑 ../bob/a.txt 指的是？", a: "/home/bob/a.txt", o: ["/home/amy/bob/a.txt", "/bob/a.txt", "/home/amy/a.txt"], why: ".. 是上一層，從 /home/amy 往上到 /home，再進 bob。" },
+    { ch: 12, q: "權限 rwxr-xr-- 用八進位表示是？", a: "754", o: ["751", "457", "765"], why: "rwx ＝ 4＋2＋1 ＝ 7；r-x ＝ 4＋1 ＝ 5；r-- ＝ 4。" },
+    { ch: 12, q: "FAT32 檔案系統的限制之一是？", a: "單一檔案不能超過 4 GB", o: ["不能有資料夾", "只能用在 Linux", "檔名不能有數字"], why: "FAT32 用 32 位元記錄檔案大小，2³² 位元組 ＝ 4 GiB。所以大影片要用 exFAT 或 NTFS。" },
   ];
 
   // 每章一個觀念選擇題題型；綜合（ch 99）抽全部。
@@ -1240,6 +1278,168 @@
     },
   });
   conceptSkill(10, "第 10 章觀念題", "lesson-3.html#ch10", "DBMS、資料表、主鍵與外來鍵、SQL、正規化、交易與 ACID、索引。");
+
+
+  /* ---------- 第 11 章 ---------- */
+  const PSTATE = [
+    ["一個行程剛建立好、記憶體也配置完成，它會進入哪個狀態？", "就緒", "新建建好之後先進就緒佇列排隊，還沒輪到 CPU。"],
+    ["排程器從就緒佇列選中一個行程，它會進入哪個狀態？", "執行", "被選中就拿到 CPU，開始執行。"],
+    ["正在執行的行程要讀取硬碟上的檔案，它會進入哪個狀態？", "等待", "等 I/O 時給它 CPU 也沒用，所以讓出 CPU 去等待。"],
+    ["行程在等待鍵盤輸入，使用者按下 Enter 後，它會進入哪個狀態？", "就緒", "I/O 完成後回到就緒佇列重新排隊，不是直接回到執行。"],
+    ["使用 RR 排程時，正在執行的行程時間配額用完，它會進入哪個狀態？", "就緒", "被換下來的行程回就緒佇列的最後面重新排隊。"],
+    ["正在執行的行程跑完最後一行程式，它會進入哪個狀態？", "結束", "跑完就進入結束狀態，作業系統回收資源。"],
+    ["使用可搶先的優先權排程時，來了一個優先權更高的行程，原本正在執行的行程會進入哪個狀態？", "就緒", "被搶先的行程還能繼續跑，只是沒有 CPU，所以回就緒。"],
+    ["哪一個狀態的行程，作業系統<b>不會</b>把 CPU 分給它（就算 CPU 閒著）？", "等待", "等待中的行程在等 I/O 或事件，事情沒完成前給它 CPU 也做不了事。"],
+  ];
+  add({
+    id: "procState", ch: 11, name: "行程狀態", lesson: "lesson-4.html#ch11-3",
+    desc: "新建、就緒、執行、等待、結束。I/O 完成回就緒，不是回執行。",
+    gen() {
+      const [q, a, why] = pick(PSTATE), choices = shuffle(["新建", "就緒", "執行", "等待", "結束"]);
+      return {
+        prompt: q, kind: "choice", choices, answer: a,
+        check(x) {
+          if (x === a) return OK;
+          if (x === "執行" && a === "就緒") return BAD("不會直接回到執行：CPU 可能正被別人用，要先回<b>就緒</b>重新排隊。" + why);
+          return BAD(why);
+        },
+        steps: [why, `答案：<b>${a}</b>`],
+      };
+    },
+  });
+  const ganttText = (S) => S.segs.map(s => `${s.name || "閒置"}（${s.s}～${s.e}）`).join(" → ");
+  const procTable = (P, showPr) => `<table class="calc dbq"><tr><th>行程</th><th>抵達時間</th><th>執行時間</th>${showPr ? "<th>優先權</th>" : ""}</tr>${P.map(p => `<tr><td>${p.name}</td><td>${p.at}</td><td>${p.bt}</td>${showPr ? `<td>${p.pr}</td>` : ""}</tr>`).join("")}</table>`;
+  add({
+    id: "sched", ch: 11, name: "CPU 排程：平均等待時間", lesson: "lesson-4.html#ch11-4",
+    desc: "先畫甘特圖，再算：等待 ＝ 完成 − 抵達 − 執行，最後取平均。",
+    gen(level) {
+      const n = level === 1 ? 3 : 4, alg = level === 1 ? pick(["FCFS", "SJF"]) : pick(["SJF", "SRTF", "PRI", "RR"]), q = pick([2, 3, 4]);
+      let P;
+      do {
+        let t = 0;
+        P = Array.from({ length: n }, (_, i) => { const at = level === 1 && Math.random() < 0.5 ? 0 : (i === 0 ? 0 : (t += ri(0, 3))); return { name: "P" + (i + 1), at, bt: ri(1, level === 1 ? 8 : 9), pr: ri(1, 5) }; });
+        if (level === 1 && P.some(p => p.at === 0) && Math.random() < 0.5) P.forEach(p => (p.at = 0));
+      } while (alg === "PRI" && new Set(P.map(p => p.pr)).size < n);
+      const S = window.OS.schedule(P, alg, q), ans = +S.avgW.toFixed(2);
+      const others = ["FCFS", "SJF", "SRTF", "PRI", "RR"].filter(a => a !== alg).map(a => [a, +window.OS.schedule(P, a, q).avgW.toFixed(2)]);
+      const name = window.OS.ALG_NAME[alg] + (alg === "RR" ? `，時間配額 ${q}` : "") + (alg === "PRI" ? "（數字小的優先，不可搶先）" : "");
+      const ignoreArrival = +(S.res.reduce((s, r) => s + (r.ct - r.bt), 0) / n).toFixed(2);
+      return {
+        prompt: `用<b>${name}</b>排程下面的行程，平均等待時間是多少？（可以寫小數或分數）${procTable(P, alg === "PRI")}`, kind: "text", mode: "decimal", placeholder: "例如 4.33 或 13/3", answer: String(ans),
+        check(a) {
+          const s = String(a).trim().replace(/[，,]/g, ".");
+          const m = s.match(/^(-?\d+)\s*\/\s*(\d+)$/), x = m ? +m[1] / +m[2] : parseFloat(s);
+          if (Number.isNaN(x)) return INVALID("請輸入數字，例如 4.33 或 13/3。");
+          const near = (v) => Math.abs(x - v) < 0.011;
+          if (near(S.avgW)) return OK;
+          if (near(S.avgT)) return BAD("這是平均<b>週轉</b>時間。等待時間還要再減掉每個行程的執行時間。");
+          if (P.some(p => p.at) && near(ignoreArrival)) return BAD("忘了減抵達時間：等待 ＝ 完成 − <b>抵達</b> − 執行。");
+          const o = others.find(([, v]) => near(v) && Math.abs(v - S.avgW) > 0.011);
+          if (o) return BAD(`這是用 ${window.OS.ALG_NAME[o[0]]} 算出來的。${alg === "SJF" ? "SJF 是 CPU 空出來時，從<b>已經抵達</b>的行程裡挑執行時間最短的，而且不會中途搶走。" : alg === "SRTF" ? "SRTF 可以搶先：每當有新行程抵達，都要比一次<b>剩餘</b>時間。" : alg === "RR" ? `RR 每個行程一次最多跑 ${q} 個單位，沒跑完就排到隊伍最後面。` : alg === "PRI" ? "優先權排程挑數字最小的（最優先的），不看執行時間。" : "FCFS 照抵達順序，不看長短。"}`);
+          return BAD("先畫甘特圖，再逐一算每個行程的「完成 − 抵達 − 執行」。");
+        },
+        steps: [`甘特圖：${ganttText(S)}`, `<table class="calc"><tr><th>行程</th><th>完成</th><th>等待 ＝ 完成 − 抵達 − 執行</th></tr>${S.res.map(r => `<tr><td>${r.name}</td><td>${r.ct}</td><td>${r.ct} − ${r.at} − ${r.bt} ＝ ${r.wt}</td></tr>`).join("")}</table>`, `平均 ＝ (${S.res.map(r => r.wt).join(" ＋ ")}) ÷ ${n} ＝ <b>${ans}</b>`],
+      };
+    },
+  });
+
+  conceptSkill(11, "第 11 章觀念題", "lesson-4.html#ch11", "作業系統的角色、系統呼叫、中斷、行程與執行緒、排程方法比較、死結。");
+
+  /* ---------- 第 12 章 ---------- */
+  add({
+    id: "pageAddr", ch: 12, name: "分頁位址轉換", lesson: "lesson-4.html#ch12-2",
+    desc: "頁碼 ＝ 位址 ÷ 頁大小的商，位移 ＝ 餘數；實體 ＝ 頁框 × 頁大小 ＋ 位移。",
+    gen(level) {
+      const size = pick(level === 1 ? [100, 1000, 256, 1024] : [256, 512, 1024, 2048, 4096]);
+      const frames = shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]).slice(0, 6);
+      const p = ri(0, 5), off = ri(1, size - 1), a = p * size + off, f = frames[p], pa = f * size + off;
+      const tbl = `<table class="calc dbq"><tr><th>頁碼</th>${frames.map((_, i) => `<td>${i}</td>`).join("")}</tr><tr><th>頁框</th>${frames.map(x => `<td>${x}</td>`).join("")}</tr></table>`;
+      const nonPow = !isPow2(size);
+      if (level === 1 && Math.random() < 0.5) return {
+        prompt: `頁大小 ${size} 位元組${nonPow ? "（教學用的簡化數字）" : ""}。邏輯位址 ${a} 的<b>頁碼和位移</b>各是多少？（用逗號隔開，例如 3, 120）`, kind: "text", mode: "text", placeholder: "頁碼, 位移", answer: `${p}, ${off}`,
+        check(x) {
+          const m = String(x).match(/\d+/g); if (!m || m.length !== 2) return INVALID("請輸入兩個整數，用逗號隔開。");
+          const [u, v] = m.map(Number);
+          if (u === p && v === off) return OK;
+          if (u === off && v === p) return BAD("順序反了：先寫頁碼（商），再寫位移（餘數）。");
+          if (u === p) return BAD(`頁碼對了。位移是<b>餘數</b>：${a} − ${p} × ${size}。`);
+          return BAD(`${a} ÷ ${size}：商是頁碼，餘數是位移。`);
+        },
+        steps: [`${a} ÷ ${size} ＝ ${p} 餘 ${off}`, `頁碼 <b>${p}</b>，位移 <b>${off}</b>`],
+      };
+      return {
+        prompt: `頁大小 ${size} 位元組，分頁表如下。邏輯位址 ${a} 對應的<b>實體位址</b>是多少？${tbl}`, kind: "text", mode: "numeric", placeholder: "實體位址（十進位）", answer: String(pa),
+        check(x) {
+          const v = intParse(x); if (v === null) return INVALID("請輸入整數。");
+          if (v === pa) return OK;
+          if (v === a) return BAD("這是邏輯位址本身。要查分頁表，把頁碼換成頁框號碼。");
+          if (v === f * size) return BAD("漏了位移：實體位址 ＝ 頁框 × 頁大小 ＋ <b>位移</b>。");
+          if (v === f * size + p) return BAD("加錯了：要加的是<b>位移</b>（餘數），不是頁碼。");
+          if (frames.some((g, i) => i !== p && v === g * size + off)) return BAD(`查錯表了：頁碼是 ${p}，第 ${p} 頁對應頁框 ${f}。`);
+          if (v === p * size + f) return BAD("位置弄反了：頁框號碼要乘頁大小，位移直接加。");
+          return BAD(`先算頁碼和位移（${a} ÷ ${size} 的商和餘數），查表得頁框，再算頁框 × ${size} ＋ 位移。`);
+        },
+        steps: [`${a} ÷ ${size} ＝ ${p} 餘 ${off}：頁碼 ${p}、位移 ${off}。`, `查表：第 ${p} 頁 → 頁框 ${f}。`, `實體位址 ＝ ${f} × ${size} ＋ ${off} ＝ <b>${pa}</b>`],
+      };
+    },
+  });
+  add({
+    id: "pageFault", ch: 12, name: "頁面置換：分頁錯誤次數", lesson: "lesson-4.html#ch12-4",
+    desc: "FIFO 踢最早載入、LRU 踢最久沒用、OPT 踢未來最久才用。填空頁框也算錯誤。",
+    gen(level) {
+      const alg = level === 1 ? pick(["FIFO", "LRU"]) : pick(["FIFO", "LRU", "OPT"]), frames = level === 1 ? 3 : pick([3, 4]);
+      const L = level === 1 ? ri(8, 10) : ri(11, 14), maxPage = level === 1 ? 4 : 6;
+      let refs;
+      do { refs = []; while (refs.length < L) { const x = ri(0, maxPage); if (refs[refs.length - 1] !== x) refs.push(x); } } while (new Set(refs).size <= frames);
+      const S = window.OS.pageReplace(refs, frames, alg), ans = S.faults;
+      const other = ["FIFO", "LRU", "OPT"].filter(a => a !== alg).map(a => [a, window.OS.pageReplace(refs, frames, a).faults]);
+      const grid = `<table class="calc"><tr><th>存取</th>${S.steps.map(s => `<td><b>${s.ref}</b></td>`).join("")}</tr>${Array.from({ length: frames }, (_, k) => `<tr><th>頁框 ${k + 1}</th>${S.steps.map(s => `<td>${s.frames[k] === null ? "" : s.frames[k]}</td>`).join("")}</tr>`).join("")}<tr><th>結果</th>${S.steps.map(s => `<td>${s.hit ? "✓" : "<b>F</b>"}</td>`).join("")}</tr></table>`;
+      return {
+        prompt: `參考串 ${C(refs.join(" "))}，${frames} 個頁框（一開始是空的），用 <b>${window.OS.ALG_NAME[alg]}</b>，會發生幾次分頁錯誤？`, kind: "text", mode: "numeric", placeholder: "錯誤次數", answer: String(ans),
+        check(a) {
+          const x = intParse(a); if (x === null) return INVALID("請輸入整數。");
+          if (x === ans) return OK;
+          if (x === S.hits) return BAD("這是<b>命中</b>次數。題目問的是錯誤次數。");
+          if (x === ans - Math.min(frames, new Set(refs).size)) return BAD(`一開始頁框是空的，前 ${frames} 次載入新頁也算分頁錯誤。`);
+          const o = other.find(([, f]) => f === x && f !== ans);
+          if (o) return BAD(`這是 ${o[0]} 的答案。${alg === "FIFO" ? "FIFO 踢掉<b>最早載入</b>的那頁，不管它最近有沒有被用過。" : alg === "LRU" ? "LRU 踢掉<b>最久沒被用到</b>的那頁：命中時也要更新「最近用過」。" : "OPT 往<b>未來</b>看，踢掉最久以後才會再用到（或不再用到）的那頁。"}`);
+          return BAD("畫一張表，一欄一欄記下頁框的內容，數有幾欄是錯誤。");
+        },
+        steps: [grid, `F 共 <b>${ans}</b> 次${S.steps.some(s => s.victim !== null) ? `（被踢掉的依序是：${S.steps.filter(s => s.victim !== null).map(s => s.victim).join("、")}）` : ""}`],
+      };
+    },
+  });
+  add({
+    id: "perm", ch: 12, name: "檔案權限（rwx 與八進位）", lesson: "lesson-4.html#ch12-5",
+    desc: "r ＝ 4、w ＝ 2、x ＝ 1，每組相加成一個八進位數字。",
+    gen() {
+      const digs = [pick([7, 6, 7, 5]), pick([5, 4, 0, 6, 7]), pick([4, 0, 5, 1])];
+      const str = digs.map(d => (d & 4 ? "r" : "-") + (d & 2 ? "w" : "-") + (d & 1 ? "x" : "-")).join(""), oct = digs.join("");
+      const expl = digs.map((d, i) => `${["擁有者", "同群組", "其他人"][i]} ${(d & 4 ? "r" : "-") + (d & 2 ? "w" : "-") + (d & 1 ? "x" : "-")} ＝ ${bin(d, 3)} ＝ ${d}`);
+      if (Math.random() < 0.5) return {
+        prompt: `權限 ${C(str)} 用八進位表示是多少？（chmod 後面的三位數）`, kind: "text", mode: "numeric", placeholder: "三位數字", answer: oct,
+        check(a) {
+          a = clean(a); if (!/^[0-7]{3}$/.test(a)) return INVALID("請輸入三位 0～7 的數字。");
+          if (a === oct) return OK;
+          const rev3 = digs.map(d => ((d & 1) << 2) | (d & 2) | ((d & 4) >> 2)).join("");
+          if (a === rev3) return BAD("位權方向反了：r 是 4、w 是 2、x 是 1。");
+          return BAD("每三個字元一組，有字母的位置算 1：r ＝ 4、w ＝ 2、x ＝ 1，相加。");
+        },
+        steps: [...expl, `合起來 <b>${oct}</b>`],
+      };
+      return {
+        prompt: `${C("chmod " + oct)} 之後，權限寫成 rwx 的形式是什麼？（9 個字元，沒有的權限寫 -）`, kind: "text", mode: "text", placeholder: "例如 rwxr-xr--", answer: str,
+        check(a) {
+          a = String(a).trim().toLowerCase(); if (!/^[rwx-]{9}$/.test(a)) return INVALID("請寫 9 個字元，只用 r、w、x、-。");
+          if (a === str) return OK;
+          if (!/^([r-][w-][x-]){3}$/.test(a)) return BAD("每組的順序固定是 r、w、x，沒有的寫 -。");
+          return BAD("每一位數字拆成三個位元：4 → r、2 → w、1 → x。");
+        },
+        steps: [...expl, `合起來 <b>${str}</b>`],
+      };
+    },
+  });
+  conceptSkill(12, "第 12 章觀念題", "lesson-4.html#ch12", "MMU、碎片、分頁、TLB、虛擬記憶體、頁面置換、路徑、權限、檔案系統。");
 
   conceptSkill(99, "觀念選擇題（綜合）", "lesson.html", "名詞與觀念的快速檢查，涵蓋全部章節。");
 

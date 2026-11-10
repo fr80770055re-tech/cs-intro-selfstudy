@@ -343,3 +343,71 @@ table.db td.num{font-family:var(--mono);text-align:right}
   .dbpair{grid-template-columns:1fr}
   .tablewrap table.db{min-width:0}
 }
+
+/* ---------- 第 11 章：行程狀態、排程 ---------- */
+.pscroll{overflow-x:auto;margin:4px 0 10px}
+svg.pstate{width:100%;min-width:500px;max-width:640px;height:auto;display:block}
+.pnode rect{fill:var(--surface);stroke:var(--line-strong);stroke-width:1.5}
+.pnode text{font-size:17px;font-weight:700;text-anchor:middle;fill:var(--text);font-family:var(--sans)}
+.pnode.cur rect{fill:var(--accent);stroke:var(--accent)}
+.pnode.cur text{fill:var(--accent-text)}
+.pedge{fill:none;stroke:var(--line-strong);stroke-width:2}
+.pedge.hot{stroke:var(--sign);stroke-width:3}
+.ahead{fill:var(--line-strong)}.ahead.hot{fill:var(--sign)}
+.plabel{font-size:13px;fill:var(--muted);text-anchor:middle;font-family:var(--sans)}
+.plabel.hot{fill:var(--sign);font-weight:700}
+.pbtns button{min-height:36px;padding:4px 12px;font-size:14px}
+table.schedin{width:auto}
+table.schedin td,table.schedin th{padding:4px 10px;vertical-align:middle}
+table.schedin input[type=text].narrow{width:4.5em;min-height:38px;font-size:16px}
+.gantt{display:flex;height:46px;border-radius:8px;overflow:hidden;border:1px solid var(--line-strong);margin-top:4px}
+.gseg{display:flex;align-items:center;justify-content:center;min-width:0;border-right:1px solid var(--line-strong);font-family:var(--mono);font-weight:700;font-size:14px;overflow:hidden}
+.gseg:last-child{border-right:0}
+.gseg span{white-space:nowrap}
+.gseg.c0{background:var(--accent-soft);color:var(--accent)}.gseg.c1{background:var(--gb);color:var(--sign)}
+.gseg.c2{background:var(--exp-soft);color:var(--exp)}.gseg.c3{background:var(--ok-soft);color:var(--ok)}
+.gseg.idle{background:repeating-linear-gradient(45deg,var(--surface-2) 0 6px,var(--bg) 6px 12px);color:var(--muted);font-weight:400}
+.gticks{position:relative;height:22px;font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:10px}
+.gticks span{position:absolute;top:2px;transform:translateX(-50%)}
+.gticks span:first-child{transform:none}.gticks span:last-child{transform:translateX(-100%)}
+table.sres{font-size:14.5px}
+#sch-out .results{grid-template-columns:minmax(0,2fr) repeat(2,minmax(0,1fr))}
+#sch-out .rval{word-break:normal;overflow-wrap:anywhere;font-size:17px}
+table.sres td{white-space:nowrap}
+
+/* ---------- 第 12 章：分頁、置換、權限 ---------- */
+.pgwrap{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:16px;align-items:start}
+table.ptable{width:100%;margin:0;font-size:14.5px}
+table.ptable td,table.ptable th{padding:3px 10px}
+table.ptable tr.cur td{background:var(--hl);font-weight:700}
+.pgbin{margin-top:10px;font-size:14px}
+.pgbin > div{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:4px 0}
+.pgbin .lab{min-width:8.5em;font-weight:700}
+.pgbin .arrow{color:var(--muted);font-size:13px}
+.pbits{font-family:var(--mono);font-size:16px;letter-spacing:.06em;display:inline-flex;border-radius:6px;overflow:hidden}
+.pbits > span{padding:2px 6px}
+.pp,.legend .sw.pp{background:var(--ga)}.pf,.legend .sw.pf{background:var(--exp-soft)}.po,.legend .sw.po{background:var(--gb)}
+.legend .sw.pp,.legend .sw.pf,.legend .sw.po{box-shadow:none}
+table.prgrid{border-collapse:collapse;font-family:var(--mono);font-size:14.5px;margin:4px 0}
+table.prgrid th{font-family:var(--sans);font-size:12.5px;color:var(--muted);font-weight:700;padding:3px 8px;text-align:left;white-space:nowrap}
+table.prgrid tr:first-child th:not(:first-child){color:var(--text);font-family:var(--mono);font-size:14.5px;text-align:center;border-bottom:2px solid var(--line-strong)}
+table.prgrid td{width:30px;height:30px;text-align:center;border:1px solid var(--line)}
+table.prgrid td.new{font-weight:700;background:var(--accent-soft);color:var(--accent)}
+table.prgrid td.miss{background:var(--bad-soft);color:var(--bad);font-weight:700}
+table.prgrid td.hit{color:var(--ok);font-weight:700}
+table.prgrid td.vic{color:var(--muted);font-size:13px;border:0}
+.permgrid{display:flex;flex-wrap:wrap;gap:12px 20px;margin-bottom:10px}
+.pgroup .pcells{display:flex;gap:4px}
+button.pcell{flex-direction:column;gap:0;width:46px;min-height:52px;padding:4px 0;font-family:var(--mono);background:var(--zero);color:var(--zero-text);border-color:transparent}
+button.pcell b{font-size:19px}
+button.pcell small{font-size:11px;opacity:.8}
+button.pcell.on{background:var(--one);color:var(--one-text)}
+.psum{font-size:13.5px;margin-top:4px;color:var(--muted)}
+.psum b{color:var(--text)}
+
+@media (max-width:900px){
+  .pgwrap{grid-template-columns:1fr}
+  #sch-out .results{grid-template-columns:1fr 1fr}
+  #sch-out .results .rcard.src{grid-column:1/-1}
+  table.ptable{max-width:260px}
+}

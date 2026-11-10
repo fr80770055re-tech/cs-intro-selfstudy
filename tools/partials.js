@@ -3,7 +3,7 @@
 const FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Serif+TC:wght@700;900&display=swap">`;
 const ICON = (id) => `<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#${id}"/></svg>`;
-const LESSONS = ["lesson.html", "lesson-2.html", "lesson-3.html"];
+const LESSONS = ["lesson.html", "lesson-2.html", "lesson-3.html", "lesson-4.html"];
 function topbar(cur){
   const items = [["index.html", "首頁", null], ["lesson.html", "講義", "book"], ["practice.html", "練習", "pencil"], ["audio.html", "音檔", "headphones"]];
   const isCur = (h) => h === cur || (LESSONS.includes(cur) && h === "lesson.html");
@@ -25,6 +25,9 @@ const PAGES = [
     ["ch8","第 8 章　電腦網路","ch"],["ch8-1","8.1 網路是什麼"],["ch8-2","8.2 封包與分層"],["ch8-3","8.3 IP 位址"],["ch8-4","8.4 名字與網址"],["ch8-5","8.5 速度與時間"],["ch8-ex","例題"],
     ["ch9","第 9 章　程式語言","ch"],["ch9-1","9.1 機器語言到高階語言"],["ch9-2","9.2 變數與型別"],["ch9-3","9.3 三種流程"],["ch9-4","9.4 函式與程式庫"],["ch9-5","9.5 演算法的好壞"],["ch9-6","9.6 語言地圖"],["ch9-ex","例題"],
     ["ch10","第 10 章　資料庫","ch"],["ch10-1","10.1 為什麼需要資料庫"],["ch10-2","10.2 關聯式模型"],["ch10-3","10.3 SQL"],["ch10-4","10.4 交易與 ACID"],["ch10-5","10.5 索引、備份與 NoSQL"],["ch10-ex","例題"]] },
+  { file: "lesson-4.html", part: "講義 ④　作業系統", toc: [["start","這份講義要學什麼","ch"],
+    ["ch11","第 11 章　作業系統與行程","ch"],["ch11-1","11.1 作業系統做什麼"],["ch11-2","11.2 核心、系統呼叫與中斷"],["ch11-3","11.3 行程與執行緒"],["ch11-4","11.4 CPU 排程"],["ch11-5","11.5 同步與死結"],["ch11-ex","例題"],
+    ["ch12","第 12 章　記憶體與檔案管理","ch"],["ch12-1","12.1 邏輯與實體位址"],["ch12-2","12.2 分頁"],["ch12-3","12.3 虛擬記憶體"],["ch12-4","12.4 頁面置換"],["ch12-5","12.5 檔案系統"],["ch12-ex","例題"]] },
 ];
 function toc(page){
   const blocks = PAGES.map((p, i) => {

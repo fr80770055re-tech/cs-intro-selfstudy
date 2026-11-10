@@ -1,6 +1,6 @@
 // 章節清單：首頁的學習路線和練習頁的分組共用
 // part：1＝講義 ①、2＝講義 ②、3＝講義 ③、0＝綜合（n 用 99，避免和章號衝突）
-window.PARTS = { 1: "講義 ①　整數", 2: "講義 ②　更多資料表示", 3: "講義 ③　電腦、網路與軟體" };
+window.PARTS = { 1: "講義 ①　整數", 2: "講義 ②　更多資料表示", 3: "講義 ③　電腦、網路與軟體", 4: "講義 ④　作業系統" };
 window.CHAPTERS = [
   { n: 0, title: "開始之前", sum: "位元、位元組、位權、次方。完全沒基礎從這裡開始。", lesson: "lesson.html#ch0", audio: [1], days: "第 1 天", part: 1 },
   { n: 1, title: "進位轉換", sum: "二、八、十、十六進位互相轉換，包含小數和分組捷徑。", lesson: "lesson.html#ch1", audio: [2, 3, 6, 7], days: "第 2～4 天", part: 1 },
@@ -13,5 +13,7 @@ window.CHAPTERS = [
   { n: 8, title: "電腦網路", sum: "封包與分層、IP 位址與子網路、DNS 與網址、頻寬與下載時間。", lesson: "lesson-3.html#ch8", audio: [15], days: "第 17～18 天", part: 3 },
   { n: 9, title: "程式語言", sum: "編譯與直譯、變數與型別、三種流程、函式、演算法的好壞。", lesson: "lesson-3.html#ch9", audio: [16], days: "第 19～20 天", part: 3 },
   { n: 10, title: "資料庫", sum: "資料表、主鍵與外來鍵、SQL 查詢、交易與 ACID。", lesson: "lesson-3.html#ch10", audio: [17, 18], days: "第 21～22 天", part: 3 },
-  { n: 99, title: "綜合", sum: "全部章節的觀念選擇題。", lesson: "lesson.html", audio: [], days: "第 23 天", part: 0 },
+  { n: 11, title: "作業系統與行程", sum: "核心與系統呼叫、中斷、行程狀態、CPU 排程（FCFS、SJF、SRTF、優先權、RR）、死結。", lesson: "lesson-4.html#ch11", audio: [19], days: "第 23～25 天", part: 4 },
+  { n: 12, title: "記憶體與檔案管理", sum: "邏輯與實體位址、分頁位址轉換、虛擬記憶體、頁面置換（FIFO、LRU、OPT）、檔案系統與權限。", lesson: "lesson-4.html#ch12", audio: [20, 21], days: "第 26～27 天", part: 4 },
+  { n: 99, title: "綜合", sum: "全部章節的觀念選擇題。", lesson: "lesson.html", audio: [], days: "第 28 天", part: 0 },
 ];

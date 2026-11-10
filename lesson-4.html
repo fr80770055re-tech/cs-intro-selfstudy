@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>講義 ④　作業系統</title>
+<meta name="description" content="計概自學講義第 11～12 章：作業系統與行程、CPU 排程、死結、記憶體管理、分頁與虛擬記憶體、頁面置換、檔案系統。">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Serif+TC:wght@700;900&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/lesson.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="logo" href="index.html" aria-label="計概自學 首頁"><span class="logo-mark" aria-hidden="true"><i class="on"></i><i></i><i class="on"></i><i class="on"></i></span><span class="logo-text">計概自學</span></a>
+  <nav aria-label="主選單"><a href="index.html">首頁</a><a href="lesson.html" aria-current="page"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#book"/></svg>講義</a><a href="practice.html"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#pencil"/></svg>練習</a><a href="audio.html"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>音檔</a></nav>
+</header>
+<div class="layout">
+<nav class="toc" aria-label="目錄"><details open><summary>目錄<span class="cur"></span></summary><div class="links">
+  <div class="part">講義 ①　整數</div>
+  <a href="lesson.html#ch0" class="ch other">第 0 章　開始之前</a>
+  <a href="lesson.html#ch1" class="ch other">第 1 章　進位轉換</a>
+  <a href="lesson.html#ch2" class="ch other">第 2 章　負數與溢位</a>
+  <div class="part">講義 ②　更多資料表示</div>
+  <a href="lesson-2.html#ch3" class="ch other">第 3 章　位元寬度與位元運算</a>
+  <a href="lesson-2.html#ch4" class="ch other">第 4 章　浮點數</a>
+  <a href="lesson-2.html#ch5" class="ch other">第 5 章　文字、圖片與聲音</a>
+  <div class="part">講義 ③　電腦、網路與軟體</div>
+  <a href="lesson-3.html#ch6" class="ch other">第 6 章　電腦的構成</a>
+  <a href="lesson-3.html#ch7" class="ch other">第 7 章　圖靈機與馮紐曼模型</a>
+  <a href="lesson-3.html#ch8" class="ch other">第 8 章　電腦網路</a>
+  <a href="lesson-3.html#ch9" class="ch other">第 9 章　程式語言</a>
+  <a href="lesson-3.html#ch10" class="ch other">第 10 章　資料庫</a>
+  <div class="part">講義 ④　作業系統</div>
+  <a href="#start" class="ch">這份講義要學什麼</a>
+  <a href="#ch11" class="ch">第 11 章　作業系統與行程</a>
+  <a href="#ch11-1" class="sub">11.1 作業系統做什麼</a>
+  <a href="#ch11-2" class="sub">11.2 核心、系統呼叫與中斷</a>
+  <a href="#ch11-3" class="sub">11.3 行程與執行緒</a>
+  <a href="#ch11-4" class="sub">11.4 CPU 排程</a>
+  <a href="#ch11-5" class="sub">11.5 同步與死結</a>
+  <a href="#ch11-ex" class="sub">例題</a>
+  <a href="#ch12" class="ch">第 12 章　記憶體與檔案管理</a>
+  <a href="#ch12-1" class="sub">12.1 邏輯與實體位址</a>
+  <a href="#ch12-2" class="sub">12.2 分頁</a>
+  <a href="#ch12-3" class="sub">12.3 虛擬記憶體</a>
+  <a href="#ch12-4" class="sub">12.4 頁面置換</a>
+  <a href="#ch12-5" class="sub">12.5 檔案系統</a>
+  <a href="#ch12-ex" class="sub">例題</a>
+  </div></details></nav>
+
+<main>
+<h1>講義 ④　作業系統</h1>
+<p class="lead">講義 ③ 看到 CPU 一條一條執行指令、記憶體分好幾層。可是你的電腦同時開著瀏覽器、音樂、通訊軟體，只有幾個 CPU 核心和一塊記憶體，大家怎麼分？負責分配的就是作業系統。</p>
+
+<section id="start">
+<h2 class="minor">這份講義要學什麼</h2>
+<ul>
+  <li><strong>第 11 章</strong>：作業系統的角色、核心與系統呼叫、行程與執行緒、行程狀態，以及考試最愛的 <strong>CPU 排程</strong>計算（平均等待時間），最後是死結。</li>
+  <li><strong>第 12 章</strong>：記憶體怎麼分給很多程式：邏輯位址與實體位址、<strong>分頁的位址轉換</strong>、虛擬記憶體、<strong>頁面置換</strong>計算（FIFO、LRU、OPT），以及檔案系統和檔案權限。</li>
+</ul>
+<div class="note">這份講義的計算題很多，而且答案都有固定的算法，照步驟做就不會錯。會一直用到第 6 章的<strong>指令週期、中斷、記憶體階層</strong>，第 1 章的<strong>八進位</strong>，以及第 0 章的 <strong>2 的次方</strong>。</div>
+</section>
+
+<!-- ============ 第 11 章 ============ -->
+<section id="ch11">
+<h2 class="chapter"><span class="no">第 11 章</span>作業系統與行程</h2>
+<p class="lead">作業系統是開機後第一個跑起來、關機前最後一個停下的程式。它不幫你寫報告或看影片，它的工作是讓其他所有程式能順利地共用同一台電腦。</p>
+
+<h3 id="ch11-1">11.1 作業系統做什麼</h3>
+<div class="term"><span class="t">作業系統（operating system，OS）</span>介於硬體和應用程式之間的系統軟體。兩個主要角色：（1）<strong>資源管理者</strong>：決定 CPU 時間、記憶體、檔案、裝置要分給誰、分多少；（2）<strong>提供抽象</strong>：把複雜的硬體包裝成好用的介面，應用程式只要說「開檔案」，不用管硬碟的磁軌在哪裡。</div>
+<p>常見的作業系統：個人電腦上的 Windows、macOS、Linux；手機上的 Android、iOS；伺服器大多跑 Linux。它們管的東西大致可以分成四類，這也是課本作業系統章節的固定分法：</p>
+<div class="tablewrap"><table class="plain">
+<tr><th>管理什麼</th><th>做哪些事</th><th>本講義</th></tr>
+<tr><td><b>行程管理</b></td><td>建立、結束程式；決定哪個程式現在用 CPU（排程）；協調程式之間的合作</td><td>11.3～11.5</td></tr>
+<tr><td><b>記憶體管理</b></td><td>分配記憶體給各程式、互相隔開、記憶體不夠時借用硬碟</td><td>12.1～12.4</td></tr>
+<tr><td><b>檔案管理</b></td><td>檔案與資料夾、權限、怎麼存在硬碟上</td><td>12.5</td></tr>
+<tr><td><b>裝置（I/O）管理</b></td><td>透過驅動程式控制鍵盤、螢幕、印表機、網路卡</td><td>11.2</td></tr>
+</table></div>
+<p>開機的過程也和作業系統有關：電源打開後，CPU 先執行主機板上 ROM 裡的韌體（<strong>BIOS</strong> 或新一代的 <strong>UEFI</strong>），它檢查硬體、找到開機磁碟，載入一小段<strong>開機載入程式</strong>（bootloader），再由它把作業系統的核心載入記憶體開始執行。<strong>回想一下</strong>第 6.5 節：RAM 斷電就清空，所以每次開機都要從非揮發性的 ROM 和硬碟重新載入。</p>
+
+<h3 id="ch11-2">11.2 核心、系統呼叫與中斷</h3>
+<div class="term"><span class="t">核心（kernel）</span>作業系統最核心、權限最高的部分，常駐在記憶體，直接管理硬體。使用者看到的桌面、檔案總管、命令列（<strong>shell</strong>）都是跑在核心之上的程式，負責和人互動。</div>
+<p>為了安全，CPU 有兩種執行模式：<strong>核心模式</strong>可以執行所有指令、碰所有硬體；<strong>使用者模式</strong>不行。一般程式都在使用者模式，所以一個程式當掉不會拖垮整台電腦。那一般程式要讀檔案怎麼辦？</p>
+<div class="term"><span class="t">系統呼叫（system call）</span>應用程式請作業系統代辦事情的正式管道，例如開檔、讀檔、建立新行程、送出網路封包。呼叫時 CPU 切到核心模式，由核心做完再切回來。這就像 9.4 節的函式呼叫，只是被呼叫的是作業系統。</div>
+<p>CPU 怎麼知道鍵盤被按了、硬碟讀完了？有兩種做法：</p>
+<ul>
+<li><strong>輪詢</strong>（polling）：CPU 每隔一下就去問裝置「好了沒？」大部分時候答案是沒有，很浪費。</li>
+<li><strong>中斷</strong>（interrupt）：裝置好了主動發訊號給 CPU。CPU 把手上的事暫停、存好狀態，跳去執行對應的<strong>中斷處理程式</strong>，做完再回來繼續。這就是在 6.4 節的「擷取→解碼→執行」迴圈之間，多了一步「有沒有中斷？」。</li>
+</ul>
+<p>大量資料搬運（例如從硬碟讀一個大檔）還可以用 <strong>DMA</strong>（直接記憶體存取）：由專門的控制器直接把資料搬進記憶體，搬完才發一個中斷，CPU 不用一個位元組一個位元組地經手。每種裝置的控制細節則由<strong>驅動程式</strong>（driver）處理，所以插上新印表機要先裝驅動程式。</p>
+
+<h3 id="ch11-3">11.3 行程與執行緒</h3>
+<div class="term"><span class="t">行程（process）</span><strong>執行中的程式</strong>。程式（program）是放在硬碟上的檔案，是靜態的；把它載入記憶體開始跑，就成了一個行程，是動態的。同一個程式可以同時有好幾個行程，例如開兩個記事本視窗。</div>
+<p>作業系統替每個行程記一份資料，叫<b class="k">行程控制區塊</b>（PCB）：行程編號、目前狀態、程式計數器 PC 和暫存器的值（<strong>回想一下</strong>第 6.3 節）、用了哪些記憶體、開了哪些檔案。</p>
+<p>一個行程從生到死會經過五種<strong>狀態</strong>：</p>
+<div class="tablewrap"><table class="plain">
+<tr><th>狀態</th><th>意思</th></tr>
+<tr><td><b>新建</b>（new）</td><td>正在建立，還沒準備好</td></tr>
+<tr><td><b>就緒</b>（ready）</td><td>什麼都準備好了，只差 CPU，在排隊</td></tr>
+<tr><td><b>執行</b>（running）</td><td>正在 CPU 上跑。一個核心同一時間只有一個行程在這個狀態</td></tr>
+<tr><td><b>等待</b>（waiting／blocked）</td><td>在等某件事，例如等 I/O 完成、等使用者輸入。這時給它 CPU 也沒用</td></tr>
+<tr><td><b>結束</b>（terminated）</td><td>跑完了，等作業系統回收資源</td></tr>
+</table></div>
+<div class="widget" id="pstate">
+  <div class="wtitle">互動：行程狀態圖</div>
+  <p class="whint">按下面的事件，看行程在五個狀態之間怎麼移動。只有合理的事件可以按。</p>
+  <div id="pstate-out"></div>
+</div>
+<p>最容易考錯的兩點：<strong>I/O 完成後回到「就緒」，不是直接回到「執行」</strong>，因為 CPU 可能正被別人用，要重新排隊；<strong>等待中的行程不能直接去執行</strong>，一定要先回就緒。</p>
+<div class="term"><span class="t">內容切換（context switch）</span>CPU 從行程 A 換成行程 B 時，要把 A 的暫存器和 PC 存回 A 的 PCB，再把 B 的載入。這段時間 CPU 沒做任何有用的事，是純粹的額外負擔，所以切換不能太頻繁。</div>
+<div class="term"><span class="t">執行緒（thread）</span>行程裡面的一條執行路線。同一個行程的多個執行緒<strong>共用記憶體和檔案</strong>，各自有自己的 PC 和暫存器。瀏覽器可以一個執行緒畫畫面、一個下載圖片、一個跑 JavaScript。執行緒之間切換比行程便宜，但因為共用記憶體，寫不好會互相干擾（11.5 節）。</div>
+<p>單一 CPU 核心其實一次只能跑一個行程。作業系統讓每個行程輪流跑一小段（幾毫秒），切換得夠快，人就覺得大家在「同時」跑，這叫<strong>多工</strong>（multitasking）。有多個核心時，才是真的同時跑，叫<strong>平行處理</strong>。</p>
+
+<h3 id="ch11-4">11.4 CPU 排程</h3>
+<p>就緒佇列裡常常有好幾個行程在等 CPU。<b class="k">排程器</b>（scheduler）決定下一個是誰。不同的決定方式，大家等待的時間差很多。先學三個衡量用的時間，<strong>這三個公式一定要背</strong>：</p>
+<div class="term"><span class="t">週轉時間（turnaround time）</span>從抵達到完成總共花多久：<strong>週轉時間 ＝ 完成時間 − 抵達時間</strong>。</div>
+<div class="term"><span class="t">等待時間（waiting time）</span>在就緒佇列裡乾等、沒用到 CPU 的時間總和：<strong>等待時間 ＝ 週轉時間 − 執行時間</strong>。考題最常問「平均等待時間」。</div>
+<div class="term"><span class="t">回應時間（response time）</span>從抵達到<strong>第一次</strong>拿到 CPU：<strong>回應時間 ＝ 第一次開始時間 − 抵達時間</strong>。互動式程式（打字、點按鈕）最在乎這個。</div>
+<p>五種常考的排程方法：</p>
+<div class="tablewrap"><table class="plain">
+<tr><th>方法</th><th>規則</th><th>會不會中途搶走 CPU</th><th>特點</th></tr>
+<tr><td><b>FCFS</b> 先到先服務</td><td>照抵達順序，像排隊結帳</td><td>不會（不可搶先）</td><td>最簡單；一個長工作排在前面，後面全部要等（<strong>護航效應</strong>）</td></tr>
+<tr><td><b>SJF</b> 最短工作優先</td><td>CPU 空出來時，挑執行時間最短的</td><td>不會</td><td>平均等待時間最小（在不可搶先的方法中）；但要先知道執行時間</td></tr>
+<tr><td><b>SRTF</b> 最短剩餘時間優先</td><td>隨時挑<strong>剩餘</strong>時間最短的；新來的比較短就搶過去</td><td>會（可搶先）</td><td>SJF 的可搶先版，平均等待時間最小</td></tr>
+<tr><td><b>優先權</b></td><td>挑優先權最高的（本講義：數字小的優先）</td><td>兩種版本都有；本講義用不可搶先</td><td>低優先權的可能永遠輪不到（<strong>飢餓</strong>）；解法是等愈久優先權愈高（<strong>老化</strong>）</td></tr>
+<tr><td><b>RR</b> 循環排程</td><td>每人輪流跑一個<strong>時間配額</strong>（quantum），沒跑完就排回隊伍最後面</td><td>會</td><td>最公平、回應時間好，分時系統的基礎；配額太小切換太多，太大就變成 FCFS</td></tr>
+</table></div>
+<p>手算的方法固定是兩步：先畫<b class="k">甘特圖</b>（Gantt chart，時間軸上誰在跑），再從甘特圖讀出每個行程的完成時間，套公式。下面的元件會幫你畫，先用它看懂規則，再自己動手。</p>
+<div class="widget" id="sched">
+  <div class="wtitle">互動：CPU 排程模擬器</div>
+  <p class="whint">改抵達時間、執行時間、優先權（數字小的優先），換排程方法，看甘特圖和平均等待時間怎麼變。執行時間留空代表這個行程不存在。</p>
+  <div class="tablewrap"><table class="plain schedin">
+    <tr><th>行程</th><th>抵達時間</th><th>執行時間</th><th>優先權</th></tr>
+    <tr><td><b>P1</b></td><td><input type="text" class="narrow" id="sch-a1" value="0" inputmode="numeric"></td><td><input type="text" class="narrow" id="sch-b1" value="8" inputmode="numeric"></td><td><input type="text" class="narrow" id="sch-p1" value="3" inputmode="numeric"></td></tr>
+    <tr><td><b>P2</b></td><td><input type="text" class="narrow" id="sch-a2" value="1" inputmode="numeric"></td><td><input type="text" class="narrow" id="sch-b2" value="4" inputmode="numeric"></td><td><input type="text" class="narrow" id="sch-p2" value="1" inputmode="numeric"></td></tr>
+    <tr><td><b>P3</b></td><td><input type="text" class="narrow" id="sch-a3" value="2" inputmode="numeric"></td><td><input type="text" class="narrow" id="sch-b3" value="9" inputmode="numeric"></td><td><input type="text" class="narrow" id="sch-p3" value="4" inputmode="numeric"></td></tr>
+    <tr><td><b>P4</b></td><td><input type="text" class="narrow" id="sch-a4" value="3" inputmode="numeric"></td><td><input type="text" class="narrow" id="sch-b4" value="5" inputmode="numeric"></td><td><input type="text" class="narrow" id="sch-p4" value="2" inputmode="numeric"></td></tr>
+  </table></div>
+  <div class="controls" style="margin-top:12px">
+    <label>排程方法<select id="sch-alg"><option value="FCFS">FCFS 先到先服務</option><option value="SJF">SJF 最短工作優先</option><option value="SRTF">SRTF 最短剩餘時間優先</option><option value="PRI">優先權（不可搶先）</option><option value="RR">RR 循環排程</option></select></label>
+    <label id="sch-qwrap">時間配額<select id="sch-q"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option></select></label>
+  </div>
+  <div id="sch-out"></div>
+</div>
+<p>用元件的預設資料比一比：FCFS 平均等待 8.75，SJF 7.75，SRTF 只有 6.5，RR（配額 2）卻是 12.75。RR 的平均等待時間通常不是最好的，它換來的是<strong>每個行程都很快就能第一次拿到 CPU</strong>（看結果表的回應時間），這對互動式系統更重要。</p>
+
+<h3 id="ch11-5">11.5 同步與死結</h3>
+<p>多個行程或執行緒共用同一份資料時會出問題。經典例子：兩個執行緒同時對餘額 100 做「讀出、加 50、寫回」，如果兩邊都先讀到 100，最後寫回的都是 150，少了 50。結果取決於誰先誰後，這叫<b class="k">競爭條件</b>（race condition）。</p>
+<p>解法是把「讀出、修改、寫回」這段標成<strong>臨界區</strong>（critical section），同一時間只准一個人進去，用<strong>互斥鎖</strong>（mutex）或<strong>號誌</strong>（semaphore）來控制。<strong>回想一下</strong>第 10.4 節資料庫交易的「隔離性」，是同一個問題。</p>
+<p>但上鎖又帶來新問題：</p>
+<div class="term"><span class="t">死結（deadlock）</span>一群行程<strong>互相等待</strong>對方手上的資源，結果誰都動不了。例：行程 A 拿著印表機、在等掃描器；行程 B 拿著掃描器、在等印表機。兩個永遠等下去。</div>
+<p>死結要發生，<strong>四個條件必須同時成立</strong>（考試常考，記這四個名字）：</p>
+<ol>
+<li><strong>互斥</strong>（mutual exclusion）：資源一次只能給一個行程用。</li>
+<li><strong>持有並等待</strong>（hold and wait）：手上拿著資源，還在等別的。</li>
+<li><strong>不可搶奪</strong>（no preemption）：資源不能被強制拿走，只能等持有者自己放。</li>
+<li><strong>循環等待</strong>（circular wait）：A 等 B、B 等 C……最後有人等 A，繞成一圈。</li>
+</ol>
+<p>只要破壞其中一個，就不會死結。例如規定所有資源都要照固定順序申請（先印表機再掃描器），就不可能繞成一圈。作業系統處理死結的策略有四種：<strong>預防</strong>（破壞條件）、<strong>避免</strong>（每次分配前先檢查會不會進入危險狀態，例如<strong>銀行家演算法</strong>）、<strong>偵測與恢復</strong>（發生了再砍掉某個行程），以及<strong>忽略</strong>（很少發生就假裝沒事，一般桌機作業系統其實常這樣做）。</p>
+
+<div class="summary"><h4>第 11 章重點</h4>
+<ul>
+<li>作業系統：資源管理者 ＋ 提供抽象。管行程、記憶體、檔案、裝置。</li>
+<li>核心模式 vs 使用者模式；系統呼叫是程式請 OS 辦事的管道。中斷取代輪詢；DMA 直接搬資料。</li>
+<li>程式是檔案，行程是執行中的程式；PCB 記錄行程的一切。</li>
+<li>五種狀態：新建、就緒、執行、等待、結束。I/O 完成 → 就緒（不是執行）。</li>
+<li>週轉 ＝ 完成 − 抵達；等待 ＝ 週轉 − 執行；回應 ＝ 第一次開始 − 抵達。</li>
+<li>FCFS（護航效應）、SJF、SRTF（平均等待最小）、優先權（飢餓 → 老化）、RR（時間配額，回應快）。</li>
+<li>死結四條件：互斥、持有並等待、不可搶奪、循環等待。</li>
+</ul></div>
+
+<h3 id="ch11-ex">第 11 章例題</h3>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">1.</b>三個行程都在時間 0 抵達，執行時間 P1 ＝ 24、P2 ＝ 3、P3 ＝ 3。用 FCFS 和 SJF 的平均等待時間各是多少？</p>
+<p><strong>FCFS</strong>：甘特圖 P1（0～24）、P2（24～27）、P3（27～30）。等待時間 0、24、27，平均 51 ÷ 3 ＝ <strong>17</strong>。</p>
+<p><strong>SJF</strong>：先跑短的，P2（0～3）、P3（3～6）、P1（6～30）。等待時間 P1 ＝ 6、P2 ＝ 0、P3 ＝ 3，平均 9 ÷ 3 ＝ <strong>3</strong>。只是換個順序，差了快 6 倍，這就是護航效應。</p>
+<button class="loadbtn" data-load='[["sch-a1","0"],["sch-b1","24"],["sch-a2","0"],["sch-b2","3"],["sch-a3","0"],["sch-b3","3"],["sch-b4",""],["sch-alg","FCFS"]]' data-goto="sched">丟進模擬器（再自己切到 SJF）</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">2.</b>同上題的三個行程，用 RR、時間配額 4，平均等待時間是多少？</p>
+<p>甘特圖：P1（0～4）、P2（4～7，跑完）、P3（7～10，跑完）、P1（10～30）。完成時間 P1 ＝ 30、P2 ＝ 7、P3 ＝ 10。等待 ＝ 完成 − 抵達 − 執行：P1 ＝ 30 − 24 ＝ 6、P2 ＝ 7 − 3 ＝ 4、P3 ＝ 10 − 3 ＝ 7。平均 17 ÷ 3 ≈ <strong>5.67</strong>。</p>
+<button class="loadbtn" data-load='[["sch-a1","0"],["sch-b1","24"],["sch-a2","0"],["sch-b2","3"],["sch-a3","0"],["sch-b3","3"],["sch-b4",""],["sch-alg","RR"],["sch-q","4"]]' data-goto="sched">丟進模擬器</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">3.</b>一個行程在時間 2 抵達，執行時間 5，在時間 12 完成。它的週轉時間和等待時間各是多少？</p>
+<p>週轉 ＝ 12 − 2 ＝ <strong>10</strong>；等待 ＝ 10 − 5 ＝ <strong>5</strong>（有 5 個單位的時間在排隊）。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">4.</b>一個正在執行的行程要讀硬碟裡的檔案，它會進入哪個狀態？讀完之後呢？</p>
+<p>發出 I/O 請求 → <strong>等待</strong>。I/O 完成 → <strong>就緒</strong>，重新排隊等 CPU，不會直接回到執行。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">5.</b>十字路口四台車各自佔住一個路口、都在等前面那台車讓開。這是死結嗎？是哪四個條件？</p>
+<p>是。<strong>互斥</strong>：一個路口一次只能一台車；<strong>持有並等待</strong>：每台車佔著自己的路口又等下一個；<strong>不可搶奪</strong>：不能把車吊走；<strong>循環等待</strong>：四台車繞成一圈互等。紅綠燈就是用「強制順序」破壞循環等待。</p>
+</details>
+<div class="gopractice"><b>讀完了？去練習：</b><a href="practice.html#skill=procState">行程狀態</a><a href="practice.html#skill=sched">CPU 排程</a><a href="practice.html#skill=concepts11">第 11 章觀念題</a><a href="audio.html#19"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>聽第 19 集複習</a></div>
+</section>
+
+<!-- ============ 第 12 章 ============ -->
+<section id="ch12">
+<h2 class="chapter"><span class="no">第 12 章</span>記憶體與檔案管理</h2>
+<p class="lead">好幾個行程同時在記憶體裡，每個都以為自己從位址 0 開始、獨佔整塊記憶體。作業系統怎麼做到？記憶體不夠時又怎麼辦？這一章的計算題是分頁的位址轉換和頁面置換。</p>
+
+<h3 id="ch12-1">12.1 邏輯位址與實體位址</h3>
+<div class="term"><span class="t">邏輯位址（logical address）</span>程式自己看到的位址，也叫虛擬位址。每個行程都以為自己從 0 開始。</div>
+<div class="term"><span class="t">實體位址（physical address）</span>資料真正在 RAM 裡的位址。</div>
+<p>兩者之間的轉換由 CPU 裡的硬體 <strong>MMU</strong>（記憶體管理單元）自動做，每次存取記憶體都會經過它。這樣做有兩個好處：每個行程被<strong>隔開</strong>，A 程式寫錯也碰不到 B 的記憶體；而且行程不必放在 RAM 裡連續的一整塊。</p>
+<p>如果每個行程都要一整塊連續的記憶體，用久了 RAM 會變成很多零碎的小空洞，加起來夠大，卻沒有一塊連續的放得下新行程，這叫<strong>外部碎片</strong>。解決方法就是分頁。</p>
+
+<h3 id="ch12-2">12.2 分頁</h3>
+<div class="term"><span class="t">分頁（paging）</span>把邏輯記憶體切成固定大小的<strong>頁</strong>（page），把實體記憶體切成同樣大小的<strong>頁框</strong>（frame）。行程的每一頁可以放進<strong>任何</strong>一個空的頁框，不必連續。每個行程有一張<strong>分頁表</strong>（page table），記錄「第幾頁放在第幾個頁框」。</div>
+<p>位址轉換的公式（頁的大小通常是 2 的次方，例如 1 KB、4 KB）：</p>
+<ol>
+<li><strong>頁碼</strong> ＝ 邏輯位址 ÷ 頁大小 的<strong>商</strong>（整數除法，<strong>回想一下</strong>第 9.2 節）。</li>
+<li><strong>頁內位移</strong>（offset）＝ 邏輯位址 ÷ 頁大小 的<strong>餘數</strong>。</li>
+<li>查分頁表：頁碼 → <strong>頁框號碼</strong>。</li>
+<li><strong>實體位址 ＝ 頁框號碼 × 頁大小 ＋ 位移</strong>。位移不變，只有頁碼換成頁框號碼。</li>
+</ol>
+<p>因為頁大小是 2 的次方，用二進位看更直接：頁大小 2<sup>d</sup> 時，位址<strong>右邊 d 個位元就是位移，左邊剩下的就是頁碼</strong>。轉換只是把左半邊換掉，右半邊原封不動。</p>
+<div class="widget" id="paging">
+  <div class="wtitle">互動：分頁位址轉換</div>
+  <p class="whint">輸入邏輯位址、選頁大小，看它怎麼拆成頁碼和位移，查表後變成實體位址。分頁表有 8 頁，打「—」的那幾頁不在記憶體裡。</p>
+  <div class="controls">
+    <label>頁大小<select id="pg-size"><option value="256">256 位元組</option><option value="1024" selected>1 KB（1024）</option><option value="4096">4 KB（4096）</option></select></label>
+    <label>邏輯位址（十進位）<input type="text" id="pg-addr" value="3000" inputmode="numeric"></label>
+  </div>
+  <div id="pg-out"></div>
+</div>
+<p>分頁沒有外部碎片，但行程的最後一頁通常用不滿，例如 1 KB 的頁只用了 100 位元組，剩下 924 浪費掉，這叫<strong>內部碎片</strong>。頁愈大，內部碎片愈多；頁愈小，分頁表愈大。</p>
+<p>每次存取記憶體都要先查分頁表（分頁表也在記憶體裡），等於多跑一趟。所以 CPU 裡有一小塊專門快取分頁表的硬體，叫 <strong>TLB</strong>，概念和第 6.5 節的快取一樣。</p>
+
+<h3 id="ch12-3">12.3 虛擬記憶體</h3>
+<p>分頁還帶來一個更大的好處：行程的頁<strong>不必全部都在 RAM 裡</strong>。不常用的頁可以先放在硬碟上，要用到時才載入。這樣程式可以比實體記憶體還大，也能同時跑更多程式。這就是<b class="k">虛擬記憶體</b>（virtual memory）。</p>
+<div class="term"><span class="t">分頁錯誤（page fault）</span>程式存取的頁不在 RAM 裡（分頁表標記為無效）。CPU 發出中斷，作業系統去硬碟把那一頁載入一個空頁框，更新分頁表，再讓程式重新執行那一條指令。名字叫「錯誤」，但這是正常機制，不是程式寫錯。</div>
+<p>只在需要時才載入頁，叫<strong>需求分頁</strong>（demand paging）。代價是：<strong>回想一下</strong>第 6.5 節的速度表，硬碟比 RAM 慢上千到十萬倍，一次分頁錯誤非常昂貴。如果 RAM 太小、程式太多，系統會把大部分時間花在搬頁進出，幾乎做不了正事，這叫<strong>輾轉現象</strong>（thrashing）。電腦開太多分頁時突然變得很卡、硬碟燈一直閃，就是這個。</p>
+<div class="note">Windows 的「分頁檔」（pagefile.sys）、Linux 的「swap」，就是硬碟上拿來放被換出去的頁的空間。</div>
+
+<h3 id="ch12-4">12.4 頁面置換</h3>
+<p>發生分頁錯誤時，如果 RAM 的頁框已經全滿，就得挑一頁<strong>踢出去</strong>騰出位置。踢誰？三種常考的方法：</p>
+<div class="tablewrap"><table class="plain">
+<tr><th>方法</th><th>踢掉哪一頁</th><th>特點</th></tr>
+<tr><td><b>FIFO</b> 先進先出</td><td><strong>最早被載入</strong>的那頁</td><td>最簡單；但最早載入的可能正是最常用的。還會出現 <strong>Belady 異常</strong>：頁框變多，錯誤反而變多</td></tr>
+<tr><td><b>LRU</b> 最近最少使用</td><td><strong>最久沒被用到</strong>的那頁</td><td>用「過去」預測「未來」，效果接近最佳，實務上最常用（或其近似）</td></tr>
+<tr><td><b>OPT</b> 最佳置換</td><td><strong>未來最久才會再用到</strong>的那頁（以後都不用的優先）</td><td>錯誤次數最少，是理論上限；但要知道未來，實際做不到，只拿來比較</td></tr>
+</table></div>
+<p>考題會給一串<strong>參考串</strong>（程式依序存取的頁碼）和頁框數，問發生幾次分頁錯誤。手算時畫一張表：每存取一頁就寫一欄，記下頁框裡現在有哪些頁；頁已經在裡面是<strong>命中</strong>，不在就是<strong>錯誤</strong>。<strong>前幾次填滿空頁框也算錯誤</strong>，這是最常漏算的地方。</p>
+<div class="widget" id="pr">
+  <div class="wtitle">互動：頁面置換模擬器</div>
+  <p class="whint">輸入參考串（用空白隔開的頁碼），選頁框數和方法。紅底是分頁錯誤，深色字是剛被換進來的頁。</p>
+  <div class="controls">
+    <label>參考串<input type="text" id="pr-refs" class="wide" value="7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1" inputmode="numeric"></label>
+    <label>頁框數<select id="pr-frames"><option>2</option><option selected>3</option><option>4</option><option>5</option></select></label>
+    <label>方法<select id="pr-alg"><option value="FIFO">FIFO</option><option value="LRU">LRU</option><option value="OPT">OPT</option></select></label>
+  </div>
+  <div id="pr-out"></div>
+</div>
+<p>預設的參考串和 3 個頁框是課本的經典例子：FIFO 15 次錯誤、LRU 12 次、OPT 9 次。OPT 永遠最少，LRU 通常介於兩者之間。</p>
+
+<h3 id="ch12-5">12.5 檔案系統</h3>
+<div class="term"><span class="t">檔案（file）</span>作業系統提供的抽象：一串有名字的位元組，存在非揮發性的儲存裝置上。除了內容，作業系統還記錄它的<strong>屬性</strong>（metadata）：名稱、大小、建立和修改時間、擁有者、權限、資料實際放在磁碟的哪些區塊。</div>
+<p>檔案用<strong>目錄</strong>（資料夾）組織成一棵<strong>樹</strong>：最上面是根目錄，Windows 寫成 <code>C:\</code>，macOS／Linux 寫成 <code>/</code>。指出一個檔案的位置叫<strong>路徑</strong>：</p>
+<ul>
+<li><strong>絕對路徑</strong>：從根目錄寫起，例如 <code>/home/amy/report.txt</code>。不管你現在在哪裡，指的都是同一個檔案。</li>
+<li><strong>相對路徑</strong>：從目前所在的目錄寫起。<code>.</code> 是目前目錄，<code>..</code> 是上一層。在 <code>/home/amy</code> 底下，<code>../bob/a.txt</code> 指的是 <code>/home/bob/a.txt</code>。這個網站的網頁互相連結也是用相對路徑，例如 <code>assets/site.css</code>。</li>
+</ul>
+<p>常見的檔案系統格式：Windows 用 <strong>NTFS</strong>，隨身碟常用 <strong>FAT32</strong>／<strong>exFAT</strong>（FAT32 單一檔案不能超過 4 GB），Linux 用 <strong>ext4</strong>，Apple 用 <strong>APFS</strong>。「格式化」就是在磁碟上建立一套空的檔案系統。</p>
+<p><strong>檔案權限</strong>是 Linux／macOS 常考的計算：每個檔案對三種人（<strong>擁有者</strong>、<strong>同群組</strong>、<strong>其他人</strong>）各有三種權限：讀（r）、寫（w）、執行（x）。每種人 3 個位元，有權限是 1、沒有是 0。<strong>回想一下</strong>第 1.5 節：3 個位元剛好是一個八進位數字。</p>
+<div class="formula"><span class="s">rwx</span> <span class="e">r-x</span> <span class="m">r--</span> → <span class="s">111</span> <span class="e">101</span> <span class="m">100</span> → <span class="s">7</span><span class="e">5</span><span class="m">4</span></div>
+<p>所以 r ＝ 4、w ＝ 2、x ＝ 1，相加就是那一組的數字。指令 <code>chmod 754 file</code> 的意思是：擁有者可讀寫執行（7）、同群組可讀可執行（5）、其他人只能讀（4）。<code>644</code>（rw-r--r--）是一般檔案最常見的權限，<code>755</code> 是程式和資料夾最常見的。</p>
+<div class="widget" id="perm">
+  <div class="wtitle">互動：檔案權限</div>
+  <p class="whint">點格子開關權限，或直接輸入三位八進位數字。</p>
+  <div class="controls"><label>八進位<input type="text" id="perm-oct" class="narrow" value="754" inputmode="numeric" maxlength="3"></label></div>
+  <div id="perm-out"></div>
+</div>
+
+<div class="summary"><h4>第 12 章重點</h4>
+<ul>
+<li>邏輯位址（程式看到的）由 MMU 轉成實體位址（RAM 真正的）。連續配置會有外部碎片。</li>
+<li>分頁：頁 ＝ 頁框大小。頁碼 ＝ 位址 ÷ 頁大小的商，位移 ＝ 餘數；實體位址 ＝ 頁框 × 頁大小 ＋ 位移。</li>
+<li>頁大小 2<sup>d</sup>：右邊 d 位是位移。分頁有內部碎片；TLB 快取分頁表。</li>
+<li>虛擬記憶體：頁可以放在硬碟。存取不在 RAM 的頁 → 分頁錯誤。搬進搬出太頻繁 → 輾轉現象。</li>
+<li>頁面置換：FIFO 踢最早載入、LRU 踢最久沒用、OPT 踢未來最久才用（最少錯誤）。前幾次填空頁框也算錯誤。FIFO 有 Belady 異常。</li>
+<li>檔案系統是一棵樹；絕對路徑從根開始，相對路徑從目前位置開始，<code>..</code> 是上一層。</li>
+<li>權限 rwx：r ＝ 4、w ＝ 2、x ＝ 1，每組一個八進位數字。754 ＝ rwxr-xr--。</li>
+</ul></div>
+
+<h3 id="ch12-ex">第 12 章例題</h3>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">1.</b>頁大小 1 KB，分頁表中第 2 頁放在頁框 7。邏輯位址 3000 的實體位址是多少？</p>
+<p>3000 ÷ 1024 ＝ 2 餘 952，所以頁碼 2、位移 952。頁 2 → 頁框 7。實體位址 ＝ 7 × 1024 ＋ 952 ＝ <strong>8120</strong>。</p>
+<button class="loadbtn" data-load='[["pg-size","1024"],["pg-addr","3000"]]' data-goto="paging">丟進元件驗算</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">2.</b>32 位元的邏輯位址、頁大小 4 KB。位移占幾個位元？最多有幾頁？</p>
+<p>4 KB ＝ 4096 ＝ 2<sup>12</sup>，位移占 <strong>12 位元</strong>。頁碼占 32 − 12 ＝ 20 位元，最多 2<sup>20</sup> ＝ <strong>1,048,576 頁</strong>。</p>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">3.</b>參考串 1 2 3 4 1 2 5 1 2 3 4 5，用 FIFO。3 個頁框和 4 個頁框各有幾次分頁錯誤？</p>
+<p>3 個頁框：<strong>9 次</strong>；4 個頁框：<strong>10 次</strong>。頁框變多，錯誤反而變多，這就是 <strong>Belady 異常</strong>。LRU 和 OPT 不會發生這種事。</p>
+<button class="loadbtn" data-load='[["pr-refs","1 2 3 4 1 2 5 1 2 3 4 5"],["pr-frames","3"],["pr-alg","FIFO"]]' data-goto="pr">丟進模擬器（再切成 4 個頁框）</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">4.</b>參考串 1 2 3 1 4 1 5，3 個頁框，用 LRU 有幾次分頁錯誤？</p>
+<p>1、2、3 填入空頁框：3 次錯誤。存取 1：命中。存取 4：錯誤，頁框是 1、2、3，最久沒用的是 2（1 剛用過），踢掉 2。存取 1：命中。存取 5：錯誤，頁框是 1、4、3，最久沒用的是 3，踢掉 3。共 <strong>5 次</strong>。</p>
+<button class="loadbtn" data-load='[["pr-refs","1 2 3 1 4 1 5"],["pr-frames","3"],["pr-alg","LRU"]]' data-goto="pr">丟進模擬器</button>
+</details>
+<details class="ex"><summary>看解答</summary>
+<p class="q"><b class="n">5.</b><code>chmod 640 notes.txt</code> 之後，三種人各有什麼權限？</p>
+<p>6 ＝ 110 ＝ rw-：擁有者可讀寫；4 ＝ 100 ＝ r--：同群組只能讀；0 ＝ 000 ＝ ---：其他人什麼都不行。合起來 <strong>rw-r-----</strong>。</p>
+<button class="loadbtn" data-load='[["perm-oct","640"]]' data-goto="perm">丟進元件</button>
+</details>
+<div class="gopractice"><b>讀完了？去練習：</b><a href="practice.html#skill=pageAddr">分頁位址轉換</a><a href="practice.html#skill=pageFault">頁面置換</a><a href="practice.html#skill=perm">檔案權限</a><a href="practice.html#skill=concepts12">第 12 章觀念題</a><a href="audio.html#20"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#headphones"/></svg>聽第 20 集複習</a></div>
+</section>
+
+<nav class="pager" aria-label="其他講義"><a href="lesson-3.html"><small>上一份講義</small><b>← 講義 ③　電腦、網路與軟體</b><span class="small muted">電腦構成、圖靈機、網路、程式語言、資料庫</span></a><a class="next" href="practice.html"><small>全部讀完了</small><b>去練習頁 →</b><span class="small muted">用混合挑戰檢查自己</span></a></nav>
+</main>
+</div>
+<script src="assets/lesson-core.js"></script>
+<script src="assets/os-core.js"></script>
+<script src="assets/lesson-4.js"></script>
+</body>
+</html>
